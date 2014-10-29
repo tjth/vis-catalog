@@ -16,8 +16,8 @@ RUN /bin/bash -c -l 'source /usr/local/rvm/scripts/rvm'
 RUN /bin/bash -c -l 'gem install rails'
 RUN /bin/bash -c -l 'gem install bundler'
 
-ADD . app
-WORKDIR app
+ADD . /src
+WORKDIR /src
 RUN /bin/bash -c -l 'bundle install'
 
 EXPOSE 3123
