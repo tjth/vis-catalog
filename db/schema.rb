@@ -11,10 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141030114923) do
+ActiveRecord::Schema.define(version: 20141030135827) do
 
   create_table "users", force: true do |t|
-    t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -40,6 +39,7 @@ ActiveRecord::Schema.define(version: 20141030114923) do
     t.string   "description"
     t.string   "notes"
     t.string   "author_info"
+    t.integer  "content_type"
   end
 
 end
