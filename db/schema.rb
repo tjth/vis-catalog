@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141029142326) do
+ActiveRecord::Schema.define(version: 20141030114923) do
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -31,5 +31,15 @@ ActiveRecord::Schema.define(version: 20141029142326) do
   end
 
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+
+  create_table "visualisations", force: true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "link"
+    t.string   "name"
+    t.string   "description"
+    t.string   "notes"
+    t.string   "author_info"
+  end
 
 end
