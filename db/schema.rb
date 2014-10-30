@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141030143434) do
+ActiveRecord::Schema.define(version: 20141030144405) do
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 20141030143434) do
     t.datetime "updated_at"
     t.string   "name"
     t.string   "username"
+    t.boolean  "isAdmin"
+    t.boolean  "isApproved"
   end
 
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
