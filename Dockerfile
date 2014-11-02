@@ -16,8 +16,11 @@ RUN /bin/bash -c -l 'source /usr/local/rvm/scripts/rvm'
 RUN /bin/bash -c -l 'gem install --no-ri --no-rdoc rails'
 RUN /bin/bash -c -l 'gem install --no-ri --no-rdoc bundler'
 
-WORKDIR /src
+
+ADD Gemfile Gemfile
 RUN /bin/bash -c -l 'bundle install'
+
+WORKDIR /src
 
 EXPOSE 3123
 CMD /bin/bash -c -l 'rake db:migrate && rails server -p 3123' 
