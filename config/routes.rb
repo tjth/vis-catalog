@@ -4,9 +4,9 @@ Rails.application.routes.draw do
   resources :users
   resources :visualisations
 
+  get '/visualisations' => 'visualisations#index' 
+  
   get '/visualisations/:visid' => 'visualisations#show'
-
-  get '/visualisations/all' => 'visualisations#all' 
 
   delete '/visualisations/:visid' => 'visualisations#delete'
 end

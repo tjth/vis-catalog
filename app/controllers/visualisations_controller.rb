@@ -5,8 +5,8 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.find(params[:visid])  
   end
 
-  # GET /visualisations/all
-  def all
+  # GET /visualisations
+  def index
     @visualisations = Visualisation.all
   end    
 
