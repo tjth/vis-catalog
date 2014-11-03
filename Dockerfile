@@ -17,7 +17,9 @@ RUN /bin/bash -c -l 'gem install --no-ri --no-rdoc rails'
 RUN /bin/bash -c -l 'gem install --no-ri --no-rdoc bundler'
 
 
-ADD Gemfile Gemfile
+ADD . /tmp/rails
+WORKDIR /tmp/rails
+
 RUN /bin/bash -c -l 'bundle install'
 
 WORKDIR /src

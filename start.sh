@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# Remove tmp folder generated due to mounting
 sudo rm -rf tmp
+
+sudo cp -r db/. /data
 
 sudo docker run -itd \
                 -v $(pwd):/src \

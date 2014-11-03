@@ -10,4 +10,3 @@ source /etc/bash_completion.d/docker.io
 sudo docker build -t rails .
 
 sudo mkdir -p /data
-sudo cp -r db/. /data
