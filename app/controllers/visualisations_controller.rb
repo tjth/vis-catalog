@@ -5,7 +5,7 @@ class VisualisationsController < ApplicationController
   def approve
     #if current_user.isAdmin
        v = Visualisation.find(params[:visid])
-       v.isApproved = true
+       v.approved = true
        v.save!
     #else 
        return "You are not an admin!"
@@ -82,6 +82,6 @@ class VisualisationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def visualisation_params
-      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :filepath)
+      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved)
     end
 end
