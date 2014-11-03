@@ -38,7 +38,7 @@ $card-radius:3px;
         }
 
         &.small {
-            width: calc(~"50% - ${padding}/2");
+            width: calc(50% - #{$padding}/2);
             height: 50%;
             .img {
                 height: 150px;
@@ -96,7 +96,7 @@ $card-radius:3px;
             $height:1.2em + 2 * 1em;
             font-size:1.2em;
             text-transform:uppercase;
-            height:calc($height);
+            height:$height;
             line-height:$height;
             border-top-left-radius: $card-radius;
             border-top-right-radius: $card-radius;

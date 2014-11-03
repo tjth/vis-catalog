@@ -145,12 +145,12 @@ header {
             width:$hamburger-size;
             height:$hamburger-size;
             
-            top:calc(~"(${header-height} - ${hamburger-size})/2");
-            left:calc(~"(${header-height} - ${hamburger-size})/2");
+            top:calc(( #{$header-height} - #{$hamburger-size})/2);
+            left:calc(( #{$header-height} - #{$hamburger-size})/2);
             
             @media (max-width: $mobile-width) {
-                top:calc(~"(${header-height-small} - ${hamburger-size})/2");
-                left:calc(~"(${header-height-small} - ${hamburger-size})/2");
+                top:calc(( #{$header-height-small} - #{$hamburger-size})/2);
+                left:calc(( #{$header-height-small} - #{$hamburger-size})/2);
             }
             
             &.half {
@@ -262,7 +262,7 @@ header {
     position:fixed;
     top:$header-height;
     left:0;
-    height: calc(100% - $header-height);
+    height: calc(100% - #{$header-height});
     background:#fff;
     box-shadow:0px 0px 10px rgba(0,0,0,0.2);
     width:$menu-width;
@@ -279,7 +279,7 @@ header {
     
     @media (max-width: $mobile-width) {
         top:$header-height-small;
-        height: calc(100% - $header-height-small);
+        height: calc(100% - #{$header-height-small});
     }
     
     nav {
@@ -372,7 +372,7 @@ header {
         background:#e0e0e0;
         color:#868686;
         border-bottom:1px solid #d8d8d8;
-        line-height:calc(1rem + 1.5*$padding);
+        line-height:calc(1rem + 1.5*#{$padding});
         
         color:#fff;
         background:#616161;
