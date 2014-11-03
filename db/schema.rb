@@ -12,7 +12,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 20141102104610) do
-
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
@@ -44,6 +43,7 @@ ActiveRecord::Schema.define(version: 20141102104610) do
     t.integer  "content_type"
     t.integer  "user_id"
     t.string   "filepath"
+
   end
 
 end
