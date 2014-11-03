@@ -1,32 +1,26 @@
 $card-radius:3px;
+$card-shadow-radius:7px;
 
 #masonry {
-    $padding: 10px;
     -moz-column-count: 3;
     -webkit-column-count: 3;
     column-count: 3;
+    
     columns: 3 auto;
-    -moz-column-gap: $padding;
-    -webkit-column-gap: $padding;
-    column-gap: $padding;
+    
+    -webkit-column-gap: 0;
+    column-gap:0;
 
     .grid-item {
-        background-color: #eee;
+        background-color: white;
         display: inline-block;
-        margin: 0 0 $padding;
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
-        box-shadow: 2px 2px 4px 0 #ccc;
-
-        @media screen and (-webkit-min-device-pixel-ratio:0) {  
-            &:first-child{
-                margin-top:2px;                
-            }
-        }
+        margin:$card-shadow-radius;
 
         &.large {
-            width: 100%;
+            width: calc(100% - #{$card-shadow-radius} * 2);
             height: 100%;
             .img {
                 height: 350px;
@@ -38,7 +32,7 @@ $card-radius:3px;
         }
 
         &.small {
-            width: calc(50% - #{$padding}/2);
+            width: calc(50% - #{$card-shadow-radius} * 2);
             height: 50%;
             .img {
                 height: 150px;
@@ -46,13 +40,11 @@ $card-radius:3px;
             .desc {
                 display: none;
             }
-        }
+            
+            .right {
+                
+            }
 
-        &.left {
-            margin-left: $padding/2;
-        }
-        &.right {
-            margin-right: $padding/2;
         }
 
         .img {
@@ -64,7 +56,7 @@ $card-radius:3px;
         }
         
         .header {
-            background-color: yellow;
+            background-color: #ececec;
             font-size: 2em;
             padding: 0.5em;
         }
@@ -81,7 +73,7 @@ $card-radius:3px;
 
 .card {
     background:white;
-    box-shadow: 0px 2px 7px rgba(0,0,0,0.25);
+    box-shadow: 0px 1px 7px rgba(0,0,0,0.25);
     border-radius: $card-radius;
     
     &.guideline {
