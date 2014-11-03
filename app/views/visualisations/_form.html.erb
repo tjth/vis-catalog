@@ -1,0 +1,17 @@
+<%= form_for(@visualisation) do |f| %>
+  <% if @visualisation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@visualisation.errors.count, "error") %> prohibited this visualisation from being saved:</h2>
+
+      <ul>
+      <% @visualisation.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
