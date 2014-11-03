@@ -1,0 +1,53 @@
+<section class="container-fluid" ng-controller="submitVisualisationController">
+    <div class="row">
+
+        <div id="submit-visualisation-col" class="col-sm-8">
+            <form id="form" class="card" ng-init="visualisation={}">
+                <div class="content">
+                    <input type="text" 
+                           placeholder="Visualisation Name" 
+                           ng-model="visualisation.name" />
+                    <input type="text" 
+                           placeholder="Author's website/more info (optional)" 
+                           ng-model="visualisation.website" />                
+                    <textarea class="grow" 
+                           placeholder="Description" 
+                           ng-model="visualisation.description" />
+                    <textarea class="grow" 
+                           placeholder="Notes/preferences/instructions (optional)" 
+                           ng-model="visualisation.notes" />
+                </div>
+                <div class="bottom">
+                <a class="submit">Submit</a>
+            </div>
+            </form>
+        </div>
+
+        <div id="guidelines" class="col-sm-4">
+            <div class="card guideline blue">
+                <div class="title">Content Types</div>
+                <div class="item">
+                    <div class="heading">Web Link</div>
+                </div>
+                <div class="item">
+                    <div class="heading">Image (PNG, JPG)</div>
+                    <div class="description">Dimensions must be 1920 x 1080</div>
+                </div>
+                <div class="item">
+                    <div class="heading">Web Content (ZIP)</div>
+                    <div class="description">Must consist of static HTML, JS and CSS files</div>
+                    <div class="description">Visualisation should be contained within an index.html file in the root of the ZIP</div>
+                </div>
+            </div>
+            
+            <div class="card guideline yellow">
+                <div class="title">Visualisation Guidelines</div>
+                <div class="item">
+                    <div class="heading">Web Content</div>
+                    <div class="description">Visualisations should require no user input to start</div>
+                    <div class="description">Visualisations should scale to any screen size</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

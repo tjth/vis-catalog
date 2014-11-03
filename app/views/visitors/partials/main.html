@@ -1,0 +1,13 @@
+<div ng-controller="masonController" id="masonry">
+    <div class="grid-item card" 
+         ng-class="{'large': $index % 3 == 0, 
+                   'right' : $index % 3 == 1, 
+                   'left' : $index % 3 == 2, 
+                   'small' : $index % 3 != 0}" 
+         ng-repeat="item in visItems">
+        <div style="background-image: url({[{ item.url }]});" class="img"></div>
+        <div class="header">{[{ item.name }]}</div>
+        <div class="desc">{[{ item.desc }]}</div>
+    </div>
+</div>
+
