@@ -1,19 +1,19 @@
-@card-radius:3px;
+$card-radius:3px;
 
 #masonry {
-    @padding: 10px;
+    $padding: 10px;
     -moz-column-count: 3;
     -webkit-column-count: 3;
     column-count: 3;
     columns: 3 auto;
-    -moz-column-gap: @padding;
-    -webkit-column-gap: @padding;
-    column-gap: @padding;
+    -moz-column-gap: $padding;
+    -webkit-column-gap: $padding;
+    column-gap: $padding;
 
     .grid-item {
         background-color: #eee;
         display: inline-block;
-        margin: 0 0 @padding;
+        margin: 0 0 $padding;
         box-sizing: border-box;
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
@@ -38,7 +38,7 @@
         }
 
         &.small {
-            width: calc(~"50% - @{padding}/2");
+            width: calc(~"50% - ${padding}/2");
             height: 50%;
             .img {
                 height: 150px;
@@ -49,19 +49,20 @@
         }
 
         &.left {
-            margin-left: @padding/2;
+            margin-left: $padding/2;
         }
         &.right {
-            margin-right: @padding/2;
+            margin-right: $padding/2;
         }
 
         .img {
     	    width:100%;
             background-size: cover;
             background-repeat: no-repeat;
-            border-top-right-radius: @card-radius;
-            border-top-left-radius: @card-radius;
-
+            border-top-right-radius: $card-radius;
+            border-top-left-radius: $card-radius;
+        }
+        
         .header {
             background-color: yellow;
             font-size: 2em;
@@ -81,24 +82,24 @@
 .card {
     background:white;
     box-shadow: 0px 2px 7px rgba(0,0,0,0.25);
-    border-radius: @card-radius;
+    border-radius: $card-radius;
     
     &.guideline {
-        @padding:0.9rem;
+        $padding:0.9rem;
         text-align: center;
-        font-size:@padding;
-        padding-bottom:@padding;
+        font-size:$padding;
+        padding-bottom:$padding;
         font-weight:500;
         margin-bottom: 20px;
         
         .title {
-            @height:1.2em + 2 * 1em;
+            $height:1.2em + 2 * 1em;
             font-size:1.2em;
             text-transform:uppercase;
-            height:calc(@height);
-            line-height:@height;
-            border-top-left-radius: @card-radius;
-            border-top-right-radius: @card-radius;
+            height:calc($height);
+            line-height:$height;
+            border-top-left-radius: $card-radius;
+            border-top-right-radius: $card-radius;
         }
         
         .item {

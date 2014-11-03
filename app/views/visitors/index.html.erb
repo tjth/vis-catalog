@@ -1,184 +1,159 @@
-<!DOCTYPE html>
-<html ng-app="app" ng-controller="mainController">
-<head>
-	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-	<title>Visualisation Catalogue</title>
-
-	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'></link>
-	<link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css"></link>
-    <link rel='stylesheet' href='../static/less/fonts.css' type='text/css'></link>
-	<link rel='stylesheet' href='../static/less/style.css' type='text/css'></link>
-    <link rel='stylesheet' href='../static/less/content.css' type='text/css'></link>
-    <link rel='stylesheet' href='../static/less/devices.css' type='text/css'></link>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-animate.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular-route.js"></script>
-    <script src="../static/js/color-thief.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-</head>
-<body>
-    <div id="menu-shadow" ng-init="menuVisible = false" ng-show="menuVisible"></div>
-	<header ng-class="page.headerClass">
-        <div id="menu-button" ng-click="menuVisible = !menuVisible" >
-            <div ng-class="{'hamburger half': menuVisible, 'hamburger': !menuVisible}"></div>
-        </div>
-        
-        <div id="breadcrumb">
-            <div class="title">{[{page.title}]}</div>
-            <div ng-show="page.secondaryTitle">
-                <div class="arrow"></div>
-                <div class="title secondary">{[{page.secondaryTitle}]}</div>
-            </div>
-        </div>
-        
-        <div id="search" ng-init="showSearch = false" ng-class="{'active' : showSearch}" 
-             ng-show="page.searchEnabled">
-            <div class="icon" 
-                 ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false"
-                 ng-disabled="menuVisible">
-            </div>
-            <input type="text" placeholder="Search" ng-model="searchQuery" ng-show="showSearch"
-                   ng-disabled="menuVisible" />
-        </div>
-	</header>
-    
-    <div id="menu" ng-show="menuVisible" ng-include="'/partials/menu.html'" 
-         ng-controller="menuController">
+<div id="menu-shadow" ng-init="menuVisible = false" ng-show="menuVisible"></div>
+<header ng-class="page.headerClass">
+    <div id="menu-button" ng-click="menuVisible = !menuVisible" >
+        <div ng-class="{'hamburger half': menuVisible, 'hamburger': !menuVisible}"></div>
     </div>
     
-    <section class="viewport">
-        <div id="mask" ng-show="menuVisible" ng-click="menuVisible = false"></div>
-        <div ng-view class="ngview page" ng-class="page.class"></div>
+    <div id="breadcrumb">
+        <div class="title">{[{page.title}]}</div>
+        <div ng-show="page.secondaryTitle">
+            <div class="arrow"></div>
+            <div class="title secondary">{[{page.secondaryTitle}]}</div>
+        </div>
     </div>
-    </section>
+    
+    <div id="search" ng-init="showSearch = false" ng-class="{'active' : showSearch}" 
+         ng-show="page.searchEnabled">
+        <div class="icon" 
+             ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false"
+             ng-disabled="menuVisible">
+        </div>
+        <input type="text" placeholder="Search" ng-model="searchQuery" ng-show="showSearch"
+               ng-disabled="menuVisible" />
+    </div>
+</header>
 
-    <script>       
+<div id="menu" ng-show="menuVisible" ng-include="'/partials/menu.html'" ng-controller="menuController">
+</div>
+
+<section class="viewport">
+    <div id="mask" ng-show="menuVisible" ng-click="menuVisible = false"></div>
+    <div ng-view class="ngview page" ng-class="page.class"></div>
+</section>
+
+<script>       
+    
+    var app = angular.module("app", ['ngRoute', 'ngAnimate']);
+
+    app.config(function($interpolateProvider) {
+          $interpolateProvider.startSymbol('{[{');
+          $interpolateProvider.endSymbol('}]}');
+    });
+    
+    app.config(['$routeProvider',
+        function($routeProvider) {
+            $routeProvider.
+            when('/', {
+                templateUrl: 'partials/main.html',
+                controller: 'masonController'
+            }).
+            when('/visualisations/:id', {
+                templateUrl: 'partials/visualisation.html',
+                controller: 'mainController',
+            }).
+            when('/submit/advert', {
+                templateUrl: 'partials/submit-advert.html',
+                controller: 'mainController',
+            }).
+            when('/submit/visualisation', {
+                templateUrl: 'partials/submit-visualisation.html',
+                controller: 'mainController',
+            }).               
+            when('/moderate', {
+                templateUrl: 'partials/moderate.html',
+                controller: 'moderateController',
+            }).
+            otherwise({
+                redirectTo: '/'
+            });
+      }]);
+
+    app.controller('mainController', function($scope, $rootScope, $route) {
+
+        $scope.clearSearch = function() { jQuery("#search input").val(""); }
+
+                                
+        $scope.$on('$routeChangeSuccess', function(next, current) { 
+            $scope.menuVisible = false;
+         });
         
-        var app = angular.module("app", ['ngRoute', 'ngAnimate']);
-
-        app.config(function($interpolateProvider) {
-              $interpolateProvider.startSymbol('{[{');
-              $interpolateProvider.endSymbol('}]}');
-        });
+    });
+    
+    app.controller('menuController', function($scope, $rootScope, $route) {
         
-        app.config(['$routeProvider',
-            function($routeProvider) {
-                $routeProvider.
-                when('/', {
-                    templateUrl: 'partials/main.html',
-                    controller: 'masonController'
-                }).
-                when('/visualisations/:id', {
-                    templateUrl: 'partials/visualisation.html',
-                    controller: 'mainController',
-                }).
-                when('/submit/advert', {
-                    templateUrl: 'partials/submit-advert.html',
-                    controller: 'mainController',
-                }).
-                when('/submit/visualisation', {
-                    templateUrl: 'partials/submit-visualisation.html',
-                    controller: 'mainController',
-                }).               
-                when('/moderate', {
-                    templateUrl: 'partials/moderate.html',
-                    controller: 'moderateController',
-                }).
-                otherwise({
-                    redirectTo: '/'
-                });
-          }]);
+        $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
 
-        app.controller('mainController', function($scope, $rootScope, $route) {
-
-            $scope.clearSearch = function() { jQuery("#search input").val(""); }
-
-                                    
-            $scope.$on('$routeChangeSuccess', function(next, current) { 
-                $scope.menuVisible = false;
-             });
-            
-        });
+        $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
+                           {name : "New", url : "", img:"ic_new_releases_black_24dp.png"},
+                           {name : "Highest Rated", url : "", img : "ic_grade_black_24dp.png"},
+                           {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
         
-        app.controller('menuController', function($scope, $rootScope, $route) {
-            
-            $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
+        $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
+                               {name : "Submit Advert", class : "submit advert", url : "/submit/advert", img:"ic_add_box_black_24dp.png"}]
+        
+        $scope.adminLinks = [{name : "Moderate Content", class:"moderate", url : "/moderate", img:"ic_check_box_black_24dp.png"},
+                             {name : "Schedule Content", class : "schedule", url : "/schedule", img:"ic_timer_black_24dp.png"}]
 
-            $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
-                               {name : "New", url : "", img:"ic_new_releases_black_24dp.png"},
-                               {name : "Highest Rated", url : "", img : "ic_grade_black_24dp.png"},
-                               {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
-            
-            $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
-                                   {name : "Submit Advert", class : "submit advert", url : "/submit/advert", img:"ic_add_box_black_24dp.png"}]
-            
-            $scope.adminLinks = [{name : "Moderate Content", class:"moderate", url : "/moderate", img:"ic_check_box_black_24dp.png"},
-                                 {name : "Schedule Content", class : "schedule", url : "/schedule", img:"ic_timer_black_24dp.png"}]
-
-            $scope.links = $scope.visLinks.concat($scope.contentLinks).concat($scope.adminLinks);
-            
-            $scope.selected = $scope.links[0];
-                        
-            $rootScope.$on('$routeChangeSuccess', function(next, current) { 
-                for (route in $route.routes) {
-                    if ($route.routes[route].templateUrl == current.loadedTemplateUrl) {
-                        $scope.selectedUrl = $route.routes[route].originalPath;
-                        break;
-                    }
+        $scope.links = $scope.visLinks.concat($scope.contentLinks).concat($scope.adminLinks);
+        
+        $scope.selected = $scope.links[0];
+                    
+        $rootScope.$on('$routeChangeSuccess', function(next, current) { 
+            for (route in $route.routes) {
+                if ($route.routes[route].templateUrl == current.loadedTemplateUrl) {
+                    $scope.selectedUrl = $route.routes[route].originalPath;
+                    break;
                 }
-             });
+            }
+         });
 
-        });
+    });
 
-        app.controller('submitAdvertController', function($scope, $rootScope, $route) {
-            $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
-        });
+    app.controller('submitAdvertController', function($scope, $rootScope, $route) {
+        $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
+    });
 
-        app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
-            $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
-        });
+    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
+        $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
+    });
 
-        app.controller('moderateController', function($scope, $rootScope, $route) {
-            $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
-        });
+    app.controller('moderateController', function($scope, $rootScope, $route) {
+        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
+    });
+    
+    app.controller('masonController', function($scope, $rootScope) {
         
-        app.controller('masonController', function($scope, $rootScope) {
-            
-            $scope.visItems = [{name : "Traffic in Milan", url : "../static/img/dummy/milan.jpeg"},
-                                       {name : "Green", url : "../static/img/dummy/green.jpeg"},
-                                       {name : "Pink", url : "../static/img/dummy/pink.jpeg"},
-                                       {name : "Power", url : "../static/img/dummy/power.jpeg"}]
-            
-            $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
-        });
+        $scope.visItems = [{name : "Traffic in Milan", url : "../static/img/dummy/milan.jpeg"},
+                                   {name : "Green", url : "../static/img/dummy/green.jpeg"},
+                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg"},
+                                   {name : "Power", url : "../static/img/dummy/power.jpeg"}]
         
+        $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
+    });
+    
 
-        app.controller('masonController', function($scope) {
-        $scope.visItems = [{name : "Traffic in Milan", url : "../static/img/dummy/milan.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Traffic in Milan", url : "../static/img/dummy/milan.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-                                   {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}]
+    app.controller('masonController', function($scope) {
+    $scope.visItems = [{name : "Traffic in Milan", url : "../static/img/dummy/milan.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Traffic in Milan", url : "../static/img/dummy/milan.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Green", url : "../static/img/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Pink", url : "../static/img/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                               {name : "Power", url : "../static/img/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}]
+    });
 
-        app.controller('moderateController', function($scope, $rootScope) {
-            $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : false, class:"moderate"}
-        });
-    </script>
-</body>
-</html>
+    app.controller('moderateController', function($scope, $rootScope) {
+        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : false, class:"moderate"}
+    });
+</script>
