@@ -1,10 +1,4 @@
-$header-height:6rem;
-$header-height-small:4rem;
-$menu-width:400px;
-
-$mobile-width:768px;
-
-$font-weight-light:300;
+@import "variables";
 
 @mixin link($color) {
     color:$color;
@@ -239,8 +233,9 @@ header {
             }
             
             @media (max-width: $mobile-width) {
-                max-width:100%;
-                margin-top: 0.8rem;
+                font-size:1.3rem;
+                max-width: 80%;
+                margin-top: 0.45rem;
             }
         }
         
@@ -365,18 +360,17 @@ header {
             
 
     .branding {
-        padding:0 $padding;
+        padding:$padding $padding;
 
         flex-shrink:0;
         vertical-align: middle;
         background:#e0e0e0;
         color:#868686;
         border-bottom:1px solid #d8d8d8;
-        line-height:calc(1rem + 1.5*#{$padding});
         
         color:#fff;
         background:#616161;
-        border-bottom:1px solid #414141;
+        border-bottom:1px solid #757575;
     }
     
     .bottom {

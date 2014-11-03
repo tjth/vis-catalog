@@ -1,15 +1,20 @@
-$card-radius:3px;
-$card-shadow-radius:7px;
+@import "variables";
+
 
 #masonry {
     -moz-column-count: 3;
     -webkit-column-count: 3;
     column-count: 3;
     
-    columns: 3 auto;
-    
+    -moz-column-gap: 0;
     -webkit-column-gap: 0;
     column-gap:0;
+    
+    @media (max-width: $mobile-width) {
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+        column-count: 1;
+    }
 
     .grid-item {
         background-color: white;
@@ -22,9 +27,15 @@ $card-shadow-radius:7px;
         &.large {
             width: calc(100% - #{$card-shadow-radius} * 2);
             height: 100%;
+            
             .img {
                 height: 350px;
+                
+                @media (max-width: $mobile-width) {
+                    height:200px
+                }
             }
+            
             .desc {
                 height: 4em;
                 display: block;
@@ -53,6 +64,7 @@ $card-shadow-radius:7px;
             background-repeat: no-repeat;
             border-top-right-radius: $card-radius;
             border-top-left-radius: $card-radius;
+            background-position: center;
         }
         
         .header {
