@@ -1,0 +1,47 @@
+<div class="branding">Imperial Data Science Institute</div>
+<nav>
+    <section>
+        <div class="item" ng-repeat="item in visLinks" 
+             ng-class="{active: item.url == selectedUrl}">
+            <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
+            <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
+        </div>
+    </section>
+    <section>
+        <div class="item special {[{item.class}]}" ng-repeat="item in contentLinks"
+             ng-class="{active: item.url == selectedUrl}">
+            <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
+            <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
+        </div>
+    </section>
+    <section>
+        <div class="item special {[{item.class}]}" ng-repeat="item in adminLinks"
+             ng-class="{active: item.url == selectedUrl}">
+            <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
+            <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
+        </div>
+    </section>
+
+    <section class="bottom">
+        <div class="user item">
+            <img class="icon avatar" ng-src="{[{user.image}]}"/>
+            <div class="name">{[{user.name}]}</div>
+            <div class="icon logout"></div>
+        </div>
+
+        <div class="legal">
+            <a href="#/privacy">Privacy</a> &amp; 
+            <a href="#/terms-and-conditions">Terms and Conditions</a>
+            <a class="toggle-credits" ng-click="showCredits = !showCredits">Credits</a>
+        </div>
+
+        <div class="credits" ng-init="showCredits = false" ng-show="showCredits">
+            Created by <a href="http://uk.linkedin.com/in/athigginson">Andrew Higginson</a>, 
+                       <a href="">Bryan Liu</a>, 
+                       <a href="">Choo Jia Guang</a>, 
+                       <a href="">Emma Hulme</a>, 
+                       <a href="">Timothy van Bremen</a> and 
+                       <a href="https://www.linkedin.com/profile/view?id=371938921">Thomas Taylor-Hall</a>.
+        </div>
+    </section>
+</nav>

@@ -8,8 +8,8 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
-gem 'sdoc', '~> 0.4.0',          group: :doc
-gem 'spring',        group: :development
+gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'spring', group: :development
 gem 'bootstrap-sass'
 gem 'devise', '3.1.1'
 gem 'therubyracer', :platform=>:ruby
@@ -20,3 +20,4 @@ group :development do
   gem 'rails_layout'
 end
 gem 'devise-kerberos-authenticatable', :git => 'https://gitlab.doc.ic.ac.uk/tjt12/devise-kerberos-authenticatable.git'
+gem 'rspec-rails', :group => [:development, :test]

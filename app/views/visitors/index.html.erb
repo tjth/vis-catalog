@@ -1,2 +1,152 @@
-<h3>Welcome</h3>
-<p><%= link_to 'Users:', users_path %> <%= User.count %> registered</p>
+<div id="menu-shadow" ng-init="menuVisible = false" ng-show="menuVisible"></div>
+<header ng-class="page.headerClass">
+    <div id="menu-button" ng-click="menuVisible = !menuVisible" >
+        <div ng-class="{'hamburger half': menuVisible, 'hamburger': !menuVisible}"></div>
+    </div>
+    
+    <div id="breadcrumb">
+        <div class="title">{[{page.title}]}</div>
+        <div ng-show="page.secondaryTitle">
+            <div class="arrow"></div>
+            <div class="title secondary">{[{page.secondaryTitle}]}</div>
+        </div>
+    </div>
+    
+    <div id="search" ng-init="showSearch = false" ng-class="{'active' : showSearch}" 
+         ng-show="page.searchEnabled">
+        <div class="icon" 
+             ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false"
+             ng-disabled="menuVisible">
+        </div>
+        <input type="text" placeholder="Search" ng-model="searchQuery" ng-show="showSearch"
+               ng-disabled="menuVisible" />
+    </div>
+</header>
+
+<div id="menu" ng-show="menuVisible" ng-include="'/partials/menu.html'" ng-controller="menuController">
+</div>
+
+<section class="viewport">
+    <div id="mask" ng-show="menuVisible" ng-click="menuVisible = false"></div>
+    <div ng-view class="ngview page" ng-class="page.class"></div>
+</section>
+
+<script>       
+    
+    var app = angular.module("app", ['ngRoute', 'ngAnimate']);
+
+    app.config(function($interpolateProvider) {
+          $interpolateProvider.startSymbol('{[{');
+          $interpolateProvider.endSymbol('}]}');
+    });
+    
+    app.config(['$routeProvider',
+        function($routeProvider) {
+            $routeProvider.
+            when('/', {
+                templateUrl: 'partials/main.html',
+                controller: 'masonController'
+            }).
+            when('/visualisations/:id', {
+                templateUrl: 'partials/visualisation.html',
+                controller: 'mainController',
+            }).
+            when('/submit/advert', {
+                templateUrl: 'partials/submit-advert.html',
+                controller: 'mainController',
+            }).
+            when('/submit/visualisation', {
+                templateUrl: 'partials/submit-visualisation.html',
+                controller: 'mainController',
+            }).               
+            when('/moderate', {
+                templateUrl: 'partials/moderate.html',
+                controller: 'moderateController',
+            }).
+            otherwise({
+                redirectTo: '/'
+            });
+      }]);
+
+    app.controller('mainController', function($scope, $rootScope, $route) {
+
+        $scope.clearSearch = function() { jQuery("#search input").val(""); }
+
+                                
+        $scope.$on('$routeChangeSuccess', function(next, current) { 
+            $scope.menuVisible = false;
+         });
+        
+    });
+    
+    app.controller('menuController', function($scope, $rootScope, $route) {
+        
+        $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
+
+        $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
+                           {name : "New", url : "", img:"ic_new_releases_black_24dp.png"},
+                           {name : "Highest Rated", url : "", img : "ic_grade_black_24dp.png"},
+                           {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
+        
+        $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
+                               {name : "Submit Advert", class : "submit advert", url : "/submit/advert", img:"ic_add_box_black_24dp.png"}]
+        
+        $scope.adminLinks = [{name : "Moderate Content", class:"moderate", url : "/moderate", img:"ic_check_box_black_24dp.png"},
+                             {name : "Schedule Content", class : "schedule", url : "/schedule", img:"ic_timer_black_24dp.png"}]
+
+        $scope.links = $scope.visLinks.concat($scope.contentLinks).concat($scope.adminLinks);
+        
+        $scope.selected = $scope.links[0];
+                    
+        $rootScope.$on('$routeChangeSuccess', function(next, current) { 
+            for (route in $route.routes) {
+                if ($route.routes[route].templateUrl == current.loadedTemplateUrl) {
+                    $scope.selectedUrl = $route.routes[route].originalPath;
+                    break;
+                }
+            }
+         });
+
+    });
+
+    app.controller('submitAdvertController', function($scope, $rootScope, $route) {
+        $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
+    });
+
+    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
+        $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
+    });
+
+    app.controller('moderateController', function($scope, $rootScope, $route) {
+        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
+    });
+    
+
+    app.controller('masonController', function($scope, $rootScope) {
+    
+        $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
+    
+        $scope.visItems = [{name : "Traffic in Milan", url : "/assets/dummy/milan.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Green", url : "/assets/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Pink", url : "/assets/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Power", url : "/assets/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Green", url : "/assets/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Pink", url : "/assets/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Power", url : "/assets/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Pink", url : "/assets/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Power", url : "/assets/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Traffic in Milan", url : "/assets/dummy/milan.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Green", url : "/assets/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Pink", url : "/assets/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Power", url : "/assets/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Green", url : "/assets/dummy/green.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Pink", url : "/assets/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Power", url : "/assets/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Pink", url : "/assets/dummy/pink.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+                                   {name : "Power", url : "/assets/dummy/power.jpeg", desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}]
+    });
+
+    app.controller('moderateController', function($scope, $rootScope) {
+        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : false, class:"moderate"}
+    });
+</script>
