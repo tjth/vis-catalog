@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141102104610) do
+ActiveRecord::Schema.define(version: 20141103201926) do
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20141102104610) do
     t.integer  "content_type"
     t.integer  "user_id"
     t.string   "filepath"
+    t.boolean  "approved"
   end
 
 end

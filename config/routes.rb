@@ -13,5 +13,7 @@ Rails.application.routes.draw do
 
   post '/visualisations' => 'visualisations#create'
 
+  patch '/visualisations/approve/:visid' => 'visualisations#approve'
+
   resources :visualisations
 end

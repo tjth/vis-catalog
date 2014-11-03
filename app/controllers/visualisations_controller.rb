@@ -1,6 +1,17 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+  # PATCH /visualisations/approve/:visid
+  def approve
+    #if current_user.isAdmin
+       v = Visualisation.find(params[:visid])
+       v.isApproved = true
+       v.save!
+    #else 
+       return "You are not an admin!"
+    #end
+  end
+  
   # GET /visualisations
   # GET /visualisations.json
   def index
@@ -27,7 +38,7 @@ class VisualisationsController < ApplicationController
     p = visualisation_params
     puts p
     @visualisation = Visualisation.new(p)
-    current_user.visualisations << @visualisation
+    #current_user.visualisations << @visualisation
     respond_to do |format|
       if @visualisation.save
         format.html { redirect_to @visualisation, notice: 'Visualisation was successfully created.' }
