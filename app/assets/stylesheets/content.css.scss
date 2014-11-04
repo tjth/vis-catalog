@@ -2,6 +2,10 @@
 
 
 #masonry {
+    height:100%;
+    width:auto;
+    overflow-x:auto;
+    
     -moz-column-count: 3;
     -webkit-column-count: 3;
     column-count: 3;
@@ -23,60 +27,74 @@
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
         margin:$card-shadow-radius;
+        
+        .content {
+            flex-direction:column;
+            display:flex;
+            width:100%;
+            height:100%;
+
+            .img {
+                width:100%;
+                background-size: cover;
+                background-repeat: no-repeat;
+                border-top-right-radius: $card-radius;
+                border-top-left-radius: $card-radius;
+                background-position: center;
+                flex-grow:1;
+            }
+
+            .header {
+                background-color: #ececec;
+                font-size: 2rem;
+                padding: 1rem;
+                flex-grow:0;
+            }
+            .desc {
+                font-size: 1rem;
+                margin: 1rem;
+                overflow: hidden;
+                flex-grow:0;
+            }
+
+        }
+        
+
 
         &.large {
             width: calc(100% - #{$card-shadow-radius} * 2);
-            height: 100%;
-            
-            .img {
-                height: 350px;
-                
+            height: 60%;
+            overflow:hidden;
+
+            .img {     
                 @media (max-width: $mobile-width) {
                     height:200px
                 }
             }
-            
+
             .desc {
-                height: 4em;
+                height: 4rem;
                 display: block;
             }
         }
 
         &.small {
             width: calc(50% - #{$card-shadow-radius} * 2);
-            height: 50%;
-            .img {
-                height: 150px;
+            height: calc(40% - 7px * 6);
+            overflow:hidden;
+
+            .header {
+                font-size: 1rem;
             }
+    
             .desc {
                 display: none;
             }
-            
+
             .right {
-                
+
             }
 
-        }
-
-        .img {
-    	    width:100%;
-            background-size: cover;
-            background-repeat: no-repeat;
-            border-top-right-radius: $card-radius;
-            border-top-left-radius: $card-radius;
-            background-position: center;
-        }
-        
-        .header {
-            background-color: #ececec;
-            font-size: 2em;
-            padding: 0.5em;
-        }
-        .desc {
-            font-size: 1em;
-            padding: 1em 2em 1em 1em;
-            margin-bottom: 1em;
-            overflow: hidden;
         }
             
     }

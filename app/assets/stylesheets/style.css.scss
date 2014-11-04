@@ -450,8 +450,7 @@ section.viewport {
     width:100%;
     padding:20px;
     background:#f2f2f2;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow:hidden;
     
     #mask {
         @include animated();
@@ -471,7 +470,7 @@ section.viewport {
     
     .ngview {
         position:absolute;
-        padding:20px;
+        padding:10px;
         top:0;
         left:0;
         height:100%;

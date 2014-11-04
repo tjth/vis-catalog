@@ -149,4 +149,15 @@
     app.controller('moderateController', function($scope, $rootScope) {
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : false, class:"moderate"}
     });
+    
+    app.directive('horizontalScroll', function() {
+    return {
+        link: function(scope, element, attrs) {
+            $(element).mousewheel(function(event, delta) {
+              this.scrollLeft -= (delta * 30);
+              event.preventDefault();
+           });
+        }
+    };
+}); 
 </script>

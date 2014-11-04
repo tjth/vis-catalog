@@ -1,13 +1,12 @@
-<div ng-controller="masonController" id="masonry">
-    <div class="grid-item card" 
-         ng-class="{'large': $index % 3 == 0, 
-                   'right' : $index % 3 == 1, 
-                   'left' : $index % 3 == 2, 
-                   'small' : $index % 3 != 0}" 
-         ng-repeat="item in visItems">
-        <div style="background-image: url({[{ item.url }]});" class="img"></div>
-        <div class="header">{[{ item.name }]}</div>
-        <div class="desc">{[{ item.desc }]}</div>
+<div ng-controller="masonController" id="masonry" horizontal-scroll>
+    <div class="grid-item card" ng-repeat="item in visItems"
+         ng-class="{'large' : ($index % 6 < 3 && $index % 3 == 0) || ($index % 6 >= 3 && $index % 3 == 2),
+                    'small' : ($index % 6 < 3 && $index % 3 != 0) || ($index % 6 >= 3 && $index % 3 != 2)}" >
+        <div class="content">
+            <div style="background-image: url({[{ item.url }]});" class="img"></div>
+            <div class="header">{[{ item.name }]}</div>
+            <div class="desc">{[{ item.desc }]}</div>
+        </div>
     </div>
 </div>
 
