@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# Remove tmp folder generated due to mounting
-sudo rm -rf tmp
+mkdir -p $(pwd)/../vis-catalog-docker
+rm -rf $(pwd)/../vis-catalog-docker/tmp
 
 sudo cp -r db/. /data
+sudo cp -r ./* $(pwd)/../vis-catalog-docker
 
 sudo docker run -itd \
-                -v $(pwd):/src \
+                -v $(pwd)/../vis-catalog-docker:/src \
                 -v /data:/src/db \
                 -p 3123:3123 \
                 --name rails-app \
