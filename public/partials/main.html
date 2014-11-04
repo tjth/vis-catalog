@@ -3,8 +3,8 @@
          ng-class="{'large' : ($index % 6 < 3 && $index % 3 == 0) || ($index % 6 >= 3 && $index % 3 == 2),
                     'small' : ($index % 6 < 3 && $index % 3 != 0) || ($index % 6 >= 3 && $index % 3 != 2)}" >
         <div class="content">
-            <div style="background-image: url({[{ item.url }]});" class="img"></div>
-            <div class="header">{[{ item.name }]}</div>
+            <div class="img" style="background-image: url({[{ item.url }]})"></div>
+            <div class="header" color-thief-src="{[{ item.url }]}">{[{ item.name }]}</div>
             <div class="desc">{[{ item.desc }]}</div>
         </div>
     </div>
