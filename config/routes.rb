@@ -16,5 +16,7 @@ Rails.application.routes.draw do
   patch '/visualisations/approve' => 'visualisations#approve'
 
   get '/visualisations/moderate' => 'visualisations#moderate'
+  
+  get '/users/makeadmin/:userid' => 'users#make_admin'
   resources :visualisations
 end

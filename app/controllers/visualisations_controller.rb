@@ -8,13 +8,13 @@ class VisualisationsController < ApplicationController
 
   # PATCH /visualisations/approve
   def approve
-    #if current_user.isAdmin
+    if current_user.isAdmin
        v = Visualisation.find(params[:visid])
        v.approved = true
        v.save!
-    #else 
+    else 
        redirect_to '/visualisations'
-    #end
+    end
   end
   
   # GET /visualisations
