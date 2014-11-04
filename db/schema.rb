@@ -11,7 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141103204647) do
+ActiveRecord::Schema.define(version: 20141104170642) do
+
+  create_table "programmes", force: true do |t|
+    t.integer  "vis_ID"
+    t.integer  "screens"
+    t.integer  "priority"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "timeslots", force: true do |t|
+    t.integer  "weekday"
+    t.time     "start_time"
+    t.time     "end_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
