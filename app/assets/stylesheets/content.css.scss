@@ -5,6 +5,7 @@
     height:100%;
     width:auto;
     overflow-x:auto;
+    overflow-y:hidden;
     
     -moz-column-count: 3;
     -webkit-column-count: 3;
@@ -18,6 +19,9 @@
         -moz-column-count: 1;
         -webkit-column-count: 1;
         column-count: 1;
+        
+        overflow-y:auto;
+        overflow-x:hidden;
     }
 
     .grid-item {
