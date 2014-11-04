@@ -1,14 +1,14 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
-  # PATCH /visualisations/approve/:visid
+  # PATCH /visualisations/approve
   def approve
     #if current_user.isAdmin
        v = Visualisation.find(params[:visid])
        v.approved = true
        v.save!
     #else 
-       return "You are not an admin!"
+       redirect_to '/visualisations'
     #end
   end
   
@@ -21,6 +21,7 @@ class VisualisationsController < ApplicationController
   # GET /visualisations/1
   # GET /visualisations/1.json
   def show
+    @visualisation = Visualisation.find(params[:id])
   end
 
   # GET /visualisations/new
@@ -38,6 +39,7 @@ class VisualisationsController < ApplicationController
     p = visualisation_params
     puts p
     @visualisation = Visualisation.new(p)
+    @visualisation.approved = true
     #current_user.visualisations << @visualisation
     respond_to do |format|
       if @visualisation.save
