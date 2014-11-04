@@ -11,10 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141104170642) do
+ActiveRecord::Schema.define(version: 20141104163230) do
 
   create_table "programmes", force: true do |t|
-    t.integer  "vis_ID"
     t.integer  "screens"
     t.integer  "priority"
     t.datetime "created_at"
