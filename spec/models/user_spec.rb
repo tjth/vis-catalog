@@ -11,8 +11,10 @@ RSpec.describe User do
     expect(user.name).to eq('John Doe')
   end
 
-  it 'should not be admin by default' do
-    user = User.create({:name => 'John Doe', :username => 'test'})
-    expect(user.admin).to be_false
+  context 'by default' do
+    it 'should not be admin' do
+      user = User.create({:name => 'John Doe', :username => 'test'})
+      expect(user.isAdmin).to be_false
+    end
   end
 end
