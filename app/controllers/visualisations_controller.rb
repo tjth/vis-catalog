@@ -1,12 +1,7 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
-  # GET /visualisations/moderate
-  def moderate
-    @visualisations = Visualisation.where(approved: false)
-  end
-
-  # PATCH /visualisations/approve
+  # PATCH /visualisations/:visid/approve
   def approve
     if current_user.isAdmin
        v = Visualisation.find(params[:visid])
@@ -20,7 +15,11 @@ class VisualisationsController < ApplicationController
   # GET /visualisations
   # GET /visualisations.json
   def index
-    @visualisations = Visualisation.all
+    if params[:needsModerating]
+      @visualisations = Visualisation.where(approved:false)
+    else
+      @visualisations = Visualisation.all
+    end
   end
 
   # GET /visualisations/1
