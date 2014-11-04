@@ -1,6 +1,11 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+  # GET /visualisations/moderate
+  def moderate
+    @visualisations = Visualisation.where(approved: false)
+  end
+
   # PATCH /visualisations/approve
   def approve
     #if current_user.isAdmin

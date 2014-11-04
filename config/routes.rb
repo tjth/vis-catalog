@@ -15,5 +15,6 @@ Rails.application.routes.draw do
 
   patch '/visualisations/approve' => 'visualisations#approve'
 
+  get '/visualisations/moderate' => 'visualisations#moderate'
   resources :visualisations
 end

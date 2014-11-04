@@ -21,3 +21,4 @@ group :development do
 end
 gem 'devise-kerberos-authenticatable', :git => 'https://gitlab.doc.ic.ac.uk/tjt12/devise-kerberos-authenticatable.git'
 gem 'carrierwave'
+gem 'attribute-defaults'
