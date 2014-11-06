@@ -15,7 +15,7 @@ class VisualisationsController < ApplicationController
   # GET /visualisations
   # GET /visualisations.json
   def index
-    if params[:needsModerating]
+    if params[:needsModerating] = true
       @visualisations = Visualisation.where(approved:false)
     else
       @visualisations = Visualisation.all
