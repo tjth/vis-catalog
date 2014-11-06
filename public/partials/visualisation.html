@@ -1,10 +1,13 @@
-<section class="container-fluid" ng-controller="masonController">
+<section class="container-fluid" ng-controller="visController">
     <div class="row">
-        <div id="details" class="col-sm-8" class="card vis" ng-repeat="item in visItems | filter: { id: '1' }">
-            <div class="content" >
-                <div class="img" style="background-image: url({[{ item.img }]})"></div>
-                <div class="header" color-thief-src="{[{ item.img }]}">{[{ item.name }]}</div>
-                <div class="desc">{[{ item.desc }]}</div>     
+        <div id="details" class="col-sm-8" class="card vis">
+            <div class="card guideline">
+                <div class=" item">
+                    <div class="heading">{[{name}]}
+                    </div>
+                    <div class="img" style="background-image: url({[{ img }]})"></div>
+                </div>
+                img is {[{img}]}
             </div>
         </div>
         <div id="comments" class="col-sm-4">
