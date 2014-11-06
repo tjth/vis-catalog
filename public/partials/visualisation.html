@@ -1,17 +1,19 @@
-<section class="container-fluid">
+<section class="container-fluid" ng-controller="masonController">
     <div class="row">
-        <div id="details" class="col-sm-6">
-        
-            
-        
+        <div id="details" class="col-sm-8" class="card vis" ng-repeat="item in visItems | filter: { id: '1' }">
+            <div class="content" >
+                <div class="img" style="background-image: url({[{ item.img }]})"></div>
+                <div class="header" color-thief-src="{[{ item.img }]}">{[{ item.name }]}</div>
+                <div class="desc">{[{ item.desc }]}</div>     
+            </div>
         </div>
-        <div id="comments" class="col-sm-6">
+        <div id="comments" class="col-sm-4">
         
             <div id="new-comment">
                 
             </div>
         
-            <div class="comment" ng-repeat="comment in comments">
+            <div class="comment card" ng-repeat="comment in comments">
                 <div class="top"></div>
                 <div class="bottom">
                     <div class="date">Posted on {[{comment.date}]}</div>
