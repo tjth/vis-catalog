@@ -2,11 +2,19 @@ Rails.application.routes.draw do
   root to: 'visitors#index'
   devise_for :users
   resources :users
-  resources :visualisations
 
-  get '/visualisations' => 'visualisations#index' 
+  #get '/visualisations' => 'visualisations#index' 
   
-  get '/visualisations/:visid' => 'visualisations#show'
+  #get '/visualisations/:visid' => 'visualisations#show'
 
-  delete '/visualisations/:visid' => 'visualisations#delete'
+ # delete '/visualisations/:visid' => 'visualisations#delete'
+
+  #get '/visualisations/new' => 'visualisations#create'
+
+  post '/visualisations' => 'visualisations#create'
+
+  patch '/visualisations/:visid/approve' => 'visualisations#approve'
+
+  get '/users/:userid/makeadmin' => 'users#make_admin'
+  resources :visualisations
 end
