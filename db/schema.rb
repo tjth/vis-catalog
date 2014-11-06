@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141104170642) do
+ActiveRecord::Schema.define(version: 20141106152253) do
 
   create_table "programmes", force: true do |t|
     t.integer  "vis_ID"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20141104170642) do
     t.integer  "priority"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "timeslot_id"
   end
 
   create_table "timeslots", force: true do |t|
