@@ -24,4 +24,4 @@ RUN /bin/bash -c -l 'bundle install'
 WORKDIR /src
 
 EXPOSE 3123
-CMD /bin/bash -c -l 'rake db:migrate && rails server -p 3123' 
+CMD /bin/bash -c -l 'rake db:seed && rake db:migrate && rails server -p 3123' 
