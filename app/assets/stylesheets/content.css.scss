@@ -186,6 +186,8 @@
 }
 
 #moderate {
+    $padding:15px;
+    
     background-color: white;
     box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
     border-radius: $card-radius;
@@ -213,10 +215,17 @@
             }
             
             td.author {
-                display:flex;
+                
+                img {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;    
+                    display:inline-block
+                }
                 
                 .name {
-                    flex-grow:1   
+                    display:inline-block;
+                    margin-left:$padding/2;
                 }
             }
             
@@ -231,7 +240,7 @@
                     display:inline-block;
                     float:right;
                     @include link(#ff1744);
-                    margin-left:15px;   
+                    margin-left:$padding;   
                 }
             }
             
@@ -242,10 +251,19 @@
                     font-size: 0.9em;   
                 }
             }
+            
+            td.no-content {
+                text-align: center;
+                background: #f5f5f5;
+                color: #9B9B9B;
+                font-weight: $font-weight-light;
+                font-size: 1.2rem;
+                padding: $padding*2;   
+            }
         }
         
         td,th {
-            padding:15px;
+            padding:$padding;
         }
 
     }

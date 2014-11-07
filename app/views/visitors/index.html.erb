@@ -82,8 +82,10 @@
         
     app.factory('Visualisation', ['$resource',
         function($resource){
-            return $resource('visualisations/:id.json', {}, {
-                query: { method:'GET', params:{id:''}, isArray:true}
+            return $resource('visualisations/:id.json', {visId : "@id"}, {
+                query: { method:'GET', url:'visualisations.json', isArray:true},
+                approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
+                reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
             });
     }]);
     
@@ -125,11 +127,6 @@
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
     });
 
-    app.controller('moderateController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
-    });
-    
-
     app.controller('masonController', function($scope, $rootScope, Visualisation) {
     
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
@@ -137,16 +134,43 @@
         $scope.visItems = Visualisation.query()
     });
 
-    app.controller('moderateController', function($scope, $rootScope) {
+    app.controller('moderateController', function(Visualisation, $scope, $rootScope) {
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
         
-        $scope.content = [{ title:"Wordcloud from latest tweets", type:"Visualisation", author: { name:"Andrew Higginson", img:""}, 
-                            contentUrl:"", contentType:"Web link", description: "Lorem ipsum dolor sit aemt consectucutor some other text and will truncate soon enough if we are lucky" },
-                          { title:"Wordcloud from latest tweets", type:"Advert", author: { name:"Andrew Higginson", img:""}, 
-                            contentUrl:"", contentType:"Image", description: "Lorem ipsum dolor sit aemt consectucutor some other text and will truncate soon enough if we are lucky" },
-                          { title:"Wordcloud from latest tweets", type:"Visualisation", author: { name:"Andrew Higginson", img:""}, 
-                            contentUrl:"", contentType:"Web link", description: "Lorem ipsum dolor sit aemt consectucutor some other text and will truncate soon enough if we are lucky" }
-                         ];
+        $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true'})
+        
+        $scope.fadeOutRow = function(childElement, item) {
+            var row = $(childElement).parents("tr");
+            row.animate({opacity: 0}, 250);
+            setTimeout(function() { 
+                // Add in another element which we can animate, so table rows do not 'jump' up
+                var shrinker = $("<div/>").addClass("shrinker").css({width : "100%", height : row.css("height")});
+                $(shrinker).insertAfter(row);
+                row.remove(); 
+                shrinker.slideUp(250);
+                
+                setTimeout(function() { 
+                    shrinker.remove();
+                    
+                    // Remove content item from content
+                    $scope.content.splice($scope.content.indexOf(item), 1);
+                    
+                    $scope.$apply();
+                }, 250);
+            }, 250)
+        }
+        
+        
+        $scope.approve = function(event, item) {
+            Visualisation.approve({id : item.id})
+            $scope.fadeOutRow(event.target);
+        }
+        
+        $scope.reject = function(event, item) {
+            Visualisation.reject({id : item.id})
+            $scope.fadeOutRow(event.target, item);
+        }
+
     });
     
     app.directive('horizontalScroll', function() {
