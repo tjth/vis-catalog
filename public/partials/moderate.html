@@ -1,1 +1,31 @@
-Moderate
+<div id="moderate">
+
+    <table>
+       <tbody>
+            <tr class="header">
+                <th>Title</th>
+                <th>Type</th>
+                <th>Author</th>
+                <th>Content</th>
+                <th>Action</th>
+            </tr>
+           <tr ng-if="content.length == 0">
+            <td colspan="5" class="no-content">No content to moderate</td>
+           </tr>
+            <tr ng-if="content.length > 0" ng-repeat="item in content">
+                <td class="title"><a ng-href="#/visualisations/{[{item.id}]}">
+                    <div class="title">{[{item.title}]}</div>
+                    <div class="description">{[{item.description | words:15 }]}</div>
+                    </a></td>
+                <td>{[{item.type}]}</td>
+                <td class="author"><img ng-src="{[{item.author.image}]}"/><div class="name">{[{item.author.name}]}</div></td>
+                <td><a ng-href="{[{item.contentUrl}]}">{[{item.contentType}]}</a></td>
+                <td class="action">
+                    <a class="approve" ng-click="approve($event, item)">APPROVE</a>
+                    <a class="reject" ng-click="reject($event, item)">REJECT</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
