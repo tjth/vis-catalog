@@ -199,7 +199,44 @@
 
 .comment {
     .newcomment{
-        height: 5em;
+        border: 5px solid white; 
+        -webkit-box-shadow: 
+            inset 0 0 8px  rgba(0,0,0,0.1),
+                  0 0 16px rgba(0,0,0,0.1); 
+        -moz-box-shadow: 
+            inset 0 0 8px  rgba(0,0,0,0.1),
+                  0 0 16px rgba(0,0,0,0.1); 
+        box-shadow: 
+            inset 0 0 8px  rgba(0,0,0,0.1),
+                  0 0 16px rgba(0,0,0,0.1); 
+        padding: 15px;
+        background: rgba(255,255,255,0.5);
+        margin: 0 0 10px 0;
+    }
+    
+    .btn {
+        background: #5a34d9;
+        background-image: -webkit-linear-gradient(top, #5a34d9, #2b42b8);
+        background-image: -moz-linear-gradient(top, #5a34d9, #2b42b8);
+        background-image: -ms-linear-gradient(top, #5a34d9, #2b42b8);
+        background-image: -o-linear-gradient(top, #5a34d9, #2b42b8);
+        background-image: linear-gradient(to bottom, #5a34d9, #2b42b8);
+        -webkit-border-radius: 10;
+        -moz-border-radius: 10;
+        border-radius: 10px;
+        text-transform:uppercase;
+        color: #ffffff;
+        padding: 10px 20px 10px 20px;
+        text-decoration: none;
+        &:hover {
+            background: #3cfaf0;
+            background-image: -webkit-linear-gradient(top, #3cfaf0, #34d9d1);
+            background-image: -moz-linear-gradient(top, #3cfaf0, #34d9d1);
+            background-image: -ms-linear-gradient(top, #3cfaf0, #34d9d1);
+            background-image: -o-linear-gradient(top, #3cfaf0, #34d9d1);
+            background-image: linear-gradient(to bottom, #3cfaf0, #34d9d1);
+            text-decoration: none;
+        }
     }
     
     .bubble{
