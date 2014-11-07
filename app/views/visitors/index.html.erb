@@ -15,10 +15,13 @@
     <div id="search" ng-init="showSearch = false" ng-class="{'active' : showSearch}" 
          ng-show="page.searchEnabled">
         <div class="icon" 
-             ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false"
+             ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false; focusSearch();"
              ng-disabled="menuVisible">
         </div>
-        <input type="text" placeholder="Search" ng-model="searchQuery" ng-show="showSearch"
+        <input type="text" placeholder="Search" 
+               ng-model="searchQuery" 
+               ng-model-options="{debounce:500}"
+               ng-show="showSearch"
                ng-disabled="menuVisible" />
     </div>
 </header>
@@ -53,11 +56,11 @@
             }).
             when('/submit/advert', {
                 templateUrl: 'partials/submit-advert.html',
-                controller: 'mainController',
+                controller: 'submitAdvertController',
             }).
             when('/submit/visualisation', {
                 templateUrl: 'partials/submit-visualisation.html',
-                controller: 'mainController',
+                controller: 'submitVisualisationController',
             }).               
             when('/moderate', {
                 templateUrl: 'partials/moderate.html',
@@ -71,11 +74,16 @@
     app.controller('mainController', function($scope, $rootScope, $route) {
 
         $scope.clearSearch = function() { jQuery("#search input").val(""); }
-
-                                
+            
         $scope.$on('$routeChangeSuccess', function(next, current) { 
             $scope.menuVisible = false;
          });
+        
+        $scope.focusSearch = function() {
+            setTimeout(function() {
+                $("#search input").focus()
+            }, 500);
+        }
         
     });
     

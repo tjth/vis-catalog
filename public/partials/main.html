@@ -1,5 +1,5 @@
 <div ng-controller="masonController" id="masonry" horizontal-scroll>
-    <div class="grid-item card" ng-repeat="item in visItems"
+    <div class="grid-item card" ng-repeat="item in visItems | filter:searchQuery"
          ng-class="{'large' : ($index % 6 < 3 && $index % 3 == 0) || ($index % 6 >= 3 && $index % 3 == 2),
                     'small' : ($index % 6 < 3 && $index % 3 != 0) || ($index % 6 >= 3 && $index % 3 != 2)}" >
         <div class="content">
