@@ -435,12 +435,16 @@ section.viewport {
     
     .ngview {
         position:absolute;
-        padding:10px;
+        padding:20px;
         top:0;
         left:0;
         height:100%;
         width:100%;
         background:#f2f2f2;
+        
+        &.visualisations {
+            padding:0px;   
+        }
     }
     
 }
