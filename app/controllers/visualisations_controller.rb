@@ -3,6 +3,10 @@ class VisualisationsController < ApplicationController
 
   # PATCH /visualisations/:visid/approve
   def approve
+    if current_user == nil
+      redirect_to '/visualisations'
+    end
+
     if current_user.isAdmin
        v = Visualisation.find(params[:visid])
        v.approved = true
