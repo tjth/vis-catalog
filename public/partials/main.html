@@ -1,11 +1,11 @@
 <div ng-controller="masonController" id="masonry" horizontal-scroll>
-    <div class="grid-item card" ng-repeat="item in visItems"
+    <div class="grid-item card" ng-repeat="item in visItems | filter:searchQuery"
          ng-class="{'large' : ($index % 6 < 3 && $index % 3 == 0) || ($index % 6 >= 3 && $index % 3 == 2),
                     'small' : ($index % 6 < 3 && $index % 3 != 0) || ($index % 6 >= 3 && $index % 3 != 2)}" >
         <div class="content">
             <div class="img" style="background-image: url({[{ item.link }]})"></div>
             <div class="header" color-thief-src="{[{ item.link }]}">{[{ item.name }]}</div>
-            <div class="desc">{[{ item.description }]}</div>
+            <div class="desc">{[{ item.description | words:15  }]}</div>
         </div>
     </div>
 </div>
