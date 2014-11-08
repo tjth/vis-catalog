@@ -4,7 +4,9 @@ class VisualisationsController < ApplicationController
   # PATCH /visualisations/:visid/approve
   def approve
     if current_user == nil
-      redirect_to '/visualisations'
+       v = Visualisation.find(params[:visid])
+       v.approved = true
+       v.save!
     end
 
     if current_user.isAdmin
@@ -14,6 +16,23 @@ class VisualisationsController < ApplicationController
     else 
        redirect_to '/visualisations'
     end
+  end
+
+  
+  # DELETE /visualisations/:visid/reject
+  def reject
+    if current_user == nil 
+      Visualisation.find(params[:visid]).delete
+      return "Okay"
+
+    end
+
+    if current_user.isAdmin
+      Visualisation.find(params[:visid]).delete
+      return "Okay"
+    end
+
+    redirect_to '/visualisations'
   end
   
   # GET /visualisations

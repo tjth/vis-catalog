@@ -16,5 +16,8 @@ Rails.application.routes.draw do
   patch '/visualisations/:visid/approve' => 'visualisations#approve'
 
   get '/users/:userid/makeadmin' => 'users#make_admin'
-  resources :visualisations
+  
+  delete '/visualisations/:visid/reject' => 'visualisations#reject'
+  
+resources :visualisations
 end
