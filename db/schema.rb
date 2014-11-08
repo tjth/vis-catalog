@@ -11,19 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 20141106152253) do
-=======
-ActiveRecord::Schema.define(version: 20141104232900) do
->>>>>>> origin/programme
 
   create_table "programmes", force: true do |t|
     t.integer  "screens"
     t.integer  "priority"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "timeslot_id"
     t.integer  "visualisations_id"
+    t.integer  "timeslot_id"
   end
 
   add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
