@@ -38,6 +38,7 @@ class VisualisationsController < ApplicationController
   # GET /visualisations
   # GET /visualisations.json
   def index
+    @expandAuthor = params[:expandAuthor]
     if params[:needsModerating] = true
       @visualisations = Visualisation.where(approved:false)
     else
