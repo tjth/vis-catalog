@@ -1,43 +1,5 @@
 @import "variables";
-
-@mixin link($color) {
-    color:$color;
-    @include clickable();
-    
-    &:hover {
-        color: darken($color, 20%);
-    }
-}
-
-@mixin placeholder-color($color) {
-    &::-webkit-input-placeholder {
-       color: $color;
-    }
-
-    &:-moz-placeholder {
-       color: $color;
-    }
-
-    &::-moz-placeholder {
-       color: $color;
-    }
-
-    &:-ms-input-placeholder {
-       color: $color;
-    }
-}
-
-@mixin clickable { 
-    &:hover {
-        cursor:pointer 
-    } 
-}
-
-
-@mixin animated($duration : 0.5s) { 
-    transition:all ease-out $duration;
-}
-    
+@import "mixins";
 
 html { height:100%; }
 body { 
@@ -266,11 +228,14 @@ header {
     display:flex;
     flex-direction: column;
     font-size:0.9rem;
+
+    @media (min-height: $large-height) {
+        font-size:1rem;
+    }
     
     &.ng-hide {
         left:-$menu-width;
     }
-    
     
     @media (max-width: $mobile-width) {
         top:$header-height-small;
@@ -450,7 +415,7 @@ section.viewport {
     width:100%;
     padding:20px;
     background:#f2f2f2;
-    overflow:hidden;
+    overflow-x:hidden;
     
     #mask {
         @include animated();
@@ -470,12 +435,16 @@ section.viewport {
     
     .ngview {
         position:absolute;
-        padding:10px;
+        padding:20px;
         top:0;
         left:0;
         height:100%;
         width:100%;
         background:#f2f2f2;
+        
+        &.visualisations {
+            padding:0px;   
+        }
     }
     
 }

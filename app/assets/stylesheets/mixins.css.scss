@@ -1,0 +1,39 @@
+@import "variables";
+
+@mixin link($color) {
+    color:$color;
+    @include clickable();
+    
+    &:hover {
+        color: darken($color, 20%);
+    }
+}
+
+@mixin placeholder-color($color) {
+    &::-webkit-input-placeholder {
+       color: $color;
+    }
+
+    &:-moz-placeholder {
+       color: $color;
+    }
+
+    &::-moz-placeholder {
+       color: $color;
+    }
+
+    &:-ms-input-placeholder {
+       color: $color;
+    }
+}
+
+@mixin clickable { 
+    &:hover {
+        cursor:pointer 
+    } 
+}
+
+
+@mixin animated($duration : 0.5s) { 
+    transition:all ease-out $duration;
+}

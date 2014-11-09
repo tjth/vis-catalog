@@ -14,12 +14,15 @@
 ActiveRecord::Schema.define(version: 20141109120013) do
 
   create_table "programmes", force: true do |t|
-    t.integer  "vis_ID"
     t.integer  "screens"
     t.integer  "priority"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "visualisations_id"
+    t.integer  "timeslot_id"
   end
+
+  add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
 
   create_table "timeslots", force: true do |t|
     t.integer  "weekday"
@@ -27,8 +30,11 @@ ActiveRecord::Schema.define(version: 20141109120013) do
     t.time     "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "programmes_id"
     t.date     "date"
   end
+
+  add_index "timeslots", ["programmes_id"], name: "index_timeslots_on_programmes_id"
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
