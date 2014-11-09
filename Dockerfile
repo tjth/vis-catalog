@@ -39,4 +39,4 @@ WORKDIR /src
 EXPOSE 3123
 
 # Default start-up command (if not specified in 'docker run')
-CMD /bin/bash -c -l 'rake db:seed && rake db:migrate && rails server -p 3123' 
+CMD /bin/bash -c -l 'rake db:migrate && rake db:seed && rails server -p 3123' 
