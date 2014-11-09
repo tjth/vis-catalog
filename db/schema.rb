@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141109120013) do
+ActiveRecord::Schema.define(version: 20141109121740) do
 
   create_table "programmes", force: true do |t|
     t.integer  "screens"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 20141109120013) do
     t.integer  "user_id"
     t.boolean  "approved"
     t.string   "content"
+    t.boolean  "isDefault"
   end
 
 end
