@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141104170642) do
+ActiveRecord::Schema.define(version: 20141109120013) do
 
   create_table "programmes", force: true do |t|
     t.integer  "vis_ID"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20141104170642) do
     t.time     "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.date     "date"
   end
 
   create_table "users", force: true do |t|
