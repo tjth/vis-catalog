@@ -2,6 +2,6 @@ class TimeslotsController < ApplicationController
   include Scheduling
 
   def test
-    @test = testing
+    @test = get_a_default_programme
   end
 end
