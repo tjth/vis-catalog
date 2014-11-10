@@ -31,13 +31,20 @@ class VisualisationsController < ApplicationController
   # GET /visualisations.json
   def index
     @expandAuthor = params[:expandAuthor]
-    puts @expandAuthor
+    @visualisations = Visualisation.all
+
     if params[:userid] == nil
-      if params[:needsModerating] == true
-        @visualisations = Visualisation.where(approved:false)
-      else
-        @visualisations = Visualisation.where(approved:true)
+      if params[:newest] != nil
+
+      @visualisations = get_newest_n(params[:newest])
       end
+
+      if params[:needsModerating] != nil
+        @visualisations = @visualisations.select{ |vis| vis.approved == false }
+      else
+        @visualisations = @visualisations.select{ |vis| vis.approved == true }
+      end
+      
     else
       #want visualisations of a particular user
       u = User.find_by_id(params[:userid])
@@ -48,9 +55,15 @@ class VisualisationsController < ApplicationController
       if params[:needsModerating] != nil
         @visualisations = u.visualisations.approved(false)
       else
-        @visualisations = u.visualisations
+        @visualisations = u.visualisations.approved(true)
       end
     end
+
+    
+  end
+
+  def get_newest_n(n)
+    return Visualisation.order(created_at: :desc).take(n)
   end
 
   # GET /visualisations/1
