@@ -18,8 +18,10 @@ class VisualisationsController < ApplicationController
   # DELETE /visualisations/:visid/reject
   def reject
     if current_user.isAdmin
-      Visualisation.find_by_id(params[:visid]).delete
-      return "Okay"
+      v = Visualisation.find_by_id(params[:visid])
+      unless v == nil
+        v.delete
+      end
     end
 
     redirect_to '/visualisations'
@@ -34,7 +36,7 @@ class VisualisationsController < ApplicationController
       if params[:needsModerating] == true
         @visualisations = Visualisation.where(approved:false)
       else
-        @visualisations = Visualisation.all
+        @visualisations = Visualisation.where(approved:true)
       end
     else
       #want visualisations of a particular user
