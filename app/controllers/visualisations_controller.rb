@@ -3,16 +3,12 @@ class VisualisationsController < ApplicationController
 
   # PATCH /visualisations/:visid/approve
   def approve
-    if current_user == nil
-       v = Visualisation.find(params[:visid])
-       v.approved = true
-       v.save!
-    end
-
     if current_user.isAdmin
-       v = Visualisation.find(params[:visid])
-       v.approved = true
-       v.save!
+      v = Visualisation.find_by_id(params[:visid])
+      unless v == nil
+        v.approved = true
+        v.save!
+      end
     else 
        redirect_to '/visualisations'
     end
@@ -21,14 +17,8 @@ class VisualisationsController < ApplicationController
   
   # DELETE /visualisations/:visid/reject
   def reject
-    if current_user == nil 
-      Visualisation.find(params[:visid]).delete
-      return "Okay"
-
-    end
-
     if current_user.isAdmin
-      Visualisation.find(params[:visid]).delete
+      Visualisation.find_by_id(params[:visid]).delete
       return "Okay"
     end
 
@@ -39,6 +29,7 @@ class VisualisationsController < ApplicationController
   # GET /visualisations.json
   def index
     @expandAuthor = params[:expandAuthor]
+    puts @expandAuthor
     if params[:userid] == nil
       if params[:needsModerating] == true
         @visualisations = Visualisation.where(approved:false)
@@ -47,10 +38,13 @@ class VisualisationsController < ApplicationController
       end
     else
       #want visualisations of a particular user
-      u = User.find(params[:userid])
+      u = User.find_by_id(params[:userid])
+      if u == nil
+        return "no such user"
+      end
 
-      if params[:needsModerating] == true
-        @visualisations = u.visualisations.aproved(false)
+      if params[:needsModerating] != nil
+        @visualisations = u.visualisations.approved(false)
       else
         @visualisations = u.visualisations
       end
