@@ -39,10 +39,21 @@ class VisualisationsController < ApplicationController
   # GET /visualisations.json
   def index
     @expandAuthor = params[:expandAuthor]
-    if params[:needsModerating] = true
-      @visualisations = Visualisation.where(approved:false)
+    if params[:userid] == nil
+      if params[:needsModerating] == true
+        @visualisations = Visualisation.where(approved:false)
+      else
+        @visualisations = Visualisation.all
+      end
     else
-      @visualisations = Visualisation.all
+      #want visualisations of a particular user
+      u = User.find(params[:userid])
+
+      if params[:needsModerating] == true
+        @visualisations = u.visualisations.aproved(false)
+      else
+        @visualisations = u.visualisations
+      end
     end
   end
 

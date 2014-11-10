@@ -3,4 +3,8 @@ class Visualisation < ActiveRecord::Base
   belongs_to :user
   belongs_to :programme
   attr_default :approved, false
+
+  #some filters!
+  scope :approved, -> (boolean) {where approved: boolean}
+
 end
