@@ -11,7 +11,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'spring', group: :development
 gem 'bootstrap-sass'
-gem 'devise', '3.2'
+gem 'devise', '3.1.1'
 gem 'therubyracer', :platform=>:ruby
 group :development do
   gem 'better_errors'
@@ -23,4 +23,3 @@ gem 'devise-kerberos-authenticatable', :git => 'https://gitlab.doc.ic.ac.uk/tjt1
 gem 'rspec-rails', :group => [:development, :test]
 gem 'carrierwave'
 gem 'attribute-defaults'
-gem 'devise_token_auth'
