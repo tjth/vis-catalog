@@ -39,10 +39,10 @@ end
 
 emptyProgs = Programme.create([])
 underPopulatedProgs = Programme.create([{:screens => 1, :priority => 4}])
-wellPopulatedProgsQueue = Programme.create([{:screens => 1, :priority => 4},
-                                            {:screens => 4, :priority => 3}, 
-                                            {:screens => 3, :priority => 2},
-                                            {:screens => 2, :priority => 1}])
+wellPopulatedProgs = Programme.create([{:screens => 1, :priority => 4},
+                                       {:screens => 4, :priority => 3}, 
+                                       {:screens => 3, :priority => 2},
+                                       {:screens => 2, :priority => 1}])
 
 
 RSpec.describe Scheduling, :type => :concern do
@@ -71,7 +71,7 @@ RSpec.describe Scheduling, :type => :concern do
     it 'should return the sum of all programme\'s screens' do
       expect(get_total_screen_load(emptyProgs)).to be 0
       expect(get_total_screen_load(underPopulatedProgs)).to be 1
-      expect(get_total_screen_load(wellPopulatedProgsQueue)).to be 10
+      expect(get_total_screen_load(wellPopulatedProgs)).to be 10
     end
   end
 
@@ -79,7 +79,7 @@ RSpec.describe Scheduling, :type => :concern do
     
     emptyProgsQueue = preprocess_and_build_queue(emptyProgs)
     underPopulatedProgsQueue = preprocess_and_build_queue(underPopulatedProgs)
-    wellPopulatedProgsQueue = preprocess_and_build_queue(wellPopulatedProgsQueue)
+    wellPopulatedProgsQueue = preprocess_and_build_queue(wellPopulatedProgs)
 
     context 'should return a queue which' do
       context 'contain some programmes' do
@@ -122,9 +122,23 @@ RSpec.describe Scheduling, :type => :concern do
         
       end
 
-      it 'contain all programmes in input' do
-        emptyProgs.each do |prog|
-          expect(emptyProgsQueue).to include prog
+      context 'contain all programmes in input' do
+        def checkInclusion(progs, queue)
+          progs.each do |prog|
+            expect(queue).to include prog
+          end
+        end
+
+        it 'for initially empty programme list' do
+          checkInclusion(emptyProgs, emptyProgsQueue)
+        end
+        
+        it 'for under-populated programme list' do
+          checkInclusion(underPopulatedProgs, underPopulatedProgsQueue)
+        end
+
+        it 'for well-populated programme list' do
+          checkInclusion(wellPopulatedProgs, wellPopulatedProgsQueue)
         end
       end
 
