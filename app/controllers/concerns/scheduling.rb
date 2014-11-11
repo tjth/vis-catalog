@@ -12,8 +12,8 @@ module Scheduling
     vis = Visualisation.where(isDefault:true)
 
     prog = Programme.new({:visualisations_id => vis[rand(vis.length())].id,
-                          :screens => 1,
-                          :priority => 1
+                          :screens => Const.MIN_SCREENS,
+                          :priority => Const.MIN_PRIORITY
                          })
     return prog
   end
@@ -25,5 +25,9 @@ module Scheduling
       scrLoad = scrLoad + programme.screens
     end
     return scrLoad
+  end
+
+  def preprocess_and_build_queue(programmes)
+    return []  
   end
 end
