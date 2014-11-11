@@ -3,4 +3,5 @@ class Visualisation < ActiveRecord::Base
   belongs_to :user
   belongs_to :programme
   attr_default :approved, false
+  attr_default :isDefault, false
 end
