@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141109121740) do
+ActiveRecord::Schema.define(version: 20141111154914) do
 
   create_table "programmes", force: true do |t|
     t.integer  "screens"
@@ -25,9 +25,8 @@ ActiveRecord::Schema.define(version: 20141109121740) do
   add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
 
   create_table "timeslots", force: true do |t|
-    t.integer  "weekday"
-    t.time     "start_time"
-    t.time     "end_time"
+    t.datetime "start_time"
+    t.datetime "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "programmes_id"
