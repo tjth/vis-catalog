@@ -11,7 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141111154914) do
+ActiveRecord::Schema.define(version: 20141111205131) do
+
+  create_table "playout_sessions", force: true do |t|
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.integer  "start_screen"
+    t.integer  "end_screen"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "visualisations_id"
+  end
+
+  add_index "playout_sessions", ["visualisations_id"], name: "index_playout_sessions_on_visualisations_id"
 
   create_table "programmes", force: true do |t|
     t.integer  "screens"
