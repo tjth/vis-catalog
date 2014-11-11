@@ -31,7 +31,6 @@ ActiveRecord::Schema.define(version: 20141111205131) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "visualisations_id"
-    t.integer  "timeslot_id"
   end
 
   add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
