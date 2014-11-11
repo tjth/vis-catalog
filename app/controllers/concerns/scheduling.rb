@@ -17,4 +17,13 @@ module Scheduling
                          })
     return prog
   end
+
+  def get_total_screen_load(programmes)
+    scrLoad = 0
+
+    programmes.each do |programme|
+      scrLoad = scrLoad + programme.screens
+    end
+    return scrLoad
+  end
 end

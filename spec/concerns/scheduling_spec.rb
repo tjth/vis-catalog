@@ -1,17 +1,44 @@
 require 'rails_helper'
 include Scheduling
 
-RSpec.describe Scheduling, :type => :concern do
+# Seeding
+for i in 1..5
+    Visualisation.create([
+      {:name => "Milan", 
+       :link => "/assets/dummy/milan.png", 
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing 
+                        elit, sed do eiusmod tempor incididunt ut labore et 
+                        dolore magna aliqua. Ut enim ad minim veniam, quis 
+                        nostrud exercitation ullamco laboris nisi ut aliquip 
+                        ex ea commodo consequat."}, 
+      {:name => "Green",
+       :link => "/assets/dummy/green.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing 
+                        elit, sed do eiusmod tempor incididunt ut labore et 
+                        dolore magna aliqua. Ut enim ad minim veniam, quis 
+                        nostrud exercitation ullamco laboris nisi ut aliquip 
+                        ex ea commodo consequat."},
+      {:name => "Pink", 
+       :link => "/assets/dummy/pink.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing 
+                        elit, sed do eiusmod tempor incididunt ut labore et 
+                        dolore magna aliqua. Ut enim ad minim veniam, quis 
+                        nostrud exercitation ullamco laboris nisi ut aliquip 
+                        ex ea commodo consequat."}, 
+      {:name => "Power", 
+       :link => "/assets/dummy/power.png",
+       :isDefault => true,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing 
+                        elit, sed do eiusmod tempor incididunt ut labore et 
+                        dolore magna aliqua. Ut enim ad minim veniam, quis 
+                        nostrud exercitation ullamco laboris nisi ut aliquip 
+                        ex ea commodo consequat."}, 
+    ])
+end
 
-  Visualisation.create([{:name => 'Default one',
-                         :isDefault => true},
-                        {:name => 'Not the default one',
-                         :isDefault => false},
-                        {:name => 'Not default as well',
-                         :description => 'Lorem ipsum dolor sit amet.',
-                         :isDefault => false},
-                        {:name => 'Another default one',
-                         :isDefault => true}])
+
+
+RSpec.describe Scheduling, :type => :concern do
 
   describe '.get_a_default_programme' do
     
@@ -33,11 +60,21 @@ RSpec.describe Scheduling, :type => :concern do
   end
 
   describe '.get_total_screen_load' do
-    pending "test to be implemented"
+    progs1 = Programme.create([{:screens => 1}])
+    progs2 = Programme.create([{:screens => 1}, {:screens => 2}])
+    progs3 = Programme.create([{:screens => 1}, {:screens => 4}, 
+                               {:screens => 3}, {:screens => 2}])
+    
+    it 'should return the sum of all programme\'s screens' do
+      expect(get_total_screen_load(progs1)).to be 1
+      expect(get_total_screen_load(progs2)).to be 3
+      expect(get_total_screen_load(progs3)).to be 10
+    end
   end
 
   describe '.preprocess_and_build_queue' do
-    pending "tests to be implemented"
+    
+    
   end
 
   describe '.generate_schedule' do
@@ -47,3 +84,6 @@ RSpec.describe Scheduling, :type => :concern do
     pending "tests to be implemented"
   end
 end
+
+
+
