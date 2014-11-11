@@ -37,13 +37,12 @@ for i in 1..5
     ])
 end
 
-progs1 = Programme.create([])
-progs2 = Programme.create([{:screens => 1, :priority => 4}])
-progs3 = Programme.create([{:screens => 1, :priority => 4},
-                           {:screens => 4, :priority => 3}, 
-                           {:screens => 3, :priority => 2},
-                           {:screens => 2, :priority => 1}])
-
+emptyProgs = Programme.create([])
+underPopulatedProgs = Programme.create([{:screens => 1, :priority => 4}])
+wellPopulatedProgsQueue = Programme.create([{:screens => 1, :priority => 4},
+                                            {:screens => 4, :priority => 3}, 
+                                            {:screens => 3, :priority => 2},
+                                            {:screens => 2, :priority => 1}])
 
 
 RSpec.describe Scheduling, :type => :concern do
@@ -70,41 +69,80 @@ RSpec.describe Scheduling, :type => :concern do
   describe '.get_total_screen_load' do
     
     it 'should return the sum of all programme\'s screens' do
-      expect(get_total_screen_load(progs1)).to be 0
-      expect(get_total_screen_load(progs2)).to be 1
-      expect(get_total_screen_load(progs3)).to be 10
+      expect(get_total_screen_load(emptyProgs)).to be 0
+      expect(get_total_screen_load(underPopulatedProgs)).to be 1
+      expect(get_total_screen_load(wellPopulatedProgsQueue)).to be 10
     end
   end
 
   describe '.preprocess_and_build_queue' do
     
-    queue1 = preprocess_and_build_queue(progs1)
-    queue2 = preprocess_and_build_queue(progs2)
-    queue3 = preprocess_and_build_queue(progs3)
+    emptyProgsQueue = preprocess_and_build_queue(emptyProgs)
+    underPopulatedProgsQueue = preprocess_and_build_queue(underPopulatedProgs)
+    wellPopulatedProgsQueue = preprocess_and_build_queue(wellPopulatedProgsQueue)
 
     context 'should return a queue which' do
-      it 'contain some programmes' do
-        expect(queue1.first).to be_truthy # not nil
-        expect(queue2.first).to be_truthy
-        expect(queue3.first).to be_truthy
+      context 'contain some programmes' do
+        it 'for initially empty programme list' do
+          expect(emptyProgsQueue.first).to be_truthy # not nil
+        end
+
+        it 'for under-populated programme list' do
+          expect(underPopulatedProgsQueue.first).to be_truthy
+        end
+
+        it 'for well-populated programme list' do
+          expect(wellPopulatedProgsQueue.first).to be_truthy
+        end
       end
     
-      it 'contain programmes in decreasing priority' do
-        temp = queue1.first
-        queue1.each do |queue_elem|
-          expect(queue_elem.priority).to >= temp.priority
-          temp = queue_elem
+      context 'contain programmes in decreasing priority' do
+        def decreasingPriority(queue)
+          prev = queue.first
+          queue.each do |curr|
+            if (prev.priority < curr.priority)
+              return false
+            end
+            prev = curr
+          end
+          return true
         end
+
+        it 'for initially empty programme list' do
+          expect(decreasingPriority(emptyProgsQueue)).to be true
+        end
+
+        it 'for under-populated programme list' do
+          expect(decreasingPriority(underPopulatedProgsQueue)).to be true
+        end
+
+        it 'for well-populated programme list' do
+          expect(decreasingPriority(wellPopulatedProgsQueue)).to be true
+        end
+        
       end
 
       it 'contain all programmes in input' do
-        pending ": write the test"
+        emptyProgs.each do |prog|
+          expect(emptyProgsQueue).to include prog
+        end
       end
 
-      it 'have total screen load geq NO_OF_SCREENS' do
-        expect(get_total_screen_load(queue1)).to be >= Const.NO_OF_SCREENS
-        expect(get_total_screen_load(queue2)).to be >= Const.NO_OF_SCREENS
-        expect(get_total_screen_load(queue3)).to be >= Const.NO_OF_SCREENS
+      context 'have total screen load geq NO_OF_SCREENS' do
+        it 'for initially empty programme list' do
+          expect(get_total_screen_load(emptyProgsQueue)).
+            to be >= Const.NO_OF_SCREENS
+        end
+
+        it 'for under-populated programme list' do
+          expect(get_total_screen_load(underPopulatedProgsQueue)).
+            to be >= Const.NO_OF_SCREENS
+        end
+
+        it 'for well-populated programme list' do
+          expect(get_total_screen_load(wellPopulatedProgsQueue)).
+            to be >= Const.NO_OF_SCREENS
+        end
       end
     end
   end

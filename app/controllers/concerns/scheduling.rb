@@ -28,6 +28,13 @@ module Scheduling
   end
 
   def preprocess_and_build_queue(programmes)
-    return []  
+    queue = programmes.sort_by{|prog| prog.priority}.reverse
+    initScrLoad = get_total_screen_load(queue)
+    if (initScrLoad < Const.NO_OF_SCREENS)
+      for i in 1..(Const.NO_OF_SCREENS - initScrLoad)
+        queue = queue + [get_a_default_programme]
+      end
+    end
+    return queue 
   end
 end
