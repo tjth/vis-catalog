@@ -19,7 +19,6 @@ sudo cp -r db/migrate db/seeds.rb /data
 sudo docker run -it \
                 -v $(pwd):/src \
                 -v /data:/src/db \
-                -p 3124:3124 \
                 --name rails-test \
                 rails \
                 '/bin/bash' \
