@@ -1,6 +1,11 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+  # GET /visualisations/:visid/schedule
+  def add_to_schedule
+    #TODO: add to current schedule array
+  end
+
   # PATCH /visualisations/:visid/approve
   def approve
     if current_user.isAdmin
@@ -39,7 +44,7 @@ class VisualisationsController < ApplicationController
       @visualisations = get_newest_n(params[:newest])
       end
 
-      if params[:needsModerating] != nil
+      if params[:needsModeration] != nil
         @visualisations = @visualisations.select{ |vis| vis.approved == false }
       else
         @visualisations = @visualisations.select{ |vis| vis.approved == true }
@@ -52,7 +57,7 @@ class VisualisationsController < ApplicationController
         return "no such user"
       end
 
-      if params[:needsModerating] != nil
+      if params[:needsModeration] != nil
         @visualisations = u.visualisations.approved(false)
       else
         @visualisations = u.visualisations.approved(true)
