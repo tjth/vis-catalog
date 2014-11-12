@@ -5,4 +5,8 @@ class Visualisation < ActiveRecord::Base
   has_many :playout_sessions
   attr_default :approved, false
   attr_default :isDefault, false
+
+  #some filters!
+  scope :approved, -> (boolean) {where approved: boolean}
+
 end
