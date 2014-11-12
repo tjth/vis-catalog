@@ -50,19 +50,21 @@ module Scheduling
   def generate_schedule(timeslot)
     start_time = timeslot.start_time
     end_time = timeslot.end_time
-    progs = Programme.find(timeslot.programmes_id)
+    progs = timeslot.programmes
 
     queue = preprocess_and_build_queue(progs)
     playSys = PlayoutModel.new(start_time, queue)
 
     if (get_total_screen_load(queue) == Const.NO_OF_SCREENS)
       if (queue.length == Const.OVERRIDING_QUEUE_LENGTH)
-        PlayoutSession.create({:start_time => start_time,
-                               :end_time => end_time,
-                               :start_screen => Const.MIN_SCREEN_NUMBER,
-                               :end_screen => Const.NO_OF_SCREENS,
-                               :visualisations_id => queue.first.visualisations_id
-                              })
+        session = 
+          PlayoutSession.create({:start_time => start_time,
+                                 :end_time => end_time,
+                                 :start_screen => Const.MIN_SCREEN_NUMBER,
+                                 :end_screen => Const.NO_OF_SCREENS,
+                                })
+        vis = Visualisation.find(queue.first.visualisation_id)
+        vis.playout_sessions << session
         return
       end
     end

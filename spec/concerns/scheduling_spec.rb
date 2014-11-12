@@ -128,30 +128,27 @@ RSpec.describe Scheduling, :type => :concern do
   vis = Visualisation.create({:name => 'Test'})
   overridingProg = 
     Programme.create({:screens => Const.NO_OF_SCREENS, :priority => 1})
-
   vis.programmes << overridingProg
 
-    
   overridingTimeslot = 
     Timeslot.create({
       :start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
       :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc
     })
-
   overridingTimeslot.programmes << overridingProg
 
   describe '.generate_schedule:' do
     context 'when total screen load equals to NO_OF_SCREENS' do
       context 'and there is 1 programme only (overriding case)' do
-        it 'should create schedule with 1 item only' do
-          expect(Visualisation.where(name:'Test')).to be 1
-          generate_schedule(overridingTimeslot)
+        test = generate_schedule(overridingTimeslot)
           sessions = PlayoutSession.where(start_time:
             DateTime.new(2014, 9, 1, 12, 0, 0).utc..
             DateTime.new(2014, 9, 1, 13, 0, 0))
-
+        it 'should create schedule with 1 item only' do
           expect(sessions.length).to be 1
         end
+
+        
       end
 
       context 'and there is 2-4 programs (cycle-around case)' do
