@@ -1,3 +1,3 @@
 class PlayoutSession < ActiveRecord::Base
-  has_one :visualisation
+  belongs_to :visualisation
 end

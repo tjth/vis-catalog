@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141111205131) do
+ActiveRecord::Schema.define(version: 20141112092026) do
 
   create_table "playout_sessions", force: true do |t|
     t.datetime "start_time"
@@ -20,31 +20,30 @@ ActiveRecord::Schema.define(version: 20141111205131) do
     t.integer  "end_screen"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "visualisations_id"
+    t.integer  "visualisation_id"
   end
 
-  add_index "playout_sessions", ["visualisations_id"], name: "index_playout_sessions_on_visualisations_id"
+  add_index "playout_sessions", ["visualisation_id"], name: "index_playout_sessions_on_visualisation_id"
 
   create_table "programmes", force: true do |t|
     t.integer  "screens"
     t.integer  "priority"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "visualisations_id"
+    t.integer  "timeslot_id"
+    t.integer  "visualisation_id"
   end
 
-  add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
+  add_index "programmes", ["timeslot_id"], name: "index_programmes_on_timeslot_id"
+  add_index "programmes", ["visualisation_id"], name: "index_programmes_on_visualisation_id"
 
   create_table "timeslots", force: true do |t|
     t.datetime "start_time"
     t.datetime "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "programmes_id"
     t.date     "date"
   end
-
-  add_index "timeslots", ["programmes_id"], name: "index_timeslots_on_programmes_id"
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false

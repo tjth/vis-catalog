@@ -8,13 +8,22 @@ module Scheduling
     @test = 1
   end
 
-  def get_a_default_programme
-    vis = Visualisation.where(isDefault:true)
+  class PlayoutModel
+    def initialize(time, queue)
+      @time = time
+      @schedule_items = [nil] * Const.NO_OF_SCREENS
+      @programmes = [nil] * Const.NO_OF_SCREENS
+      @queue = queue
+    end
+  end
 
-    prog = Programme.new({:visualisations_id => vis[rand(vis.length())].id,
-                          :screens => Const.MIN_SCREENS,
+  def get_a_default_programme
+    vis = Visualisation.where(isDefault:true).sample
+    prog = Programme.new({:screens => Const.MIN_SCREENS,
                           :priority => Const.MIN_PRIORITY
                          })
+
+    vis.programmes << prog
     return prog
   end
 
@@ -36,5 +45,28 @@ module Scheduling
       end
     end
     return queue 
+  end
+
+  def generate_schedule(timeslot)
+    start_time = timeslot.start_time
+    end_time = timeslot.end_time
+    progs = Programme.find(timeslot.programmes_id)
+
+    queue = preprocess_and_build_queue(progs)
+    playSys = PlayoutModel.new(start_time, queue)
+
+    if (get_total_screen_load(queue) == Const.NO_OF_SCREENS)
+      if (queue.length == Const.OVERRIDING_QUEUE_LENGTH)
+        PlayoutSession.create({:start_time => start_time,
+                               :end_time => end_time,
+                               :start_screen => Const.MIN_SCREEN_NUMBER,
+                               :end_screen => Const.NO_OF_SCREENS,
+                               :visualisations_id => queue.first.visualisations_id
+                              })
+        return
+      end
+    end
+
+    return []
   end
 end
