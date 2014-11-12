@@ -66,6 +66,10 @@
                 templateUrl: 'partials/moderate.html',
                 controller: 'moderateController',
             }).
+            when('/schedule', {
+                templateUrl: 'partials/schedule.html',
+                controller: 'scheduleController',
+            }).
             otherwise({
                 redirectTo: '/'
             });
@@ -136,10 +140,15 @@
     });
 
     app.controller('masonController', function($scope, $rootScope, Visualisation) {
-    
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
         $scope.visItems = Visualisation.query()
+    });
+    
+    app.controller('scheduleController', function($scope, $rootScope) {
+        $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
+    
+        
     });
 
     app.controller('moderateController', function(Visualisation, $scope, $rootScope) {
