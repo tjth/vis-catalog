@@ -11,8 +11,8 @@ sudo mkdir -p $(pwd)/../vis-catalog-docker
 sudo rm -rf $(pwd)/../vis-catalog-docker/tmp
 
 # Temproarily remove persistent data storage
-sudo rm -rf /data
-sudo mkdir /data
+#sudo rm -rf /data
+#sudo mkdir /data
 
 # Copy all migrations to /data (persistent data storage)
 #  - would not affect existing .sqlite3 files as it is not checked in on git
