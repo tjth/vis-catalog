@@ -1,6 +1,11 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+  # GET /visualisations/:visid/schedule
+  def add_to_schedule
+    #TODO: add to current schedule array
+  end
+
   # PATCH /visualisations/:visid/approve
   def approve
     if current_user.isAdmin
