@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'timeslots/test'
+
   root to: 'visitors#index'
   devise_for :users
   resources :users
@@ -16,5 +18,7 @@ Rails.application.routes.draw do
   patch '/visualisations/:visid/approve' => 'visualisations#approve'
 
   get '/users/:userid/makeadmin' => 'users#make_admin'
+
+  get '/schedulingtest/' => 'timeslots#test'
   resources :visualisations
 end
