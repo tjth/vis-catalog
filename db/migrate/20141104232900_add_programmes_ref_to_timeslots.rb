@@ -1,5 +1,5 @@
 class AddProgrammesRefToTimeslots < ActiveRecord::Migration
   def change
-    add_reference :timeslots, :programmes, index: true
+    add_reference :programmes, :timeslot, index: true
   end
 end

@@ -10,10 +10,14 @@ sudo mkdir -p $(pwd)/../vis-catalog-docker
 #  error on RVM
 sudo rm -rf $(pwd)/../vis-catalog-docker/tmp
 
+# Temproarily remove persistent data storage
+sudo rm -rf /data
+sudo mkdir /data
+
 # Copy all migrations to /data (persistent data storage)
 #  - would not affect existing .sqlite3 files as it is not checked in on git
 # Copy all source files to (new folder) - for mounting
-sudo cp -r db/. /data
+sudo cp -r db/migrate db/seeds.rb db/schema.rb /data
 sudo cp -r ./* $(pwd)/../vis-catalog-docker
 
 # Start and run a docker container:
