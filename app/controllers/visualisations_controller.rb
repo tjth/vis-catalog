@@ -44,7 +44,7 @@ class VisualisationsController < ApplicationController
       @visualisations = get_newest_n(params[:newest])
       end
 
-      if params[:needsModerating] != nil
+      if params[:needsModeration] != nil
         @visualisations = @visualisations.select{ |vis| vis.approved == false }
       else
         @visualisations = @visualisations.select{ |vis| vis.approved == true }
@@ -57,7 +57,7 @@ class VisualisationsController < ApplicationController
         return "no such user"
       end
 
-      if params[:needsModerating] != nil
+      if params[:needsModeration] != nil
         @visualisations = u.visualisations.approved(false)
       else
         @visualisations = u.visualisations.approved(true)
