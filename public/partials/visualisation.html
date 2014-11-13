@@ -1,29 +1,28 @@
-<section class="container-fluid" ng-controller="visController">
-    <div class="row">
+<section class="container-fluid" ng-controller="visController" >
+    <div class="row" color-thief-src="{[{ img }]}">
         <div id="details" class="col-sm-8" class="card vis">
-            <div class="card guideline">
-                <div class=" item">
-                    <div class="heading">{[{name}]}
-                    </div>
-                    <div class="img" style="background-image: url({[{ img }]})"></div>
+            <div class="guideline card">
+                <div class="content">
+                    <div class="img" style="background-image: url({[{ img }]}); height: 70vh; background-repeat: no-repeat; background-size: cover;"></div>
+                    <div class="header" color-thief-src="{[{ img }]}" style="font-size: 2em;">{[{ name }]}</div>
+                    <div class="desc">{[{ desc }]}</div>
                 </div>
             </div>
         </div>
         <div id="comments" class="col-sm-4">
             <div class="card guideline">
                 <div class="item">
-                    <div class="heading">Description</div>
-                    <div class="description">{[{desc}]}</div>
-                </div>
-            </div>
-            <div class="card guideline">
-                <div class="item">
                     <div class="heading">Comments</div>
-                    <div id="new-comment">
-                        <div class="comment"><input placeholder="New Comment" class="newcomment"></input>
-                            <button class="newcomment btn">Submit Comment</button>
-                        </div>
-                        
+                    <form ng-controller="CommentController">
+                          <div id="new-comment" class="comment">
+                              <textarea ng-model="txtcomment" placeholder="Your comment"></textarea>
+                              <button class="newcomment btn" ng-click="comment_add();" style="margin-top:10px;">Post Comment</button>
+                          </div>                        
+                          Comments
+                          <ul>
+                            <li ng-repeat="comnt in comments"> {[{ comnt }]}></li>
+                          </ul>
+                    </form>
                     </div>
                     <div class="comment bubble" ng-repeat="comment in comments">
                     <div class="top"></div>

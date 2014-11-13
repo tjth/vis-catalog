@@ -150,6 +150,10 @@
             
         }]);
     
+    app.controller('commentController', function($scope) {
+        $scope.comment = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}
+    });
+    
     app.controller('submitAdvertController', function($scope, $rootScope, $route) {
         $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
     });
