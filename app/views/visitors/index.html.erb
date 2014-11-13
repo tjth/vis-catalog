@@ -36,6 +36,18 @@
 
 <script>       
     
+    // From http://stackoverflow.com/questions/3115982/how-to-check-javascript-array-equals
+    function arraysEqual(a, b) {
+      if (a === b) return true;
+      if (a == null || b == null) return false;
+      if (a.length != b.length) return false;
+
+      for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+    
     var app = angular.module("app", ['ngRoute', 'ngAnimate', 'ngResource', 'truncate']);
 
     app.config(function($interpolateProvider) {
@@ -48,7 +60,7 @@
             $routeProvider.
             when('/', {
                 templateUrl: 'partials/main.html',
-                controller: 'masonController'
+                controller: 'masonController',
             }).
             when('/visualisations/:id', {
                 templateUrl: 'partials/visualisation.html',
@@ -77,6 +89,7 @@
 
     app.controller('mainController', function($scope, $rootScope, $route) {
 
+
         $scope.clearSearch = function() { jQuery("#search input").val(""); }
             
         $scope.$on('$routeChangeSuccess', function(next, current) { 
@@ -94,20 +107,19 @@
         
     app.factory('Visualisation', ['$resource',
         function($resource){
-            return $resource('visualisations/:id.json', {visId : "@id"}, {
-                query: { method:'GET', url:'visualisations.json', isArray:true},
+            return $resource('visualisations/:id.json', {id : "@id"}, {
+                query: { method:'GET', url:'visualisations.json', isArray:true },
                 approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
                 reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
             });
     }]);
     
-    app.controller('menuController', function($scope, $rootScope, $route) {
+    app.controller('menuController', function($scope, $rootScope, $route, $location) {
         
         $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
 
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
-                           {name : "New", url : "", img:"ic_new_releases_black_24dp.png"},
-                           {name : "Highest Rated", url : "", img : "ic_grade_black_24dp.png"},
+                           {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"},
                            {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
         
         $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
@@ -116,18 +128,17 @@
         $scope.adminLinks = [{name : "Moderate Content", class:"moderate", url : "/moderate", img:"ic_check_box_black_24dp.png"},
                              {name : "Schedule Content", class : "schedule", url : "/schedule", img:"ic_timer_black_24dp.png"}]
 
-        $scope.links = $scope.visLinks.concat($scope.contentLinks).concat($scope.adminLinks);
         
-        $scope.selected = $scope.links[0];
-                    
-        $rootScope.$on('$routeChangeSuccess', function(next, current) { 
-            for (route in $route.routes) {
-                if ($route.routes[route].templateUrl == current.loadedTemplateUrl) {
-                    $scope.selectedUrl = $route.routes[route].originalPath;
-                    break;
-                }
-            }
-         });
+        $scope.getQueryParameters = function(str) {
+            var params = (str).replace(/(.*\?)|(.*)/, '').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
+            return arraysEqual(Object.keys(params), [""]) ? {} : params; 
+        }
+        
+        $scope.isCurrentMenuItem = function(item) {
+            return item.url.replace(/(\?.*)/, '') == $location.path() && 
+                   arraysEqual(Object.keys($scope.getQueryParameters(item.url)), Object.keys($location.search()));
+        }
+
 
     });
 
@@ -139,15 +150,25 @@
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
     });
 
-    app.controller('masonController', function($scope, $rootScope, Visualisation) {
+    app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
-        $scope.visItems = Visualisation.query()
+        $scope.visItems = Visualisation.query($routeParams)
     });
     
     app.controller('scheduleController', function($scope, $rootScope) {
         $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
-    
+        $scope.days = [0, 1, 2, 3, 4, 5, 6];
+        $scope.timeslots = [ {startTime:"2014-11-13T10:00:00Z", endTime:"2014-11-13T11:00:00Z", visualisations: [1, 2, 3], adverts:[5, 6, 7]} ];
+        $scope.startOfWeek = moment().date(10)
+        
+        $scope.getShortWeekdayName = function(day) {
+            return moment().day(day).format("ddd")   
+        }
+        
+        $scope.formatWeek = function() {
+            return $scope.startOfWeek.format("Do MMMM") + " - " +  $scope.startOfWeek.clone().add(7, "days").format("Do MMMM")
+        }
         
     });
 
