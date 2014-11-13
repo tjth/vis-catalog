@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   get 'timeslots/test'
 
   root to: 'visitors#index'
-  devise_for :users
+  devise_for :users, :token_authentication_key => 'authentication_key'
   resources :users
 
   #get '/visualisations' => 'visualisations#index' 
