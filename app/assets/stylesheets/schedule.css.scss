@@ -1,7 +1,6 @@
 @import "variables";
 @import "mixins";
 
-$day-height:70px;
 $week-height:45px;
 $axis-height:50px;
 $top-height:$week-height + $axis-height;
@@ -11,21 +10,30 @@ $top-height:$week-height + $axis-height;
     display:flex;
 }
 
+#days, #timeslot-actions {
+    padding-top:$top-height;
+    
+    .spacer { 
+        display:flex;
+        flex-direction:column;
+        box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+        position: relative;
+        height:100%;
+        width:100%;
+    }
+}
+
 #days {
     height:100%;
-    padding-top:$top-height;
     width:70px;
     font-size: 0.9rem;
     flex-shrink: 0;
     
-    .spacer { 
-        box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
-        position: relative;
+    .spacer {
         
         .day {
             width:100%;
-            height: $day-height;
-            display: table;
+            flex-grow:1;
             text-align: center;
             vertical-align: middle;
             text-transform: uppercase;
@@ -33,9 +41,13 @@ $top-height:$week-height + $axis-height;
             color:#fff;
             border-bottom:1px solid #fff;
 
-            .day-label {
-                display:table-cell;
-                vertical-align: middle;   
+            .table-wrapper {
+                display: table;
+
+                .day-label {
+                    display:table-cell;
+                    vertical-align: middle;   
+                }
             }
 
             &:last-child {
@@ -88,6 +100,7 @@ $top-height:$week-height + $axis-height;
     .scroll {
         flex-grow:1;
         overflow-x: scroll;
+        overflow-y: hidden;
 
         display:flex;
         flex-direction:column;
@@ -95,23 +108,80 @@ $top-height:$week-height + $axis-height;
         #planner {
             flex-grow:1;
             width:300%;
+            position:relative;
             
             #axis {
-                background-color:#f5f5f5;
-                height:$axis-height;
+                position:absolute;
+                top:0;
+                left:0;
+                height:100%;
+                width:100%;
+                background: #fff;
                 border-bottom:1px solid #e0e0e0;
             }
             
-            .day {
-                height:$day-height;
+            #fg {
+                position:absolute;
+                top:$axis-height;
+                left:0;
+                height:calc(100% - #{$axis-height});
                 width:100%;
-                background-color:#fff;
                 
-                border-bottom:1px solid #e0e0e0;
+                .day {
+                    height:70px;
+                    width:100%;
+                    background-color:rgba(255,255,255,0.85);
+
+                    border-bottom:1px solid #e0e0e0;
+                    
+                    &:first-child {
+                        border-top:1px solid #e0e0e0;   
+                    }
+                }
             }
         }
     }
 
+}
+
+#timeslot-actions {
+    height: 100%;
+    width: 30px;
+    
+    .spacer {
+        z-index:0;   
+    }
+    
+    .timeslot-actions {
+        background-color:#f5f5f5;
+        display:flex;
+        flex-direction:column;
+        border-bottom:1px solid #e0e0e0;
+        
+        .add, .remove {
+            @include clickable();
+            @include animated();
+            
+            width:100%;
+            flex-grow:1;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity:0.3;
+            
+            &:hover {
+                opacity:1;   
+            }
+        }
+        
+        .add {
+            background-image: image-url("ic_add_black_24dp.png"); 
+            border-bottom:1px solid #e0e0e0;
+        }
+        
+        .remove {
+            background-image: image-url("ic_remove_black_24dp.png");  
+        }
+    }
 }
 
 
