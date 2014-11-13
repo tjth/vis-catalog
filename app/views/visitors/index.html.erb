@@ -158,6 +158,18 @@
     
     app.controller('scheduleController', function($scope, $rootScope) {
         $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
+        $scope.days = [0, 1, 2, 3, 4, 5, 6];
+        $scope.timeslots = [ {startTime:"2014-11-13T10:00:00Z", endTime:"2014-11-13T11:00:00Z", visualisations: [1, 2, 3], adverts:[5, 6, 7]} ];
+        $scope.startOfWeek = moment().date(10)
+        
+        $scope.getShortWeekdayName = function(day) {
+            return moment().day(day).format("ddd")   
+        }
+        
+        $scope.formatWeek = function() {
+            return $scope.startOfWeek.format("Do MMMM") + " - " +  $scope.startOfWeek.clone().add(7, "days").format("Do MMMM")
+        }
+        
     });
 
     app.controller('moderateController', function(Visualisation, $scope, $rootScope) {

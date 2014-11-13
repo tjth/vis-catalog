@@ -5,22 +5,22 @@
             <div id="schedule">
                 <div id="days">
                     <div class="spacer">
-                        <div class="day" ng-repeat='day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]'>
-                            <div class="day-label">{[{day}]}</div>
+                        <div class="day" ng-repeat='day in days'>
+                            <div class="day-label">{[{getShortWeekdayName(day)}]}</div>
                         </div>
                     </div>
                 </div>
                 <div id="timeslots">
                     <div id="week">
                         <div class="navigate back"></div>
-                        <div id="week-span">20TH OCTOBER - 27TH OCTOBER</div>
+                        <div id="week-span">{[{formatWeek(startOfWeek)}]}</div>
                         <div class="navigate forward"></div>
                     </div>
                     <div class="scroll" horizontal-scroll>
                         <div id="planner">
                             <div id="axis"><canvas style="font-family: Roboto; width:100%; height:100%"></canvas></div>
                             <div id="fg">
-                                <div class="day" ng-repeat='day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]'>
+                                <div class="day" ng-repeat='day in days'>
                                 </div>
                             </div>
                         </div>
@@ -29,7 +29,7 @@
                 </div>
                 <div id="timeslot-actions">
                     <div class="spacer">
-                        <div class="day timeslot-actions" ng-repeat='day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]'>
+                        <div class="day timeslot-actions" ng-repeat='day in days'>
                            <div class="add"></div>
                            <div class="remove"></div>
                         </div>
