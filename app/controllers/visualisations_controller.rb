@@ -90,9 +90,9 @@ class VisualisationsController < ApplicationController
   # POST /visualisations.json
   def create
     p = visualisation_params
-    puts p
     @visualisation = Visualisation.new(p)
     @visualisation.approved = true
+    #TODO: uncomment this when we have users
     #current_user.visualisations << @visualisation
     respond_to do |format|
       if @visualisation.save
