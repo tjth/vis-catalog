@@ -21,6 +21,14 @@ module Const
     1
   end
 
+  def self.MIN_CYCLE_AROUND_QUEUE_LENGTH
+    2
+  end
+  
+  def self.MAX_CYCLE_AROUND_QUEUE_LENGTH
+    4
+  end
+
   def self.MIN_SCREEN_NUMBER
     1
   end
