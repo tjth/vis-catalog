@@ -2,21 +2,21 @@
 <nav>
     <section>
         <div class="item" ng-repeat="item in visLinks" 
-             ng-class="{active: item.url == selectedUrl}">
+             ng-class="{active: isCurrentMenuItem(item)}">
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
     </section>
     <section>
         <div class="item special {[{item.class}]}" ng-repeat="item in contentLinks"
-             ng-class="{active: item.url == selectedUrl}">
+             ng-class="{active: isCurrentMenuItem(item)}">
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
     </section>
     <section>
         <div class="item special {[{item.class}]}" ng-repeat="item in adminLinks"
-             ng-class="{active: item.url == selectedUrl}">
+             ng-class="{active: isCurrentMenuItem(item)}">
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
