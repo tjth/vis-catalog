@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :comments
+
   get 'timeslots/test'
 
   root to: 'visitors#index'
