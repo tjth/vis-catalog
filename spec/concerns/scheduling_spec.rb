@@ -123,8 +123,6 @@ RSpec.describe Scheduling, :type => :concern do
     end
   end
 
-
-
   describe '.clean_old_sessions' do
     it 'should clean all the existing session within the timeslot' do
       for i in 0..2
@@ -175,6 +173,4 @@ RSpec.describe Scheduling, :type => :concern do
   end
 
 end
-
-
 
