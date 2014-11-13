@@ -123,6 +123,9 @@ RSpec.describe Scheduling, :type => :concern do
     end
   end
 
+  start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
+  end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
+
   describe '.clean_old_sessions' do
     it 'should clean all the existing session within the timeslot' do
       for i in 0..2
@@ -131,12 +134,9 @@ RSpec.describe Scheduling, :type => :concern do
          :end_time => DateTime.new(2014, 9, 1, 12, i+1, 0).utc})
       end
 
-      start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
-      end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
       clean_old_sessions(start_time, end_time)
 
       sessions = PlayoutSession.where(start_time: start_time...end_time)
-
       expect(sessions.length).to be 0
     end
   end
@@ -146,9 +146,6 @@ RSpec.describe Scheduling, :type => :concern do
       context 'and there is 1 programme only (overriding case)' do
         
         it 'should create schedule with 1 item only' do
-          start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
-          end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
-
           vis = Visualisation.create({:name => 'Test'})
           overridingProg = Programme.create({:screens => Const.NO_OF_SCREENS,
                                              :priority => 1})
