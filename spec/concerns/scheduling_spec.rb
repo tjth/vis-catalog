@@ -127,22 +127,17 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.clean_old_sessions' do
     it 'should clean all the existing session within the timeslot' do
-      PlayoutSession.create([
-        {:start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
-         :end_time => DateTime.new(2014, 9, 1, 12, 1, 0).utc},
-        {:start_time => DateTime.new(2014, 9, 1, 12, 1, 0).utc,
-         :end_time => DateTime.new(2014, 9, 1, 12, 2, 0).utc},
-        {:start_time => DateTime.new(2014, 9, 1, 12, 2, 0).utc,
-         :end_time => DateTime.new(2014, 9, 1, 12, 3, 0).utc}
-      ])
+      for i in 0..2
+      PlayoutSession.create(
+        {:start_time => DateTime.new(2014, 9, 1, 12, i, 0).utc,
+         :end_time => DateTime.new(2014, 9, 1, 12, i+1, 0).utc})
+      end
 
       start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
       end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
       clean_old_sessions(start_time, end_time)
 
-      sessions = PlayoutSession.where(start_time:
-                     DateTime.new(2014, 9, 1, 12, 0, 0).utc...
-                     DateTime.new(2014, 9, 1, 13, 0, 0).utc)
+      sessions = PlayoutSession.where(start_time: start_time...end_time)
 
       expect(sessions.length).to be 0
     end
@@ -153,22 +148,20 @@ RSpec.describe Scheduling, :type => :concern do
       context 'and there is 1 programme only (overriding case)' do
         
         it 'should create schedule with 1 item only' do
+          start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
+          end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
+
           vis = Visualisation.create({:name => 'Test'})
           overridingProg = Programme.create({:screens => Const.NO_OF_SCREENS,
                                              :priority => 1})
           vis.programmes << overridingProg
 
-          overridingTimeslot = 
-            Timeslot.create({
-              :start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
-              :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc
-            })
+          overridingTimeslot = Timeslot.create({
+            :start_time => start_time, :end_time => end_time})
           overridingTimeslot.programmes << overridingProg
 
           generate_schedule(overridingTimeslot)
-          sessions = PlayoutSession.where(start_time:
-                       DateTime.new(2014, 9, 1, 12, 0, 0).utc...
-                       DateTime.new(2014, 9, 1, 13, 0, 0).utc)
+          sessions = PlayoutSession.where(start_time: start_time...end_time)
 
           expect(sessions.length).to be 1
         end
