@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   devise :kerberos_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable
   has_many :visualisations
+  has_many :comments
 
   attr_default :isAdmin, false
 end
