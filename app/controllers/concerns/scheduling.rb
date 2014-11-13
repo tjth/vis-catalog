@@ -5,7 +5,7 @@ module Scheduling
   extend ActiveSupport::Concern
  
   def testing
-    @test = 1
+    @test = 3
   end
 
   class PlayoutModel
@@ -29,7 +29,6 @@ module Scheduling
 
   def get_total_screen_load(programmes)
     scrLoad = 0
-
     programmes.each do |programme|
       scrLoad = scrLoad + programme.screens
     end
@@ -47,6 +46,11 @@ module Scheduling
     return queue 
   end
 
+  def clean_old_sessions(start_time, end_time)
+    oldSessions = PlayoutSession.where(start_time: start_time...end_time)
+    oldSessions.destroy_all
+  end
+
   def generate_schedule(timeslot)
     start_time = timeslot.start_time
     end_time = timeslot.end_time
@@ -54,6 +58,8 @@ module Scheduling
 
     queue = preprocess_and_build_queue(progs)
     playSys = PlayoutModel.new(start_time, queue)
+
+    clean_old_sessions(start_time, end_time)
 
     if (get_total_screen_load(queue) == Const.NO_OF_SCREENS)
       if (queue.length == Const.OVERRIDING_QUEUE_LENGTH)

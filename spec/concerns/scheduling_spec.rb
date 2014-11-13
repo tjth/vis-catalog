@@ -4,15 +4,14 @@ include Const
 
 RSpec.describe Scheduling, :type => :concern do
 
-  Visualisation.create([
-    {:name => "Milan"}, 
-    {:name => "Green"},
-    {:name => "Pink"}, 
-    {:name => "Power", :isDefault => true}, 
-  ])
-
   describe '.get_a_default_programme' do
-    
+    Visualisation.create([
+      {:name => "Milan"}, 
+      {:name => "Green"},
+      {:name => "Pink"}, 
+      {:name => "Power", :isDefault => true}, 
+    ])
+
     prog = get_a_default_programme
     vis = Visualisation.find(prog.visualisation_id)
 
@@ -36,6 +35,10 @@ RSpec.describe Scheduling, :type => :concern do
                                          {:screens => 3, :priority => 2},
                                          {:screens => 2, :priority => 1}])
 
+  emptyProgsQueue = preprocess_and_build_queue(emptyProgs)
+  underPopulatedProgsQueue = preprocess_and_build_queue(underPopulatedProgs)
+  wellPopulatedProgsQueue = preprocess_and_build_queue(wellPopulatedProgs)
+
   describe '.get_total_screen_load' do
     it 'should return the sum of all programme\'s screens' do
       expect(get_total_screen_load(emptyProgs)).to be 0
@@ -45,11 +48,6 @@ RSpec.describe Scheduling, :type => :concern do
   end
 
   describe '.preprocess_and_build_queue' do
-    
-    emptyProgsQueue = preprocess_and_build_queue(emptyProgs)
-    underPopulatedProgsQueue = preprocess_and_build_queue(underPopulatedProgs)
-    wellPopulatedProgsQueue = preprocess_and_build_queue(wellPopulatedProgs)
-
     context 'should return a queue which' do
       context 'contain some programmes' do
         it 'for initially empty programme list' do
@@ -125,30 +123,55 @@ RSpec.describe Scheduling, :type => :concern do
     end
   end
 
-  vis = Visualisation.create({:name => 'Test'})
-  overridingProg = 
-    Programme.create({:screens => Const.NO_OF_SCREENS, :priority => 1})
-  vis.programmes << overridingProg
 
-  overridingTimeslot = 
-    Timeslot.create({
-      :start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
-      :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc
-    })
-  overridingTimeslot.programmes << overridingProg
 
-  describe '.generate_schedule:' do
+  describe '.clean_old_sessions' do
+    it 'should clean all the existing session within the timeslot' do
+      PlayoutSession.create([
+        {:start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
+         :end_time => DateTime.new(2014, 9, 1, 12, 1, 0).utc},
+        {:start_time => DateTime.new(2014, 9, 1, 12, 1, 0).utc,
+         :end_time => DateTime.new(2014, 9, 1, 12, 2, 0).utc},
+        {:start_time => DateTime.new(2014, 9, 1, 12, 2, 0).utc,
+         :end_time => DateTime.new(2014, 9, 1, 12, 3, 0).utc}
+      ])
+
+      start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
+      end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
+      clean_old_sessions(start_time, end_time)
+
+      sessions = PlayoutSession.where(start_time:
+                     DateTime.new(2014, 9, 1, 12, 0, 0).utc...
+                     DateTime.new(2014, 9, 1, 13, 0, 0).utc)
+
+      expect(sessions.length).to be 0
+    end
+  end
+
+  describe '.generate_schedule' do
     context 'when total screen load equals to NO_OF_SCREENS' do
       context 'and there is 1 programme only (overriding case)' do
-        test = generate_schedule(overridingTimeslot)
-          sessions = PlayoutSession.where(start_time:
-            DateTime.new(2014, 9, 1, 12, 0, 0).utc..
-            DateTime.new(2014, 9, 1, 13, 0, 0))
+        
         it 'should create schedule with 1 item only' do
+          vis = Visualisation.create({:name => 'Test'})
+          overridingProg = Programme.create({:screens => Const.NO_OF_SCREENS,
+                                             :priority => 1})
+          vis.programmes << overridingProg
+
+          overridingTimeslot = 
+            Timeslot.create({
+              :start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
+              :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc
+            })
+          overridingTimeslot.programmes << overridingProg
+
+          generate_schedule(overridingTimeslot)
+          sessions = PlayoutSession.where(start_time:
+                       DateTime.new(2014, 9, 1, 12, 0, 0).utc...
+                       DateTime.new(2014, 9, 1, 13, 0, 0).utc)
+
           expect(sessions.length).to be 1
         end
-
-        
       end
 
       context 'and there is 2-4 programs (cycle-around case)' do
@@ -157,6 +180,7 @@ RSpec.describe Scheduling, :type => :concern do
 
     end
   end
+
 end
 
 
