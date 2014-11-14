@@ -290,13 +290,17 @@
     app.directive('timeslotEditor', function() {
         return {
             scope: {item:'='},
-
-                controller: ['$scope', function($scope){
-                
+            controller: ['$scope', "$location", function($scope, $location) {
+                $scope.editTimeslot = function(timeslot) {
+                    $location.path('/schedule/timeslot/' + timeslot.id);  
+                    $scope.$apply();
+                }
             }],
 
             link: function(scope, element, attrs) {
-                $(element).timesloteditor();
+                $(element).timesloteditor({ timeslotclicked : function(event, data) {
+                    scope.editTimeslot(data.timeslot);
+                }});
                 $(element).timesloteditor("setStartTime", moment(attrs["startOfWeek"]).add(attrs["day"], "days"));
             }
         }; 

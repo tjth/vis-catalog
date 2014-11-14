@@ -68,8 +68,6 @@ $.widget("widgets.timesloteditor", {
     BORDER_COLOURS : ["#999999", "#ebebeb", "#999999"],
 
     _create: function() {
-        var that = this
-
         this.height = 0;
         this.timeslots = []
 
@@ -80,23 +78,23 @@ $.widget("widgets.timesloteditor", {
         
         this.element.addClass("timeslot-editor");
         var canvas = $("<canvas></canvas>")
-          .mousemove(function(event) { that._on_mousemove(that, event); })
-          .mousedown(function(event) { that._on_mousedown(that, event); })
-          .mouseup(function(event) { that._on_mouseup(that, event); })
-          //.mouseover(function(event) { that._on_mouseover(that, event); })
-          .dblclick(function(event) { that._on_doubleclick(that, event); })
+          .mousemove($.proxy(this, "_on_mousemove"))
+          .mousedown($.proxy(this, "_on_mousedown"))
+          .mouseup($.proxy(this, "_on_mouseup"))
+          .dblclick($.proxy(this, "_on_doubleclick"))
           .attr("tabindex", "0")
-          .keydown(function(event) { that._on_keyup(that, event); }) 
+          .keydown($.proxy(this, "_on_keyup")) 
           .bind('selectstart', function(e) { e.preventDefault(); return false; })
           .appendTo(this.element);
         
         this.canvas = canvas.get(0);
         
-         canvas.fillingCanvas({
+        var that = this;
+        canvas.fillingCanvas({
             resized: function( event, data ) {
                 that.setMinuteWidth(that.canvas.width / (24*60))
             }
-          });
+        });
     },
 
     _draw: function() {
@@ -115,28 +113,33 @@ $.widget("widgets.timesloteditor", {
         ctx.restore();
     },
 
-    _on_keyup: function(that, event) {
+    _on_keyup: function(event) {
         // Delete key
         if (event.keyCode == 46) this.removeTimeslot();
     }, 
 
-    _on_mousemove: function(that, event) {
+    _on_mousemove: function(event) {
         this._fix_event(event);
         var i;
         var cursor = 'auto';
         var handle = -1;
 
-        for (i = 0; i < that.timeslots.length; i++) {
-            var handle = that._get_timeslot_resize_handle(that.timeslots[i], event.offsetX);
+        for (i = 0; i < this.timeslots.length; i++) {
+            var handle = this._get_timeslot_resize_handle(this.timeslots[i], event.offsetX);
             if (handle != -1) break;
         }
 
-        if (!that.mousedown) {
+        if (!this.mousedown) {
+            
+            if (this._get_timeslot_at_pos(event.offsetX) != null) {
+                cursor = "pointer";
+            }
+            
             switch (handle) {
               case RIGHT: cursor='w-resize';  break;
               case LEFT: cursor='e-resize';  break;
             }
-            that.element.css("cursor", cursor);
+            this.element.css("cursor", cursor);
         } else {
 
             // Create new on drag
@@ -146,31 +149,31 @@ $.widget("widgets.timesloteditor", {
 
             var minWidth = 20;
             
-            if (that.dragAction == RESIZE) {
-                if (that.dragDirection == RIGHT) {
-                    if (this._get_x(that.timeslots[that.selected].start) + minWidth < event.offsetX)
-                        that.timeslots[that.selected].setEnd(this._get_time(event.offsetX));
+            if (this.dragAction == RESIZE) {
+                if (this.dragDirection == RIGHT) {
+                    if (this._get_x(this.timeslots[this.selected].start) + minWidth < event.offsetX)
+                        this.timeslots[this.selected].setEnd(this._get_time(event.offsetX));
                 }
-                if (that.dragDirection == LEFT) {
-                    if (this._get_x(that.timeslots[that.selected].end) > event.offsetX + minWidth)
-                        that.timeslots[that.selected].setStart(this._get_time(event.offsetX));
+                if (this.dragDirection == LEFT) {
+                    if (this._get_x(this.timeslots[this.selected].end) > event.offsetX + minWidth)
+                        this.timeslots[this.selected].setStart(this._get_time(event.offsetX));
                 }
-            } else if (that.dragAction == MOVE) {
-                that.element.css("cursor", "move");
-                that.timeslots[that.selected].move(this._get_time(event.offsetX - this.dragXOffset));
+            } else if (this.dragAction == MOVE) {
+                this.element.css("cursor", "move");
+                this.timeslots[this.selected].move(this._get_time(event.offsetX - this.dragXOffset));
             }
-            that._draw();
+            this._draw();
         }
 
 
     },
 
-    _on_mousedown: function(that, event) {
+    _on_mousedown: function(event) {
         this._fix_event(event);
-        that.mousedown = true;
+        this.mousedown = true;
 
-        for (i = 0; i < that.timeslots.length; i++) {
-            var handle = that._get_timeslot_resize_handle(that.timeslots[i], event.offsetX);
+        for (i = 0; i < this.timeslots.length; i++) {
+            var handle = this._get_timeslot_resize_handle(this.timeslots[i], event.offsetX);
             if (handle != -1) {
                 this.selected = i;
                 this.dragDirection = handle;
@@ -180,37 +183,40 @@ $.widget("widgets.timesloteditor", {
         }
 
         // No handle selected, try to see if a Timeslot is selected
-        for (i = 0; i < that.timeslots.length; i++) {
-            if (that.timeslots[i].in(this._get_time(event.offsetX))) {
-                this.selected = i;
-                this.dragXOffset = event.offsetX - this._get_x(that.timeslots[i].start);
-                this.dragAction = MOVE;
-                return;
-            }
+        var timeslot = this._get_timeslot_at_pos(event.offsetX)
+
+        if (timeslot != null) {
+            this.selected = i;
+            this.dragXOffset = event.offsetX - this._get_x(this.timeslots[i].start);
+            this.dragAction = MOVE;
+            return;
         }
     },
 
-    _on_mouseup: function(that, event) {
+    _on_mouseup: function(event) {
         this._fix_event(event);
-        that.mousedown = false;
+        this.mousedown = false;
         this.dragXOffset = -1;
 
-        that.dragDirection = -1;
-        that.dragAction = -1;
+        this.dragDirection = -1;
+        this.dragAction = -1;
 
         var withinTimeslot = false;
-        for (var i = 0; i < this.timeslots.length; i++) {
-            if (this.timeslots[i].in(this._get_time(event.offsetX))) 
-                withinTimeslot = true;
-        }
-        if (!withinTimeslot) that.selected = null;
+        if (this._get_timeslot_at_pos(event.offsetX) != null) this.selected = null;
 
-        that._draw();
+        this._draw();
     },
 
-    _on_doubleclick: function(that, event) {
+    _on_doubleclick: function(event) {
         this._fix_event(event);
-        this.addTimeslot(event.offsetX - 100/2);
+        
+        var timeslot = this._get_timeslot_at_pos(event.offsetX);
+        
+        if (timeslot == null) {
+            this.addTimeslot(event.offsetX - 100/2);
+        } else {
+            this._trigger("timeslotclicked", event, {timeslot:timeslot});   
+        }
     },
 
     _draw_timeslot : function(ctx, timeslot, selected) {
@@ -259,6 +265,15 @@ $.widget("widgets.timesloteditor", {
         if (isNear(x, x1, tolerance, LEFT)) return LEFT;
         if (isNear(x, x2, tolerance, RIGHT)) return RIGHT;
         return -1;
+    },
+    
+    _get_timeslot_at_pos : function(x) {
+        for (i = 0; i < this.timeslots.length; i++) {
+            if (this.timeslots[i].in(this._get_time(event.offsetX))) {
+                return this.timeslots[i];          
+            }
+        }
+        return null;
     },
     
 
