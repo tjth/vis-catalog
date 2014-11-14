@@ -7,7 +7,28 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 if Visualisation.all.empty?
-  for i in 1..5
+for i in 1..10
+  Visualisation.create([
+    {:name => "Milan", 
+       :link => "/assets/dummy/milan.png", 
+       :approved => true,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Green",
+       :approved => true,
+       :link => "/assets/dummy/green.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+      {:name => "Pink", 
+       :approved => true,
+       :link => "/assets/dummy/pink.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Power", 
+       :link => "/assets/dummy/power.png",
+       :approved => true,
+       :isDefault => true,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+    ])
+end
+  for i in 1..10
     Visualisation.create([
       {:name => "Milan", 
        :link => "/assets/dummy/milan.png", 
