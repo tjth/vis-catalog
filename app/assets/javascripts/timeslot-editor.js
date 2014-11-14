@@ -5,30 +5,61 @@ var LEFT = 0;
 var RIGHT = 1;
 
 
-function isNear(x, y, x1, y1, tolerance, handle) {
+function isNear(x, x1, tolerance, handle) {
     var diffX, diffY;
 
     if (handle == LEFT) diffX = x - x1;
     if (handle == RIGHT) diffX = x1 - x;
     
-    diffY = Math.abs((y - y1) * 2);
-
-    return diffX <= tolerance && diffX > 0 &&
-           diffY <= tolerance && diffY > 0;
+    return diffX <= tolerance && diffX > 0;
 }
 
-function Timeslot(start, end) {
-    this.start = start;
-    this.end = end;
+function Timeslot(start, end, min, max) {
+    this.setStart(start);
+    this.setEnd(end);
+    
+    this.min = min;
+    this.max = max;
 }
 
-Timeslot.prototype.moveMinutes = function(minutes) {
-        this.start.add(minutes, "minutes");
-        this.end.add(minutes, "minutes");
+Timeslot.prototype.move = function(start) {
+    
+    var duration = this.end.diff(this.start);
+    
+    this.setStart(start.clone());
+    this.setEnd(this.start.clone().add(duration));
+        
+    // If we violate the bounds, rerun with the max/min we can do
+    
+    if (this.start < this.min) {
+        this.move(this.min.clone());
+    } else if (this.end > this.max) {
+        this.move(this.max.clone().add(-duration));
+    }
 }
 
 Timeslot.prototype.in = function(time) {
-        return (start.diff(time, minutes) <= 0 && end.diff(time, "minutes") >= 0);
+    return (this.start.diff(time, "minutes") <= 0 && this.end.diff(time, "minutes") >= 0);
+}
+
+Timeslot.prototype.setStart = function(start) {
+    this.start = this.snap(start);
+}
+Timeslot.prototype.setEnd = function(end) {
+    this.end = this.snap(end);
+}
+
+Timeslot.prototype.snap = function(time) {
+    var diff =  time.minute() % 10;
+    if (diff < 5) {
+        return time.add(-diff, "minutes");
+    } else {
+        return time.add(10 - diff, "minutes");
+    }
+}
+
+Timeslot.prototype.format = function() {
+        return this.start.format("HH:mm") + " - " + this.end.format("HH:mm");
 }
 
 $.widget("widgets.timesloteditor", {
@@ -96,7 +127,7 @@ $.widget("widgets.timesloteditor", {
         var handle = -1;
 
         for (i = 0; i < that.timeslots.length; i++) {
-            var handle = that._get_timeslot_resize_handle(that.timeslots[i], event.offsetX, event.offsetY);
+            var handle = that._get_timeslot_resize_handle(that.timeslots[i], event.offsetX);
             if (handle != -1) break;
         }
 
@@ -118,14 +149,15 @@ $.widget("widgets.timesloteditor", {
             if (that.dragAction == RESIZE) {
                 if (that.dragDirection == RIGHT) {
                     if (this._get_x(that.timeslots[that.selected].start) + minWidth < event.offsetX)
-                        that.timeslots[that.selected].end = this._get_time(event.offsetX);
+                        that.timeslots[that.selected].setEnd(this._get_time(event.offsetX));
                 }
                 if (that.dragDirection == LEFT) {
                     if (this._get_x(that.timeslots[that.selected].end) > event.offsetX + minWidth)
-                        that.timeslots[that.selected].start = this._get_time(event.offsetX);
+                        that.timeslots[that.selected].setStart(this._get_time(event.offsetX));
                 }
             } else if (that.dragAction == MOVE) {
-                that.timeslots[that.selected].moveMinutes((event.offsetX - this.dragXOffset) / this.minuteWidth);
+                that.element.css("cursor", "move");
+                that.timeslots[that.selected].move(this._get_time(event.offsetX - this.dragXOffset));
             }
             that._draw();
         }
@@ -138,7 +170,7 @@ $.widget("widgets.timesloteditor", {
         that.mousedown = true;
 
         for (i = 0; i < that.timeslots.length; i++) {
-            var handle = that._get_timeslot_resize_handle(that.timeslots[i], event.offsetX, event.offsetY);
+            var handle = that._get_timeslot_resize_handle(that.timeslots[i], event.offsetX);
             if (handle != -1) {
                 this.selected = i;
                 this.dragDirection = handle;
@@ -182,27 +214,35 @@ $.widget("widgets.timesloteditor", {
     },
 
     _draw_timeslot : function(ctx, timeslot, selected) {
-        var x1 = this._get_x(timeslot.start);
-        var x2 = this._get_x(timeslot.end);
-        
+        var x1 = Math.floor(this._get_x(timeslot.start));
+        var x2 = Math.floor(this._get_x(timeslot.end));
         var y1 = 0;
         var y2 = this.canvas.height;
         
-        var i;
-        for (i = 0; i < 3; i++) {
-            ctx.fillStyle = this.BORDER_COLOURS[i];
-            ctx.fillRect(x1 + i, y1 + i, x2 - x1 - i * 2, y2 - y1 - i * 2);
-        }
+        // Border
+        ctx.fillStyle = "#dbdbdb";
+        ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
 
-        ctx.save();
-        ctx.fillStyle = 'white';
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillRect(x1 + i, y1 + i, x2 - x1 - i * 2, y2 - y1 - i * 2);
-        ctx.restore();
+        // Fill
+        ctx.fillStyle = "#f2f2f2";
+        ctx.fillRect(x1 + 1, y1, x2 - x1 - 2, y2 - y1);
+        
+        // Text
+        ctx.fillStyle = "#9e9e9e";
+        var fontSize = 12;
+        ctx.font = fontSize + "px Roboto";
+        var text = timeslot.format();
+        
+        // Only draw text if it fits
+        if (x2 - x1 > ctx.measureText(text).width) { 
+            ctx.fillText(text, Math.floor((this._get_x(timeslot.end) + this._get_x(timeslot.start) - ctx.measureText(text).width)/2), 
+                         Math.floor((this.canvas.height + fontSize)/2));
+        }
+        
     }, 
     
     _get_x : function(time) {
-        return this.startTime.diff(time, 'minutes') * this.minuteWidth;
+        return time.diff(this.startTime, 'minutes') * this.minuteWidth;
     },
     
     _get_time : function(x) {
@@ -216,13 +256,13 @@ $.widget("widgets.timesloteditor", {
         var x1 = this._get_x(timeslot.start);
         var x2 = this._get_x(timeslot.end);
         
-        if (isNear(x, y, x1, tolerance, LEFT)) return LEFT;
-        if (isNear(x, y, x2, tolerance, RIGHT)) return RIGHT;
+        if (isNear(x, x1, tolerance, LEFT)) return LEFT;
+        if (isNear(x, x2, tolerance, RIGHT)) return RIGHT;
         return -1;
     },
     
 
-    gettimeslots: function() {
+    getTimeslots: function() {
         return this.timeslots;
     },
 
@@ -230,7 +270,10 @@ $.widget("widgets.timesloteditor", {
         var default_size = 100;
         x = x || Math.floor((this.width - default_size)/2);
         
-        this.selected = this.timeslots.push(new Timeslot(this._get_time(x), this._get_time(x+default_size))) - 1;
+        this.selected = this.timeslots.push(new Timeslot(this._get_time(x), 
+                                                         this._get_time(x).add(1, "hours"), 
+                                                         this.startTime, this.endTime)) - 1;
+
         this._draw();
     },
 
@@ -259,6 +302,7 @@ $.widget("widgets.timesloteditor", {
     
     setStartTime : function(time) {
         this.startTime = time;
+        this.endTime = time.clone().add(24, "hours");
     },
 
     _fix_event: function(event) {
