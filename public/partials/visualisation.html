@@ -9,29 +9,31 @@
                 </div>
             </div>
         </div>
-        <div id="comments" class="col-sm-4">
+        <div class="col-sm-4">
             <div class="card guideline">
-                <div class="item">
                     <div class="heading">Comments</div>
-                    <form ng-controller="CommentController">
-                          <div id="new-comment" class="comment">
-                              <textarea ng-model="txtcomment" placeholder="Your comment"></textarea>
-                              <button class="newcomment btn" ng-click="comment_add();" style="margin-top:10px;">Post Comment</button>
-                          </div>                        
-                          Comments
-                          <ul>
-                            <li ng-repeat="comnt in comments"> {[{ comnt }]}></li>
-                          </ul>
-                    </form>
+                    <div class="comment">
+                        <div class="top">
+                            <img class="avatar" ng-src="{[{commentsimage}]}"/>
+                            <textarea placeholder="Your comment" style="width: 95%;"></textarea>
+                        </div>
+                        <div class="bottom" style="text-align: right;">
+                            <button class="post" >POST</button>
+                        </div>
+                    </div>                        
+            </div>
+            <div class="card guideline">
+                <div class="comment">
+                    <div class="top">
+                        {[{commentstext}]}
                     </div>
-                    <div class="comment bubble" ng-repeat="comment in comments">
-                    <div class="top"></div>
                     <div class="bottom">
-                        <div class="date">Posted on {[{comment.date}]}</div>
-                        <div class="rating">{[{comment.rating}]} stars</div>
-                    </div>
+                        <div class="date">Posted on {[{commentsdate}]}</div>    
+                    </div>                
                 </div>
-                </div>
+                
+                
+            </div>
                 
                 
             </div>
