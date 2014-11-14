@@ -212,6 +212,10 @@
         background-color: #E0E0E0;
     }
     
+    .commenttext {
+        width: calc(100% - #{$head-size} - 10px);
+    }
+    
     .post {
         text-align: right;
         background: transparent;

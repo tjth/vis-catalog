@@ -15,7 +15,7 @@
                     <div class="comment">
                         <div class="top">
                             <img class="avatar" ng-src="{[{commentsimage}]}"/>
-                            <textarea placeholder="Your comment" style="width: 95%;"></textarea>
+                            <textarea placeholder="Your comment" class="commenttext"></textarea>
                         </div>
                         <div class="bottom" style="text-align: right;">
                             <button class="post" >POST</button>
@@ -25,10 +25,11 @@
             <div class="card guideline">
                 <div class="comment">
                     <div class="top">
+                        
                         {[{commentstext}]}
                     </div>
                     <div class="bottom">
-                        <div class="date">Posted on {[{commentsdate}]}</div>    
+                        <div class="date"> <img class="avatar" ng-src="{[{commentsimage}]}"/>Posted on {[{commentsdate}]}</div>    
                     </div>                
                 </div>
                 
