@@ -20,8 +20,7 @@
                         <div id="planner">
                             <div id="axis"><canvas style="font-family: Roboto; width:100%; height:100%"></canvas></div>
                             <div id="fg">
-                                <div class="day" ng-repeat='day in days'  timeslot-editor="{[{day}]}">
-                                </div>
+                                <div class="day" ng-repeat='day in days' timeslot-editor start-of-week="{[{startOfWeek.format()}]}" day="{[{day}]}"></div>
                             </div>
                         </div>
                     </div>

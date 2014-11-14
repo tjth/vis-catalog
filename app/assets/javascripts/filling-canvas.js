@@ -13,5 +13,6 @@ $.widget("widgets.fillingCanvas", {
     _fill: function() {
         this.element.get(0).width  = this.element.get(0).offsetWidth;
         this.element.get(0).height = this.element.get(0).offsetHeight;
+        this._trigger("resized", null, {});
     },
 });

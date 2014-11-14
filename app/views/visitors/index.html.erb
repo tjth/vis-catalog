@@ -291,13 +291,13 @@
         return {
             scope: {item:'='},
 
-            controller: ['$scope', function($scope){
+                controller: ['$scope', function($scope){
                 
             }],
 
             link: function(scope, element, attrs) {
                 $(element).timesloteditor();
-                
+                $(element).timesloteditor("setStartTime", moment(attrs["startOfWeek"]).add(attrs["day"], "days"));
             }
         }; 
     }); 
