@@ -95,6 +95,9 @@ $.widget("widgets.timesloteditor", {
                 that.setMinuteWidth(that.canvas.width / (24*60))
             }
         });
+        
+        // Still trigger the mouseup even if the cursor isn't over the canvas
+        $("body").mouseup($.proxy(this, "_on_mouseup"));
     },
 
     _draw: function() {
