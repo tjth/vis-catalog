@@ -59,7 +59,14 @@ Timeslot.prototype.snap = function(time) {
 }
 
 Timeslot.prototype.format = function() {
-        return this.start.format("HH:mm") + " - " + this.end.format("HH:mm");
+    return this.start.format("HH:mm") + " - " + this.end.format("HH:mm");
+}
+
+Timeslot.prototype.conflicts = function(start, end) {
+    return end > this.end && start < this.end ||
+           start < this.start && end > this.start ||
+           start >= this.start && end <= this.end;
+    
 }
 
 $.widget("widgets.timesloteditor", {
@@ -103,17 +110,17 @@ $.widget("widgets.timesloteditor", {
     _draw: function() {
         var ctx = this.canvas.getContext('2d')
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        ctx.save();
         
+        var conflicts = this.getConflicts();
+        
+        ctx.save();
         for (var i = 0; i < this.timeslots.length; i++) {
-            if (i != this.selected) this._draw_timeslot(ctx, this.timeslots[i], false);
+            var timeslot = this.timeslots[i];
+            var selected =  i == this.selected;
+            var conflicts = this._conflicts(null, null, timeslot);
+            this._draw_timeslot(ctx, this.timeslots[i], selected, conflicts);
         }
         ctx.restore()
-        
-        ctx.save();
-        if (this.selected != null) this._draw_timeslot(ctx, this.timeslots[this.selected], true);
-        ctx.restore();
     },
 
     _on_keyup: function(event) {
@@ -153,13 +160,21 @@ $.widget("widgets.timesloteditor", {
             var minWidth = 20;
             
             if (this.dragAction == RESIZE) {
+                // Conflict behaviour is that is something already conflicts, allow it to be resized in anyway
+                // but if it currently doesn't, don't allow it to be resized so that it conflicts
                 if (this.dragDirection == RIGHT) {
-                    if (this._get_x(this.timeslots[this.selected].start) + minWidth < event.offsetX)
-                        this.timeslots[this.selected].setEnd(this._get_time(event.offsetX));
+                    if (this._get_x(this.timeslots[this.selected].start) + minWidth < event.offsetX &&
+                        (this._conflicts(null, null, this.timeslots[this.selected]) ||
+                        !this._conflicts(null, this._get_time(event.offsetX), this.timeslots[this.selected]))) {
+                            this.timeslots[this.selected].setEnd(this._get_time(event.offsetX));
+                    }
                 }
                 if (this.dragDirection == LEFT) {
-                    if (this._get_x(this.timeslots[this.selected].end) > event.offsetX + minWidth)
+                    if (this._get_x(this.timeslots[this.selected].end) > event.offsetX + minWidth && 
+                        (this._conflicts(null, null, this.timeslots[this.selected]) ||
+                        !this._conflicts(this._get_time(event.offsetX), null, this.timeslots[this.selected]))) {
                         this.timeslots[this.selected].setStart(this._get_time(event.offsetX));
+                    }
                 }
             } else if (this.dragAction == MOVE) {
                 this.element.css("cursor", "move");
@@ -205,7 +220,7 @@ $.widget("widgets.timesloteditor", {
         this.dragAction = -1;
 
         var withinTimeslot = false;
-        if (this._get_timeslot_at_pos(event.offsetX) != null) this.selected = null;
+        if (this._get_timeslot_at_pos(event.offsetX) == null) this.selected = null;
 
         this._draw();
     },
@@ -222,7 +237,7 @@ $.widget("widgets.timesloteditor", {
         }
     },
 
-    _draw_timeslot : function(ctx, timeslot, selected) {
+    _draw_timeslot : function(ctx, timeslot, selected, conflicts) {
         var x1 = Math.floor(this._get_x(timeslot.start));
         var x2 = Math.floor(this._get_x(timeslot.end));
         var y1 = 0;
@@ -233,11 +248,22 @@ $.widget("widgets.timesloteditor", {
         ctx.fillRect(x1, y1, x2 - x1, y2 - y1);
 
         // Fill
+
         ctx.fillStyle = "#f2f2f2";
+        if (conflicts) {
+            ctx.globalAlpha=0.6;
+            ctx.fillStyle = "#f44336";  
+        }
         ctx.fillRect(x1 + 1, y1, x2 - x1 - 2, y2 - y1);
+
         
         // Text
         ctx.fillStyle = "#9e9e9e";
+        if (conflicts) {
+            ctx.fillStyle = "#fff";  
+        } else if (selected) {
+            ctx.fillStyle = "#000";
+        }
         var fontSize = 12;
         ctx.font = fontSize + "px Roboto";
         var text = timeslot.format();
@@ -297,6 +323,7 @@ $.widget("widgets.timesloteditor", {
 
     removeTimeslot: function() {
         if (this.selected != null) {
+            
             this.timeslots.splice(this.selected, 1);
             this.selected = null;
             this._draw();
@@ -330,6 +357,31 @@ $.widget("widgets.timesloteditor", {
            event.offsetX = event.pageX - targetOffset.left;
            event.offsetY = event.pageY - targetOffset.top;
         }
+    },
+    
+    _conflicts : function(start, end, timeslot) {
+        start = start || timeslot.start;
+        end = end || timeslot.end;
+        
+        for (var i = 0; i < this.timeslots.length; i++) {
+            if (this.timeslots[i] != timeslot) {
+                if (this.timeslots[i].conflicts(start, end)) {
+                    return true;   
+                }
+            }
+        }
+        return false;
+    },
+    
+    getConflicts : function() {
+        var conflicts = []
+        for (var i = 0; i < this.timeslots.length; i++) {
+            var timeslot = this.timeslots[i];
+            if (this._conflicts(null, null, timeslot)) {
+                conflicts.push(timeslot);
+            }
+        }
+        return conflicts;
     }
 
 });
