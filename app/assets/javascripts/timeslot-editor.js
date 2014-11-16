@@ -104,6 +104,7 @@ $.widget("widgets.timesloteditor", {
         });
         
         // Still trigger the mouseup even if the cursor isn't over the canvas
+        $("body").mousedown($.proxy(this, "_on_mousedown"));
         $("body").mouseup($.proxy(this, "_on_mouseup"));
     },
 
@@ -188,6 +189,13 @@ $.widget("widgets.timesloteditor", {
 
     _on_mousedown: function(event) {
         this._fix_event(event);
+        
+        if (!this._in_element(event)) {
+            this.selected = null;
+            this._draw();
+            return;
+        }
+        
         this.mousedown = true;
 
         for (i = 0; i < this.timeslots.length; i++) {
@@ -201,24 +209,20 @@ $.widget("widgets.timesloteditor", {
         }
 
         // No handle selected, try to see if a Timeslot is selected
-        var timeslot = this._get_timeslot_at_pos(event.offsetX)
+        var timeslot = this._get_timeslot_at_pos(event.offsetX);
 
         if (timeslot != null) {
             this.selected = i;
             this.dragXOffset = event.offsetX - this._get_x(this.timeslots[i].start);
             this.dragAction = MOVE;
-            return;
+        } else {
+            this.selected = null;
         }
+        this._draw();
     },
 
     _on_mouseup: function(event) {
         this._fix_event(event);
-        
-        if (this.dragAction != RESIZE && 
-            this._get_timeslot_at_pos(event.offsetX, event.clientY) == null) 
-        {
-            this.selected = null;
-        }
         
         this.mousedown = false;
         this.dragXOffset = -1;
@@ -300,18 +304,21 @@ $.widget("widgets.timesloteditor", {
         return -1;
     },
     
-    _get_timeslot_at_pos : function(x, y) {
-        if (y != undefined) {
-            var bounds = this.element.get(0).getBoundingClientRect();
-            if (!( y < bounds.bottom && y > bounds.top )) return null;
-        }
-        
+    _get_timeslot_at_pos : function(x) {
         for (i = 0; i < this.timeslots.length; i++) {
             if (this.timeslots[i].in(this._get_time(event.offsetX))) {
                 return this.timeslots[i];          
             }
         }
         return null;
+    },
+    
+    _in_element : function(event) {
+        var bounds = this.element.get(0).getBoundingClientRect();
+        return event.clientY < bounds.bottom && 
+               event.clientY > bounds.top    &&
+               event.clientX > bounds.left   &&
+               event.clientX < bounds.right;
     },
     
 
