@@ -11,23 +11,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141104170642) do
+ActiveRecord::Schema.define(version: 20141112092026) do
+
+  create_table "playout_sessions", force: true do |t|
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.integer  "start_screen"
+    t.integer  "end_screen"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "visualisation_id"
+  end
+
+  add_index "playout_sessions", ["visualisation_id"], name: "index_playout_sessions_on_visualisation_id"
 
   create_table "programmes", force: true do |t|
-    t.integer  "vis_ID"
     t.integer  "screens"
     t.integer  "priority"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "visualisations_id"
+    t.integer  "timeslot_id"
+    t.integer  "visualisation_id"
   end
 
+  add_index "programmes", ["visualisation_id"], name: "index_programmes_on_visualisation_id"
+  add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
+
   create_table "timeslots", force: true do |t|
-    t.integer  "weekday"
-    t.time     "start_time"
-    t.time     "end_time"
+    t.datetime "start_time"
+    t.datetime "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "programmes_id"
+    t.date     "date"
   end
+
+  add_index "timeslots", ["programmes_id"], name: "index_timeslots_on_programmes_id"
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
@@ -45,8 +65,10 @@ ActiveRecord::Schema.define(version: 20141104170642) do
     t.string   "username"
     t.boolean  "isAdmin"
     t.boolean  "isApproved"
+    t.string   "authentication_token"
   end
 
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
   create_table "visualisations", force: true do |t|
@@ -61,6 +83,7 @@ ActiveRecord::Schema.define(version: 20141104170642) do
     t.integer  "user_id"
     t.boolean  "approved"
     t.string   "content"
+    t.boolean  "isDefault"
   end
 
 end

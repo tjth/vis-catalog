@@ -5,5 +5,6 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable
   has_many :visualisations
 
+  before_save :ensure_authentication_token
   attr_default :isAdmin, false
 end

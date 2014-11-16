@@ -1,4 +1,7 @@
 json.array!(@visualisations) do |visualisation|
-  json.extract! visualisation, :id
-  json.url visualisation_url(visualisation, format: :json)
+  if @expandAuthor != nil
+    json.extract! visualisation, :id, :name, :link, :description, :notes, :approved, :author_info, :created_at
+  else 
+  	json.extract! visualisation, :id, :name, :link, :description, :notes, :approved, :created_at
+  end
 end

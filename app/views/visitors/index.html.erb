@@ -15,10 +15,13 @@
     <div id="search" ng-init="showSearch = false" ng-class="{'active' : showSearch}" 
          ng-show="page.searchEnabled">
         <div class="icon" 
-             ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false"
+             ng-click="showSearch = !showSearch; clearSearch(); menuVisible = false; focusSearch();"
              ng-disabled="menuVisible">
         </div>
-        <input type="text" placeholder="Search" ng-model="searchQuery" ng-show="showSearch"
+        <input type="text" placeholder="Search" 
+               ng-model="searchQuery" 
+               ng-model-options="{debounce:500}"
+               ng-show="showSearch"
                ng-disabled="menuVisible" />
     </div>
 </header>
@@ -33,7 +36,19 @@
 
 <script>       
     
-    var app = angular.module("app", ['ngRoute', 'ngAnimate']);
+    // From http://stackoverflow.com/questions/3115982/how-to-check-javascript-array-equals
+    function arraysEqual(a, b) {
+      if (a === b) return true;
+      if (a == null || b == null) return false;
+      if (a.length != b.length) return false;
+
+      for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    }
+    
+    var app = angular.module("app", ['ngRoute', 'ngAnimate', 'ngResource', 'truncate']);
 
     app.config(function($interpolateProvider) {
           $interpolateProvider.startSymbol('{[{');
@@ -45,7 +60,7 @@
             $routeProvider.
             when('/', {
                 templateUrl: 'partials/main.html',
-                controller: 'masonController'
+                controller: 'masonController',
             }).
             when('/visualisations/:id', {
                 templateUrl: 'partials/visualisation.html',
@@ -53,15 +68,19 @@
             }).
             when('/submit/advert', {
                 templateUrl: 'partials/submit-advert.html',
-                controller: 'mainController',
+                controller: 'submitAdvertController',
             }).
             when('/submit/visualisation', {
                 templateUrl: 'partials/submit-visualisation.html',
-                controller: 'mainController',
+                controller: 'submitVisualisationController',
             }).               
             when('/moderate', {
                 templateUrl: 'partials/moderate.html',
                 controller: 'moderateController',
+            }).
+            when('/schedule', {
+                templateUrl: 'partials/schedule.html',
+                controller: 'scheduleController',
             }).
             otherwise({
                 redirectTo: '/'
@@ -95,22 +114,37 @@
 
     app.controller('mainController', function($scope, $rootScope, $route) {
 
-        $scope.clearSearch = function() { jQuery("#search input").val(""); }
 
-                                
+        $scope.clearSearch = function() { jQuery("#search input").val(""); }
+            
         $scope.$on('$routeChangeSuccess', function(next, current) { 
             $scope.menuVisible = false;
          });
         
+        $scope.focusSearch = function() {
+            setTimeout(function() {
+                $("#search input").focus()
+            }, 500);
+        }
+        
     });
     
-    app.controller('menuController', function($scope, $rootScope, $route) {
+        
+    app.factory('Visualisation', ['$resource',
+        function($resource){
+            return $resource('visualisations/:id.json', {id : "@id"}, {
+                query: { method:'GET', url:'visualisations.json', isArray:true },
+                approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
+                reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
+            });
+    }]);
+    
+    app.controller('menuController', function($scope, $rootScope, $route, $location) {
         
         $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
 
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
-                           {name : "New", url : "", img:"ic_new_releases_black_24dp.png"},
-                           {name : "Highest Rated", url : "", img : "ic_grade_black_24dp.png"},
+                           {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"},
                            {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
         
         $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
@@ -119,18 +153,17 @@
         $scope.adminLinks = [{name : "Moderate Content", class:"moderate", url : "/moderate", img:"ic_check_box_black_24dp.png"},
                              {name : "Schedule Content", class : "schedule", url : "/schedule", img:"ic_timer_black_24dp.png"}]
 
-        $scope.links = $scope.visLinks.concat($scope.contentLinks).concat($scope.adminLinks);
         
-        $scope.selected = $scope.links[0];
-                    
-        $rootScope.$on('$routeChangeSuccess', function(next, current) { 
-            for (route in $route.routes) {
-                if ($route.routes[route].templateUrl == current.loadedTemplateUrl) {
-                    $scope.selectedUrl = $route.routes[route].originalPath;
-                    break;
-                }
-            }
-         });
+        $scope.getQueryParameters = function(str) {
+            var params = (str).replace(/(.*\?)|(.*)/, '').split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
+            return arraysEqual(Object.keys(params), [""]) ? {} : params; 
+        }
+        
+        $scope.isCurrentMenuItem = function(item) {
+            return item.url.replace(/(\?.*)/, '') == $location.path() && 
+                   arraysEqual(Object.keys($scope.getQueryParameters(item.url)), Object.keys($location.search()));
+        }
+
 
     });
 
@@ -166,16 +199,64 @@
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
     });
     
-
-    app.controller('masonController', function($scope, $rootScope, visScope) {
-    
+    app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
-        $scope.visItems = visScope.getVisualisations();
+        $scope.visItems = Visualisation.query($routeParams)
+    });
+    
+    app.controller('scheduleController', function($scope, $rootScope) {
+        $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
+        $scope.days = [0, 1, 2, 3, 4, 5, 6];
+        $scope.timeslots = [ {startTime:"2014-11-13T10:00:00Z", endTime:"2014-11-13T11:00:00Z", visualisations: [1, 2, 3], adverts:[5, 6, 7]} ];
+        $scope.startOfWeek = moment().date(10)
+        
+        $scope.getShortWeekdayName = function(day) {
+            return moment().day(day).format("ddd")   
+        }
+        
+        $scope.formatWeek = function() {
+            return $scope.startOfWeek.format("Do MMMM") + " - " +  $scope.startOfWeek.clone().add(7, "days").format("Do MMMM")
+        }
     });
 
-    app.controller('moderateController', function($scope, $rootScope) {
-        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : false, class:"moderate"}
+    app.controller('moderateController', function(Visualisation, $scope, $rootScope) {
+        $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
+        
+        $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true'})
+        
+        $scope.fadeOutRow = function(childElement, item) {
+            var row = $(childElement).parents("tr");
+            row.animate({opacity: 0}, 250);
+            setTimeout(function() { 
+                // Add in another element which we can animate, so table rows do not 'jump' up
+                var shrinker = $("<div/>").addClass("shrinker").css({width : "100%", height : row.css("height")});
+                $(shrinker).insertAfter(row);
+                row.remove(); 
+                shrinker.slideUp(250);
+                
+                setTimeout(function() { 
+                    shrinker.remove();
+                    
+                    // Remove content item from content
+                    $scope.content.splice($scope.content.indexOf(item), 1);
+                    
+                    $scope.$apply();
+                }, 250);
+            }, 250)
+        }
+        
+        
+        $scope.approve = function(event, item) {
+            Visualisation.approve({id : item.id})
+            $scope.fadeOutRow(event.target);
+        }
+        
+        $scope.reject = function(event, item) {
+            Visualisation.reject({id : item.id})
+            $scope.fadeOutRow(event.target, item);
+        }
+
     });
     
     app.directive('horizontalScroll', function() {
@@ -188,28 +269,41 @@
         }
     }});
         
-    app.directive('colorThiefSrc', function() {
-     return {
-        link: function(scope, element, attrs) {
-            var img = new Image();
-            img.src = attrs.colorThiefSrc;
-            
-            $(img).on('load', function() {               
-                var color = new ColorThief().getColor(img);
-                
-                $(element).css("background-color" , "rgb(" + color + ")");
+    app.directive('colorThief', function() {
+        return {
+            scope: {item:'='},
 
-                var brightness = Math.sqrt( .241 * Math.pow(color[0], 2) + 
-                                            .691 * Math.pow(color[1], 2) + 
-                                            .068 * Math.pow(color[2], 2));
-                
-                if (brightness > 255/2) {
-                    $(element).addClass("bright-background");
+            controller: ['$scope', function($scope){
+                $scope.setBackground = function(element, item) {
+                    $(element).css("background-color", item.bg);
+                    if (item.bgBright) {
+                        $(element).addClass("bright-background");
+                    }   
+                };
+            }],
+
+            link: function(scope, element, attrs) {
+                if (scope.item.bg == undefined) {               
+                    var img = new Image();
+                    img.src = scope.item.link;
+
+                    $(img).on('load', function() {               
+                        var color = new ColorThief().getColor(img);
+
+
+                        var brightness = Math.sqrt( .241 * Math.pow(color[0], 2) + 
+                                                    .691 * Math.pow(color[1], 2) + 
+                                                    .068 * Math.pow(color[2], 2));
+
+                        scope.item.bg = "rgb(" + color + ")";
+                        scope.item.bgBright = brightness > 255/2;
+                        scope.setBackground(element, scope.item);
+                    });
+                } else {
+                    scope.setBackground(element, scope.item);   
                 }
-                
-            });
-        }
-    }; 
+            }
+        }; 
     }); 
 </script>
 ;
