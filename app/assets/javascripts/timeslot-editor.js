@@ -213,14 +213,18 @@ $.widget("widgets.timesloteditor", {
 
     _on_mouseup: function(event) {
         this._fix_event(event);
+        
+        if (this.dragAction != RESIZE && 
+            this._get_timeslot_at_pos(event.offsetX, event.clientY) == null) 
+        {
+            this.selected = null;
+        }
+        
         this.mousedown = false;
         this.dragXOffset = -1;
 
         this.dragDirection = -1;
         this.dragAction = -1;
-
-        var withinTimeslot = false;
-        if (this._get_timeslot_at_pos(event.offsetX) == null) this.selected = null;
 
         this._draw();
     },
@@ -296,7 +300,12 @@ $.widget("widgets.timesloteditor", {
         return -1;
     },
     
-    _get_timeslot_at_pos : function(x) {
+    _get_timeslot_at_pos : function(x, y) {
+        if (y != undefined) {
+            var bounds = this.element.get(0).getBoundingClientRect();
+            if (!( y < bounds.bottom && y > bounds.top )) return null;
+        }
+        
         for (i = 0; i < this.timeslots.length; i++) {
             if (this.timeslots[i].in(this._get_time(event.offsetX))) {
                 return this.timeslots[i];          
