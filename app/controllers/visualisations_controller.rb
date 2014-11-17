@@ -31,7 +31,7 @@ class VisualisationsController < ApplicationController
   # GET /visualisations.json
   def index
     @expandAuthor = params[:expandAuthor]
-    @visualisations = Visualisation.all
+    @visualisations = Visualisation.where(vis_type: "vis")
     if params[:needsModeration] != nil
       @needsModeration = true   
     else
@@ -44,9 +44,9 @@ class VisualisationsController < ApplicationController
       end
 
       if @needsModeration
-        @visualisations = @visualisations.select{ |vis| vis.approved == false }
+        @visualisations = @visualisations.select{ |vis| !vis.approved && vis.vis_type == "vis" }
       else
-        @visualisations = @visualisations.select{ |vis| vis.approved == true }
+        @visualisations = @visualisations.select{ |vis| vis.approved && vis.vis_type == "vis"}
       end
       
     else
@@ -57,9 +57,9 @@ class VisualisationsController < ApplicationController
       end
 
       if params[:needsModeration] != nil
-        @visualisations = u.visualisations.approved(false)
+        @visualisations = u.visualisations.approved(false).vis
       else
-        @visualisations = u.visualisations.approved(true)
+        @visualisations = u.visualisations.approved(true).vis
       end
     end
 

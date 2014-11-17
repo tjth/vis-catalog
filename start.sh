@@ -5,7 +5,7 @@
 sudo rm -rf tmp
 
 # Temproarily remove persistent data storage
-#sudo rm -rf /data
+sudo rm -rf /data
 sudo mkdir /data
 
 # Copy all migrations to /data (persistent data storage)
