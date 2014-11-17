@@ -12,4 +12,6 @@ class Visualisation < ActiveRecord::Base
   scope :approved, -> (boolean) {where approved: true}
   scope :vis, ->  {where vis_type: "vis"}
 
+  mount_uploader :content, ContentUploader
+  mount_uploader :screenshot, ScreenshotUploader
 end

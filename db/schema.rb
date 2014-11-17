@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141117113028) do
+ActiveRecord::Schema.define(version: 20141117132418) do
 
   create_table "comments", force: true do |t|
     t.text     "content"
@@ -87,6 +87,7 @@ ActiveRecord::Schema.define(version: 20141117113028) do
     t.string   "content"
     t.boolean  "isDefault"
     t.integer  "vis_type"
+    t.string   "screenshot"
   end
 
 end
