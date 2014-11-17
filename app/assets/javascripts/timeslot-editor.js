@@ -15,8 +15,19 @@ function isNear(x, x1, tolerance, handle) {
 }
 
 function Timeslot(start, end, min, max) {
-    this.setStart(start);
-    this.setEnd(end);
+    if (start < min) {
+        this.setStart(min);   
+    } else {
+        this.setStart(start); 
+    }
+    
+    if (end > max) {
+        this.setEnd(max);
+    } else {
+        this.setEnd(end);
+    }
+
+    
     
     this.min = min;
     this.max = max;
@@ -306,7 +317,7 @@ $.widget("widgets.timesloteditor", {
     
     _get_timeslot_at_pos : function(x) {
         for (i = 0; i < this.timeslots.length; i++) {
-            if (this.timeslots[i].in(this._get_time(event.offsetX))) {
+            if (this.timeslots[i].in(this._get_time(x))) {
                 return this.timeslots[i];          
             }
         }
