@@ -1,3 +1,12 @@
+app.directive('toggleButton', function() {
+return {
+    scope: {item:'='},
+    
+    link: function(scope, element, attrs) {
+        $(element).addClass("toggle-button")
+    }
+}});
+
 app.directive('horizontalScroll', function() {
 return {
     link: function(scope, element, attrs) {

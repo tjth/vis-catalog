@@ -1,0 +1,50 @@
+<section class="container-fluid" ng-controller="editTimeslotController">
+    <div class="row">
+
+        <div class="col-sm-9" style="height:100%">
+            <div id="edit-timeslot" class="card">
+                <div class="header">
+                    <div class="day">
+                        MON
+                    </div>
+                    <div class="time">
+                        08:00-12:00
+                    </div>
+                </div>
+                <div id="edit">
+                    <div id="fields">
+
+                    </div>
+                    <div class="scroll">
+                        <div class="content">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <a class="cancel">Cancel</a>
+                    <a class="save">Save</a>
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-sm-3" style="height:100%">
+            <div id="content-selector" class="card">
+                <div class="controls">
+                    <div class="search"><input ng-model="contentFilter"/></div>
+                    <div class="content-type">
+                        <div class="toggle-button" ng-repeat="category in ['Visualisation', 'Advert']" id="{[{category  | lowercase}]}">{[{category}]}</div>
+                    </div>
+                </div>
+                
+                <div id="content">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+
+</script>

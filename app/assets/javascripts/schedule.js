@@ -1,4 +1,3 @@
-    
 app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
@@ -35,6 +34,10 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $scope.getDateForDay = function(day) {
         return $scope.startOfWeek.clone().add(day, "days");   
     }
+});
+
+app.controller('editTimeslotController', function($scope, $rootScope, Timeslot) {
+    $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
 });
 
     

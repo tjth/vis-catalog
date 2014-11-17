@@ -190,4 +190,115 @@ $top-height:$week-height + $axis-height;
     }
 }
 
+#content-selector {
 
+    .controls {
+    
+        .search {
+            box-shadow: 0px 3px 5px -3px rgba(0,0,0,0.5);
+            position: relative;
+            
+            padding:10px 10px 10px calc(10px + 24px);
+            background: image-url("ic_search_black_24dp.png") no-repeat;  
+            background-position: 10px center;
+            
+            input {
+                padding:10px;   
+                width:100%;
+            }
+        }
+        
+        .content-type {
+            display:flex;
+
+            .toggle-button {
+                @include clickable;
+
+                flex-grow:1;
+                display:inline-block;
+                background-color:#f5f5f5;
+                text-align:center;
+                padding:12px 10px;
+
+                &.toggled {
+                    background-color:#e0e0e0   
+                }
+
+                &:first-child {
+                    border-right:1px solid #e0e0e0;
+                }
+            }
+        }
+    }
+}
+
+#edit-timeslot {
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    
+    .header {
+        color:#fff;
+        background-color:#616161;
+        display:flex;
+        flex-shrink:0;
+        
+        .day, .time {
+            padding:20px;
+            text-align:center
+        }
+        
+        .day {
+            flex-grow:0;
+            flex-shrink:0;
+            border-right:1px solid white;
+        }
+        
+        .time {
+            flex-grow:1;   
+        }
+    }
+    
+    #edit {
+        flex-grow:1;
+        display:flex;
+        
+        
+        #fields, .scroll {
+            flex-grow:1;
+            display:inline-block;
+        }
+        
+        .scroll {
+            background-color: #f5f5f5;
+            box-shadow: inset 2px 0px 8px 0px rgba(0,0,0,0.75);
+            
+            .content {
+                
+            }
+        }
+        
+        
+    }
+    
+    .actions {
+        flex-shrink:0;
+        background:white;
+        border-top: 1px solid #F1F1F1;
+        
+        a {
+            text-transform: uppercase;
+            padding:20px;
+            
+            &.save {
+                color:#00e676;
+                float:right;
+            }
+            
+            &.cancel {
+                color:#ff3d00;
+                float:left;
+            }
+        }
+    }
+}

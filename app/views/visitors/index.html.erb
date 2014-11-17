@@ -84,6 +84,10 @@
                 templateUrl: 'partials/schedule.html',
                 controller: 'scheduleController',
             }).
+            when('/schedule/timeslot/:id', {
+                templateUrl: 'partials/edit-timeslot.html',
+                controller: 'editTimeslotController',
+            }).
             otherwise({
                 redirectTo: '/'
             });
