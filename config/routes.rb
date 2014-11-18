@@ -21,11 +21,12 @@ Rails.application.routes.draw do
   
   delete '/visualisations/:visid/reject' => 'visualisations#reject'
   
-  resources :visualisations
+  
+
   resources :programmes
+  resources :visualisations
   resources :timeslots
 
-  get '/timeslots/today' => 'timeslots#get_todays_timeslots'
 
   get '/schedulingtest/' => 'timeslots#test'
 

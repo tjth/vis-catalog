@@ -1,11 +1,6 @@
 class VisualisationsController < ApplicationController
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
-  # GET /visualisations/:visid/schedule
-  def add_to_schedule
-    #TODO: add to current schedule array
-  end
-
   # PATCH /visualisations/:visid/approve
   def approve
     if current_user.isAdmin
@@ -37,14 +32,18 @@ class VisualisationsController < ApplicationController
   def index
     @expandAuthor = params[:expandAuthor]
     @visualisations = Visualisation.all
+    if params[:needsModeration] != nil
+      @needsModeration = true   
+    else
+      @needsModeration = false
+    end
 
     if params[:userid] == nil
       if params[:newest] != nil
-
-      @visualisations = get_newest_n(params[:newest])
+      @visualisations = get_newest_n(!@needsModeration, params[:newest])
       end
 
-      if params[:needsModeration] != nil
+      if @needsModeration
         @visualisations = @visualisations.select{ |vis| vis.approved == false }
       else
         @visualisations = @visualisations.select{ |vis| vis.approved == true }
@@ -67,8 +66,8 @@ class VisualisationsController < ApplicationController
     
   end
 
-  def get_newest_n(n)
-    return Visualisation.order(created_at: :desc).take(n)
+  def get_newest_n(approved, n)
+    return Visualisation.where(approved: approved).order(created_at: :desc).take(n)
   end
 
   # GET /visualisations/1

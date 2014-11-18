@@ -1,122 +1,13 @@
 @import "variables";
 @import "mixins";
 
-#masonry {
-    height:100%;
-    width:auto;
-    overflow-x:auto;
-    overflow-y:hidden;
-    padding: 10px 10px 0px 10px;
-    
-    -moz-column-count: 3;
-    -webkit-column-count: 3;
-    column-count: 3;
-    
-    -moz-column-gap: 0;
-    -webkit-column-gap: 0;
-    column-gap:0;
-    
-    @media (max-width: $mobile-width) {
-        -moz-column-count: 1;
-        -webkit-column-count: 1;
-        column-count: 1;
-        
-        overflow-y:auto;
-        overflow-x:hidden;
-    }
-
-    .grid-item {
-        background-color: white;
-        display: inline-block;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        margin:$card-shadow-radius;
-        
-        .content {
-            flex-direction:column;
-            display:flex;
-            width:100%;
-            height:100%;
-
-            .img {
-                width:100%;
-                background-size: cover;
-                background-repeat: no-repeat;
-                border-top-right-radius: $card-radius;
-                border-top-left-radius: $card-radius;
-                background-position: center;
-                flex-grow:1;
-            }
-
-            .header {
-                font-size: 2rem;
-                padding: 1rem;
-                flex-grow:0;
-                color:#fff;
-                box-shadow: 0px -7px 5px -3px rgba(0,0,0,0.1);
-                
-                &.bright-background {
-                    color:#333;
-                }
-            }
-            .desc {
-                font-size: 1rem;
-                margin: 1rem;
-                overflow: hidden;
-                flex-grow:0;
-            }
-
-        }
-        
-
-
-        &.large {
-            width: calc(100% - #{$card-shadow-radius} * 2);
-            height: 60%;
-            overflow:hidden;
-
-            .img {     
-                @media (max-width: $mobile-width) {
-                    height:200px
-                }
-            }
-
-            .desc {
-                height: 4rem;
-                display: block;
-            }
-        }
-
-        &.small {
-            width: calc(50% - #{$card-shadow-radius} * 2);
-            height: calc(40% - 7px * 6);
-            overflow:hidden;
-
-            .header {
-                font-size: 1rem;
-            }
-    
-            .desc {
-                display: none;
-            }
-
-            .right {
-
-            }
-
-        }
-            
-    }
-}
-
-
 .card {
     background:white;
     box-shadow: 0px 1px 7px rgba(0,0,0,0.25);
     border-radius: $card-radius;
     
     &.guideline {
+        height: 100%;
         $padding:0.9rem;
         text-align: center;
         font-size:$padding;
@@ -136,7 +27,7 @@
         
         .item {
             padding:1em 2em 1em 2em;
-            border-top:1px solid rgba(0, 0, 0, 0.05);
+            border-top:1px so classlid rgba(0, 0, 0, 0.05);
             
             .heading {
                 text-transform:uppercase;
@@ -144,6 +35,17 @@
             
             .description {
                 padding-top:1em;   
+            }
+            
+            .img {
+                width:100%;
+                height: 60em;
+                background-size: cover;
+                background-repeat: no-repeat;
+                border-top-right-radius: $card-radius;
+                border-top-left-radius: $card-radius;
+                background-position: center;
+                flex-grow:1;
             }
             
                         
@@ -186,87 +88,37 @@
     }
 }
 
-#moderate {
-    $padding:15px;
-    
-    background-color: white;
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
-    border-radius: $card-radius;
-    overflow:auto;
-    
-    table {
-        font-size:0.9rem;
-        width:100%;
-        
-        tr {
-            
-            &.header {
-                background-color: #f5f5f5;  
-                border-bottom: 1px solid #ececec;
 
-                th {
-                    color:#9e9e9e;
-                    text-transform: uppercase;
-                    font-weight:500;
-                }
+.comment {
+    $head-size: 48px;
+    .avatar {
+                border-radius:50%;
+                width:$head-size;
+                height:$head-size;
+                opacity:1 !important;
             }
-            
-            &:nth-child(odd) {
-                background-color:#f5f5f5;
-            }
-            
-            td.author {
-                
-                img {
-                    width: 16px;
-                    height: 16px;
-                    border-radius: 50%;    
-                    display:inline-block
-                }
-                
-                .name {
-                    display:inline-block;
-                    margin-left:$padding/2;
-                }
-            }
-            
-            td.action {
-                
-                .approve {
-                    display:inline-block;
-                    @include link(#00e676);  
-                }
-                
-                .reject {
-                    display:inline-block;
-                    float:right;
-                    @include link(#ff1744);
-                    margin-left:$padding;   
-                }
-            }
-            
-            td.title {
-                width:calc(100% / 3);
-                    
-                .description {
-                    font-size: 0.9em;   
-                }
-            }
-            
-            td.no-content {
-                text-align: center;
-                background: #f5f5f5;
-                color: #9B9B9B;
-                font-weight: $font-weight-light;
-                font-size: 1.2rem;
-                padding: $padding*2;   
-            }
-        }
-        
-        td,th {
-            padding:$padding;
-        }
 
+    .top {
+        
     }
-   
+    
+    .bottom {
+        background-color: #E0E0E0;
+    }
+    
+    .commenttext {
+        width: calc(100% - #{$head-size} - 10px);
+    }
+    
+    .post {
+        text-align: right;
+        background: transparent;
+        border: transparent;
+        text-transform:uppercase;
+        color: #03A9F4;
+        
+        &:hover {
+            color: #B3E5FC;
+        }
+    }
 }

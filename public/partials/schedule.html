@@ -5,23 +5,22 @@
             <div id="schedule">
                 <div id="days">
                     <div class="spacer">
-                        <div class="day" ng-repeat='day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]'>
-                            <div class="day-label">{[{day}]}</div>
+                        <div class="day" ng-repeat='day in days'>
+                            <div class="day-label">{[{getShortWeekdayName(day)}]}</div>
                         </div>
                     </div>
                 </div>
                 <div id="timeslots">
                     <div id="week">
-                        <div class="navigate back"></div>
-                        <div id="week-span">20TH OCTOBER - 27TH OCTOBER</div>
-                        <div class="navigate forward"></div>
+                        <div class="navigate back" ng-click="nextWeek()"></div>
+                        <div id="week-span">{[{formatWeek(startOfWeek)}]}</div>
+                        <div class="navigate forward" ng-click="previousWeek()"></div>
                     </div>
                     <div class="scroll" horizontal-scroll>
                         <div id="planner">
                             <div id="axis"><canvas style="font-family: Roboto; width:100%; height:100%"></canvas></div>
                             <div id="fg">
-                                <div class="day" ng-repeat='day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]'>
-                                </div>
+                                <div class="day" ng-repeat='day in days' timeslot-editor start-of-week="{[{startOfWeek.format()}]}" day="{[{day}]}"></div>
                             </div>
                         </div>
                     </div>
@@ -29,12 +28,11 @@
                 </div>
                 <div id="timeslot-actions">
                     <div class="spacer">
-                        <div class="day timeslot-actions" ng-repeat='day in ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]'>
-                           <div class="add"></div>
-                           <div class="remove"></div>
+                        <div class="day timeslot-actions" ng-repeat='day in days'>
+                            <div class="add" ng-click="addTimeslot(day)"></div>
+                            <div class="remove" ng-click="removeTimeslot(day)"></div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
@@ -44,11 +42,10 @@
 <script src="/assets/moment.js?body=1"></script>
 <script>
 
+jQuery("#axis canvas").fillingCanvas();
+    
 function drawAxis() {
     var canvas = jQuery("#axis canvas").get(0)
-
-    canvas.width  = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
     
     var width = canvas.width;
     var height = canvas.height;
@@ -107,9 +104,6 @@ function drawAxis() {
 }
     
 function resizeDays() {
-    
-    console.log()
-    
     jQuery(".day").css("height", parseInt(jQuery("#days .spacer").css("height"))/7 + "px")
     jQuery(".day-label").css("line-height", parseInt(jQuery("#days .spacer").css("height"))/7 + "px")
 }

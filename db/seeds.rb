@@ -7,6 +7,7 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 if Visualisation.all.empty?
+for i in 1..10
   Visualisation.create([
     {:name => "Milan", 
        :link => "/assets/dummy/milan.png", 
@@ -26,7 +27,8 @@ if Visualisation.all.empty?
        :isDefault => true,
        :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
     ])
-  for i in 1..5
+end
+  for i in 1..10
     Visualisation.create([
       {:name => "Milan", 
        :link => "/assets/dummy/milan.png", 
