@@ -1,44 +1,58 @@
 <section class="container-fluid" ng-controller="editTimeslotController">
     <div class="row">
 
-        <div class="col-sm-9" style="height:100%">
+        <div class="col-sm-8" style="height:100%">
             <div id="edit-timeslot" class="card">
                 <div class="header">
-                    <div class="day">
-                        MON
-                    </div>
-                    <div class="time">
-                        08:00-12:00
-                    </div>
+                    <div class="day">{[{formatDay(timeslot.date)}]}</div>
+                    <div class="time">{[{formatTime(timeslot.start, timeslot.end)}]}</div>
                 </div>
                 <div id="edit">
                     <div id="fields">
-
+                        <div class="editable"></div>
+                        <div class="user-provided">{[{activeContentItem}]}</div>
                     </div>
                     <div class="scroll">
-                        <div class="content">
-                            
+                        <div class="content" content-drop-target>
+                            <div draggable="true" 
+                             ng-repeat="contentItem in timeslotContent"
+                             content-item content="contentItem"
+                             ng-click="setActiveContentItem(contentItem)">
+                            </div>   
+                            <div ng-if="timeslotContent.length == 0" id="drag-here">
+                                To show content in this timeslot, drag it here
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="actions">
-                    <a class="cancel">Cancel</a>
+                    <a href="#/schedule" class="cancel">Cancel</a>
                     <a class="save">Save</a>
                     <div style="clear:both"></div>
                 </div>
             </div>
         </div>
         
-        <div class="col-sm-3" style="height:100%">
-            <div id="content-selector" class="card">
-                <div class="controls">
-                    <div class="search"><input ng-model="contentFilter"/></div>
+        <div class="col-sm-4" style="height:100%">
+            <div id="content-selector">
+                <div class="controls card">
+                    <div class="search">
+                        <input ng-model="contentQuery" 
+                               ng-model-options="{debounce:500}"
+                               type="text"/>
+                    </div>
                     <div class="content-type">
                         <div class="toggle-button" ng-repeat="category in ['Visualisation', 'Advert']" id="{[{category  | lowercase}]}">{[{category}]}</div>
                     </div>
                 </div>
                 
-                <div id="content">
+                <div class="scroll">
+                    <div id="content">
+                        <div draggable="true" 
+                             ng-repeat="contentItem in content | filter:contentQuery"
+                             content-item content="contentItem">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
