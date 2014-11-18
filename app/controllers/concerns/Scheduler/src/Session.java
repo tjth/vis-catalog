@@ -6,16 +6,11 @@ public class Session implements Comparable<Session> {
   private int startScreen;
   private int endScreen;
 
-  public Session(Programme prog, int startScreen, int startTime) {
+  public Session(Programme prog, int startScreen, int startTime, int endTime) {
     vis = prog.getVis();
     this.startScreen = startScreen;
     endScreen = startScreen + prog.getScreens() - 1;
     this.startTime = startTime;
-    endTime = startTime + prog.getDuration();
-  }
-  
-  public Session(Programme prog, int startScreen, int startTime, int endTime) {
-    this(prog, startScreen, startTime);
     this.endTime = endTime;
   }
 
@@ -38,20 +33,12 @@ public class Session implements Comparable<Session> {
   public int getEndScreen() {
     return endScreen;
   }
-  
-  public void setStartTime(int startTime) {
-    endTime += startTime - this.startTime;
-    this.startTime = startTime;
-  }
-
-  public void setStartScreen(int startScreen) {
-    endScreen += startScreen - this.startScreen;
-    this.startScreen = startScreen;
-  }
 
   @Override
   public String toString() {
-    return vis.toString() + ": time " + startTime + " - " + endTime + ", screen " + startScreen + " - " + endScreen;
+    return vis.toString() + 
+        ": time " + startTime + "-" + endTime +
+        ", screen " + (startScreen + 1) + "-" + (endScreen + 1);
   }
 
   @Override

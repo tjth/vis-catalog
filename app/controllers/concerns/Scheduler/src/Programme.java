@@ -9,7 +9,7 @@ public class Programme implements Comparable<Programme> {
     new Programme(Visualisation.defVis[1], 2),
     new Programme(Visualisation.defVis[2], 3)};
 
-  private Programme(Visualisation vis, int screens) {
+  private Programme(Visualisation vis, int screens) { // for default programmes only
     this.vis = vis;
     this.screens = screens;
     priority = 0;
@@ -45,7 +45,7 @@ public class Programme implements Comparable<Programme> {
   @Override
   public int compareTo(Programme p) {
     int durationDiff = vis.getDuration() - p.vis.getDuration();
-    return durationDiff == 0 ? (int)Math.signum(Math.random() * 2 - 1) : Integer.signum(durationDiff);
+    return durationDiff == 0 ? (int)Math.signum(Math.random() * 2 - 1) : durationDiff;
   }
 
 }

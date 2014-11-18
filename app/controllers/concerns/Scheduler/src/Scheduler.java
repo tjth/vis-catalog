@@ -6,10 +6,11 @@ import java.util.PriorityQueue;
 public class Scheduler {
 
   private static final int SCREENS = 4;
-  private static final int MINS = 6;
+  private int mins;
   private List<Session> sessions = new ArrayList<Session>();
 
-  public Scheduler() {
+  public Scheduler(int mins) {
+    this.mins = mins;
     reset();
   }
 
@@ -18,121 +19,117 @@ public class Scheduler {
   }
 
   public void schedule(List<Programme> progs) {
-    PriorityQueue<PlayFreq> pq = createQueue(progs);
-    int[] nextFreeSlot = new int[SCREENS];
+    PriorityQueue<ProgTimer> pq = createQueue(progs);
+    int[] nextFreeSlot = new int[SCREENS]; // tracks the next free slot for each screen
     for (int s = 0; s < SCREENS; s++) {
       nextFreeSlot[s] = 0;
     }
-    List<PlayFreq> selectedPFs = new ArrayList<PlayFreq>();
-    List<Programme> selectedProgs = new ArrayList<Programme>();
-    for (int m = 0; m < MINS; m++) {
-      System.out.println(pq);
-      for (int checked = 0; checked < SCREENS; checked++) { // attempt to fill in all free screens at time m
-        if (nextFreeSlot[checked] <= m) { // free screen found
-          int startScr = checked;
+    List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
+    List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
+    for (int m = 0; m < mins; m++) {
+      for (int check = 0; check < SCREENS; check++) { // check for free slots at time m
+        if (nextFreeSlot[check] <= m) { // free slot found
+          int startSlot = check; // start of free slot
           int blockSize;
-          for (blockSize = 1; checked + blockSize < SCREENS; blockSize++) { // consecutive free screens
-            if (nextFreeSlot[checked + blockSize] > m) {
+          for (blockSize = 1; check + blockSize < SCREENS; blockSize++) { // check for consecutive free slots at time m
+            if (nextFreeSlot[check + blockSize] > m) { // end of free block
               break;
             }
           }
-          checked += blockSize;
-          int filled = 0;
-          while (!pq.isEmpty() && filled < blockSize) { // get enough programmes to fill consecutive free screens
-            PlayFreq pf = pq.peek();
-            if (pf.prog.getScreens() > blockSize - filled) {
+          check += blockSize; // move check to end of free block
+          int filled = 0; // records number of filled slots in block
+          while (!pq.isEmpty() && filled < blockSize) { // select programmes to fill block
+            ProgTimer pt = pq.peek();
+            if (pt.prog.getScreens() > blockSize - filled) { // selected programme is too big
               break;
             }
-            pq.remove();
-            if (pf.prog.getDuration() <= 2 * (MINS - m)) { // select programme if at least half of it can be played
-              selectedPFs.add(pf);
-              selectedProgs.add(pf.prog);
-              filled += pf.prog.getScreens();
-            }
-          }
-          Collections.sort(selectedProgs); // sort programmes in ascending duration order
-          boolean alignLeft = true; // indicates whether programmes should be aligned left or right
-          if (startScr == 0 && blockSize < SCREENS ||
-              startScr > 0 && startScr + blockSize < SCREENS &&
-              nextFreeSlot[startScr - 1] > nextFreeSlot[startScr + blockSize]) { // align left
-            Collections.reverse(selectedProgs);
-          } else if (startScr + blockSize == SCREENS && blockSize < SCREENS ||
-              startScr > 0 && startScr + blockSize < SCREENS &&
-              nextFreeSlot[startScr - 1] > nextFreeSlot[startScr + blockSize]) { // align right
-            alignLeft = false;
-          } else { // all screens free or no preference for alignment
-            if (Math.random() < 0.5) {
-              Collections.reverse(selectedProgs);
+            pq.remove(); // remove selected programme from queue
+            if (pt.prog.getDuration() <= 2 * (mins - m)) { // select programme if >= half can be played
+              selectedProgs.add(pt.prog); // schedule programme
+              filled += pt.prog.getScreens();
+              selectedPTs.add(pt); // requeue programme
             } else {
-              alignLeft = false;
+              // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
           }
-          if (!alignLeft) {
-            startScr += blockSize - filled;
+          int tryFill = 0;
+          while (filled < blockSize && Programme.defProgs.length > 0) { // fill remainder of block with default programmes
+            Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
+            if (filled + defProg.getScreens() <= blockSize) { // selected programme can fit
+              selectedProgs.add(defProg);
+              filled += defProg.getScreens();
+              tryFill = 0; // reset and pick another default programme
+            } else if (++tryFill >= 3) { // stop if no default programme that can fit is found after a few tries
+              break;
+            }
           }
-          while (!selectedProgs.isEmpty()) { // schedule all selected programmes
-            Programme prog = selectedProgs.remove(0);
-            if (m + prog.getDuration() <= MINS) {
-              sessions.add(new Session(prog, startScr, m));
+          Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
+          boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
+          if (startSlot == 0 && blockSize < SCREENS ||
+              startSlot > 0 && startSlot + blockSize < SCREENS &&
+              nextFreeSlot[startSlot - 1] > nextFreeSlot[startSlot + blockSize]) { // better to align left ie. longest to shortest
+            ascend = false;
+          } else if (startSlot + blockSize == SCREENS && blockSize < SCREENS ||
+              startSlot > 0 && startSlot + blockSize < SCREENS &&
+              nextFreeSlot[startSlot - 1] > nextFreeSlot[startSlot + blockSize]) { // better to align right ie. shortest to longest
+            ascend = true;
+          } else { // no alignment preference
+            ascend = Math.random() < 0.5;
+          }
+          if (ascend) { // schedule selected programmes in ascending duration order
+            startSlot += blockSize - filled; // starting position of 1st selected programme
+            while (!selectedProgs.isEmpty()) {
+              Programme prog = selectedProgs.remove(0);
+              int endTime = Math.min(m + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+              sessions.add(new Session(prog, startSlot, m, endTime));
               for (int i = 0; i < prog.getScreens(); i++) {
-                nextFreeSlot[startScr + i] = m + prog.getDuration();
+                nextFreeSlot[startSlot + i] = m + prog.getDuration(); // update next free slot for each screen
               }
-            } else {
-              sessions.add(new Session(prog, startScr, m, MINS));
+              startSlot += prog.getScreens(); // shift to starting position of next selected programme
+            }
+          } else { // schedule selected programmes in descending duration order
+            startSlot += filled; // ending position of 1st selected programme
+            while (!selectedProgs.isEmpty()) {
+              Programme prog = selectedProgs.remove(0);
+              startSlot -= prog.getScreens(); // shift to starting position of current selected programme
+              int endTime = Math.min(m + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+              sessions.add(new Session(prog, startSlot, m, endTime));
               for (int i = 0; i < prog.getScreens(); i++) {
-                nextFreeSlot[startScr + i] = MINS;
+                nextFreeSlot[startSlot + i] = m + prog.getDuration(); // update next free slot for each screen
               }
             }
-            startScr += prog.getScreens();
           }
-          // schedule fillers if necessary
           selectedProgs.clear();
-          requeue(selectedPFs, pq);
-          selectedPFs.clear();
+          requeue(selectedPTs, pq);
+          selectedPTs.clear();
         }
       }
-      
-//      while (filled < SIZE && Programme.defProgs.length > 0) { // screens not completely filled
-//        int attempts = 0;
-//        Programme prog = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
-//        if (filled + prog.getSize() <= SIZE) { // within size limits
-//          toScreen.add(new Session(prog, filled, m));
-//          filled += prog.getSize();
-//          attempts = 0;
-//        } else {
-//          attempts++;
-//          if (attempts >= 3) { // arbitrary value to break loop if no appropriate programme is found
-//            break;
-//          }
-//        }
-//      }
-//      sessions.addAll(toScreen);
-//      onScreen = toScreen;
     }
   }
 
-  private PriorityQueue<PlayFreq> createQueue(List<Programme> progs) {
-    PriorityQueue<PlayFreq> pq = new PriorityQueue<PlayFreq>();
+  private PriorityQueue<ProgTimer> createQueue(List<Programme> progs) {
+    PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
     for (Programme prog : progs) {
-      pq.add(new PlayFreq(prog));
+      pq.add(new ProgTimer(prog));
     }
     return pq;
   }
   
-  private void requeue(List<PlayFreq> pfs, PriorityQueue<PlayFreq> pq) {
-    for (PlayFreq pf : pfs) {
-      pf.setNextPlay();
-      pq.add(pf);
+  private void requeue(List<ProgTimer> pts, PriorityQueue<ProgTimer> pq) {
+    for (ProgTimer pt : pts) {
+      pt.setNextPlay();
+      pq.add(pt);
     }
   }
   
   @Override
   public String toString() {
-    String[][] visNames = new String[MINS][SCREENS];
-    boolean[][] strokes = new boolean[MINS][SCREENS];
-    boolean[][] dashes = new boolean[MINS][SCREENS];
-    boolean[][] plusses = new boolean[MINS][SCREENS];
-    for (int r = 0; r < MINS; r++) {
+//    System.out.println(sessions);
+    String[][] visNames = new String[mins][SCREENS];
+    boolean[][] strokes = new boolean[mins][SCREENS];
+    boolean[][] dashes = new boolean[mins][SCREENS];
+    boolean[][] plusses = new boolean[mins][SCREENS];
+    for (int r = 0; r < mins; r++) {
       for (int c = 0; c < SCREENS; c++) {
         visNames[r][c] = " NIL ";
         strokes[r][c] = true;
@@ -146,24 +143,24 @@ public class Scheduler {
       int origEndTime = startTime + vis.getDuration();
       int startScreen = session.getStartScreen();
       int endScreen = session.getEndScreen();
-      for (int m = startTime; m < Math.min(origEndTime, MINS); m++) {
+      for (int m = startTime; m < Math.min(origEndTime, mins); m++) {
         for (int s = startScreen; s <= endScreen; s++) {
           visNames[m][s] = "     ";
         }
       }
       visNames[startTime][startScreen] = vis.toString();
-      for (int m = startTime; m < Math.min(origEndTime, MINS); m++) {
+      for (int m = startTime; m < Math.min(origEndTime, mins); m++) {
         for (int s = startScreen; s <= endScreen - 1; s++) {
           strokes[m][s] = false;
         }
       }
-      for (int m = startTime; m < Math.min(origEndTime - 1, MINS); m++) {
+      for (int m = startTime; m < Math.min(origEndTime - 1, mins); m++) {
         for (int s = startScreen; s <= endScreen; s++) {
           dashes[m][s] = false;
         }
       }
       
-      for (int m = startTime; m < Math.min(origEndTime - 1, MINS); m++) {
+      for (int m = startTime; m < Math.min(origEndTime - 1, mins); m++) {
         for (int s = startScreen; s <= endScreen - 1; s++) {
           plusses[m][s] = false;
         }
@@ -175,7 +172,7 @@ public class Scheduler {
     StringBuilder disp = new StringBuilder();
     disp.append("Screen:");
     for (int s = 0; s < SCREENS; s++) {
-      disp.append("    " + s + "   ");
+      disp.append("    " + (s + 1) + "   ");
     }
     disp.append("\n");
 
@@ -185,7 +182,7 @@ public class Scheduler {
     }
     disp.append(" 0 \n");
 
-    for (int m = 0; m < MINS; m++) {
+    for (int m = 0; m < mins; m++) {
       disp.append(spaces + "|");
       for (int s = 0; s < SCREENS; s++) {
         disp.append(" " + visNames[m][s] + " ");
@@ -203,11 +200,11 @@ public class Scheduler {
     return disp.toString();
   }
 
-  private class PlayFreq implements Comparable<PlayFreq> {
+  private class ProgTimer implements Comparable<ProgTimer> {
     Programme prog;
     float whenToPlay;
     
-    PlayFreq(Programme prog) {
+    ProgTimer(Programme prog) {
       this.prog = prog;
       whenToPlay = prog.getPeriod();
     }
@@ -222,9 +219,9 @@ public class Scheduler {
     }
     
     @Override
-    public int compareTo(PlayFreq p) {
+    public int compareTo(ProgTimer p) {
       float timeDiff = whenToPlay - p.whenToPlay;
-      return (int)Math.signum(Math.abs(timeDiff) < 0.001 ? Math.random() * 2 - 1 : timeDiff);
+      return (int)Math.signum(Math.abs(timeDiff) < 0.00001 ? Math.random() * 2 - 1 : timeDiff);
     }
   }
   
