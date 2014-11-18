@@ -1,17 +1,36 @@
 class TimeslotsController < ApplicationController
   include Scheduling
+  require 'date'
+
+  def get_weeks_timeslots(dt_string)
+    date = DateTime.iso8601(dt_string)
+    timeslots = []
+    
+    for i in 1..7
+      ts = Timeslot.where(:date => date.to_date)
+      timeslots.push(ts)
+      date = date + 1    
+    end
+
+    return timeslots
+  end
 
   def get_todays_timeslots
-  	today = Date.today
-  	@timeslots = Timeslot.where(:date => today)
+    today = Date.today
+    @timeslots = Timeslot.find_by(:date => today)
   end
 
   def index
-  	if params[:date] != nil
-  		@timeslots = Timeslot.where(:date => params[:date])
-  	else
-		@timeslots = Timeslot.all
-  	end
+    if params[:weekStarting] != nil
+      @timeslots = get_weeks_timeslots(params[:weekStarting])
+      return
+    end
+
+    if params[:date] != nil
+      @timeslots = Timeslot.where(:date => params[:date])
+    else
+      @timeslots = Timeslot.all
+    end
   end
 
 	# GET /visualisations/1
