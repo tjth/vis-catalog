@@ -44,8 +44,6 @@ class VisualisationsController < ApplicationController
       @onlyVis = false
     end
 
-    puts @onlyVis
-
     if params[:userid] == nil
       if params[:newest] != nil
       @visualisations = get_newest_n(@onlyVis, !@needsModeration, params[:newest])
