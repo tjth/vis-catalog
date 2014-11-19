@@ -230,11 +230,30 @@
         padding-right: 1.5em;
         padding-left: 1.5em;
         padding-top: 0.7em;
-        font-size: 1.2em;
-        height: calc(#{$head-size} + 2em);
+        height: calc(#{$head-size} + 2em);      
         text-align: left;
         vertical-align: middle;
+        
+    }
+    .owner{
+        display: flex;
+        align-items: center;
+        padding-top: 1.2em;
+        padding-left: 0.7em;
         color: #424242;
+        float: left;
+        font-size: 1.3em;
+    }
+    .link{
+        padding-top: 1.2em;
+        padding-right: 0.7em;
+        float: right;
+        color: #69F0AE;
+        font-size: 1.3em;
+        font-weight: bold;
+        &:hover {
+            color: #B9F6CA;
+        }
     }
 }
 
