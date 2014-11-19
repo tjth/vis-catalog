@@ -1,21 +1,21 @@
 <section class="container-fluid" ng-controller="visController" >
     <div class="row">
         <div id="details" class="col-sm-6" class="card vis">
-            <div class="guideline card">
+            <div class="view card">
                 <div class="visualisation">
                     <div class="top" style="background-image: url({[{ visualisation.link }]});"></div>
                     <div class="header">{[{ visualisation.name }]}</div>
                     <div class="description">{[{ visualisation.description }]}</div>
                     <div class="bottom">
-                        <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
-                        <textbox class="owner">{[{commentsname}]}</textbox>
+                        <div><img class="avatar" align="left" ng-src="{[{commentsimage}]}"/></div>
+                        <div class="owner">{[{commentsname}]}</div>
                         <a class="link" href="https://authorssite.com">https://authorssite.com</a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-sm-6">
-            <div class="card guideline" style="padding:0px;">
+            <div class="card view">
                     <div class="comment">
                         <div class="top">
                             
@@ -28,7 +28,7 @@
                         </div>
                     </div>                        
             </div>
-            <div class="card guideline" style="padding:0px;">
+            <div class="card view">
                 <div class="comment">
                     <div class="top">
                         <span>
