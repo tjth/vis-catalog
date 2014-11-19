@@ -63,14 +63,16 @@ public class Scheduler {
             }
           }
           Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
-          boolean ascend; // indicates if block should be filled_blocks from shortest to longest duration or vice versa
-          if (start_screen == 0 && blockSize < SCREENS ||
-              start_screen > 0 && start_screen + blockSize < SCREENS &&
-              nextFreeSlot[start_screen - 1] < nextFreeSlot[start_screen + blockSize]) { // better to align left ie. longest to shortest
+
+          boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
+          if (startSlot == 0 && blockSize < SCREENS ||
+              startSlot > 0 && check < SCREENS &&
+              nextFreeSlot[startSlot - 1] < nextFreeSlot[check]) { // better to align left ie. longest to shortest
             ascend = false;
-          } else if (start_screen + blockSize == SCREENS && blockSize < SCREENS ||
-              start_screen > 0 && start_screen + blockSize < SCREENS &&
-              nextFreeSlot[start_screen - 1] > nextFreeSlot[start_screen + blockSize]) { // better to align right ie. shortest to longest
+          } else if (startSlot + blockSize == SCREENS && blockSize < SCREENS ||
+              startSlot > 0 && check < SCREENS &&
+              nextFreeSlot[startSlot - 1] > nextFreeSlot[check]) { // better to align right ie. shortest to longest
+
             ascend = true;
           } else { // no alignment preference
             ascend = Math.random() < 0.5;
