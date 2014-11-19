@@ -15,8 +15,19 @@ function isNear(x, x1, tolerance, handle) {
 }
 
 function Timeslot(start, end, min, max) {
-    this.setStart(start);
-    this.setEnd(end);
+    if (start < min) {
+        this.setStart(min);   
+    } else {
+        this.setStart(start); 
+    }
+    
+    if (end > max) {
+        this.setEnd(max);
+    } else {
+        this.setEnd(end);
+    }
+
+    
     
     this.min = min;
     this.max = max;
@@ -104,6 +115,7 @@ $.widget("widgets.timesloteditor", {
         });
         
         // Still trigger the mouseup even if the cursor isn't over the canvas
+        $("body").mousedown($.proxy(this, "_on_mousedown"));
         $("body").mouseup($.proxy(this, "_on_mouseup"));
     },
 
@@ -188,6 +200,13 @@ $.widget("widgets.timesloteditor", {
 
     _on_mousedown: function(event) {
         this._fix_event(event);
+        
+        if (!this._in_element(event)) {
+            this.selected = null;
+            this._draw();
+            return;
+        }
+        
         this.mousedown = true;
 
         for (i = 0; i < this.timeslots.length; i++) {
@@ -201,26 +220,26 @@ $.widget("widgets.timesloteditor", {
         }
 
         // No handle selected, try to see if a Timeslot is selected
-        var timeslot = this._get_timeslot_at_pos(event.offsetX)
+        var timeslot = this._get_timeslot_at_pos(event.offsetX);
 
         if (timeslot != null) {
             this.selected = i;
             this.dragXOffset = event.offsetX - this._get_x(this.timeslots[i].start);
             this.dragAction = MOVE;
-            return;
+        } else {
+            this.selected = null;
         }
+        this._draw();
     },
 
     _on_mouseup: function(event) {
         this._fix_event(event);
+        
         this.mousedown = false;
         this.dragXOffset = -1;
 
         this.dragDirection = -1;
         this.dragAction = -1;
-
-        var withinTimeslot = false;
-        if (this._get_timeslot_at_pos(event.offsetX) == null) this.selected = null;
 
         this._draw();
     },
@@ -298,11 +317,19 @@ $.widget("widgets.timesloteditor", {
     
     _get_timeslot_at_pos : function(x) {
         for (i = 0; i < this.timeslots.length; i++) {
-            if (this.timeslots[i].in(this._get_time(event.offsetX))) {
+            if (this.timeslots[i].in(this._get_time(x))) {
                 return this.timeslots[i];          
             }
         }
         return null;
+    },
+    
+    _in_element : function(event) {
+        var bounds = this.element.get(0).getBoundingClientRect();
+        return event.clientY < bounds.bottom && 
+               event.clientY > bounds.top    &&
+               event.clientX > bounds.left   &&
+               event.clientX < bounds.right;
     },
     
 
