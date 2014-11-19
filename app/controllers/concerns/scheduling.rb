@@ -35,17 +35,6 @@ module Scheduling
     return scrLoad
   end
 
-  def preprocess_and_build_queue(programmes)
-    queue = programmes.sort_by{|prog| prog.priority}.reverse
-    initScrLoad = get_total_screen_load(queue)
-    if (initScrLoad < Const.NO_OF_SCREENS)
-      for i in 1..(Const.NO_OF_SCREENS - initScrLoad)
-        queue = queue + [get_a_default_programme]
-      end
-    end
-    return queue 
-  end
-
   def clean_old_sessions(start_time, end_time)
     oldSessions = PlayoutSession.where(start_time: start_time...end_time)
     oldSessions.destroy_all
@@ -56,8 +45,7 @@ module Scheduling
     end_time = timeslot.end_time
     progs = timeslot.programmes
 
-    queue = preprocess_and_build_queue(progs)
-    playSys = PlayoutModel.new(start_time, queue)
+    playSys = PlayoutModel.new(start_time, progs)
 
     clean_old_sessions(start_time, end_time)
 
