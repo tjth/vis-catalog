@@ -113,13 +113,16 @@ class TimeslotsController < ApplicationController
     end
   end
 
+  def test
+    timeslot = Timeslot.new({:start_time => DateTime.new(2014, 11, 19, 12, 0, 7).utc,
+                             :end_time => DateTime.new(2014, 11, 19, 13, 0, 6).utc})
+    @test = generate_schedule(timeslot)
+  end
+
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def timeslot_params
       params[:timeslot].permit(:start_time, :end_time, :date)
     end
 
-  def test
-    @test = get_a_default_programme
-  end
 end

@@ -1,6 +1,8 @@
 # Module for generating schedule
 # Use of concerns: http://richonrails.com/articles/rails-4-code-concerns-in-active-record-models
 
+require 'priority_queue'
+
 module Scheduling
   extend ActiveSupport::Concern
  
@@ -8,12 +10,22 @@ module Scheduling
     @test = 3
   end
 
-  class PlayoutModel
-    def initialize(time, queue)
-      @time = time
-      @schedule_items = [nil] * Const.NO_OF_SCREENS
-      @programmes = [nil] * Const.NO_OF_SCREENS
-      @queue = queue
+  class ProgTimer
+    attr_accessor :whenToPlay, :prog
+
+    def initialize(prog)
+      @prog = prog;
+      @whenToPlay = prog.period;
+    end
+
+    def setNextPlay
+      @whenToPlay = @whenToPlay + @prog.period
+    end
+
+    def <=>(otherTimer)
+      timeDiff = @whenToPlay - otherTimer.whenToPlay
+      eps = 0.00001
+      return (timeDiff.abs < eps) ? (rand(2) * 2 - 1) : (timeDiff <=> 0)
     end
   end
 
@@ -41,28 +53,33 @@ module Scheduling
   end
 
   def generate_schedule(timeslot)
-    start_time = timeslot.start_time
-    end_time = timeslot.end_time
+    start_time = timeslot.start_time - 
+                 timeslot.start_time.to_i.modulo(Const.SECONDS_IN_UNIT_TIME)
+    end_time = timeslot.end_time - 
+               timeslot.end_time.to_i.modulo(Const.SECONDS_IN_UNIT_TIME)
     progs = timeslot.programmes
-
-    playSys = PlayoutModel.new(start_time, progs)
 
     clean_old_sessions(start_time, end_time)
 
-    if (get_total_screen_load(queue) == Const.NO_OF_SCREENS)
-      if (queue.length == Const.OVERRIDING_QUEUE_LENGTH)
-        session = 
-          PlayoutSession.create({:start_time => start_time,
-                                 :end_time => end_time,
-                                 :start_screen => Const.MIN_SCREEN_NUMBER,
-                                 :end_screen => Const.NO_OF_SCREENS,
-                                })
-        vis = Visualisation.find(queue.first.visualisation_id)
-        vis.playout_sessions << session
-        return
-      end
+    queue = initQueue(progs)
+
+    return queue
+  end
+
+  def initQueue(progs)
+    queue = PriorityQueue.new
+    progs.each do |prog|
+      progTimer = ProgTimer.new(prog)
+      queue.push progTimer, progTimer
     end
 
-    return []
+    return queue
+  end
+
+  def requeue(progTimers, queue)
+    progTimers.each do |progTimer|
+      progTimer.setNextPlay
+      queue.push progTimer, progTimer
+    end
   end
 end

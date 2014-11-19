@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'priority_queue'
 include Scheduling
 include Const
 
@@ -35,10 +36,6 @@ RSpec.describe Scheduling, :type => :concern do
                                          {:screens => 3, :priority => 2},
                                          {:screens => 2, :priority => 1}])
 
-  emptyProgsQueue = preprocess_and_build_queue(emptyProgs)
-  underPopulatedProgsQueue = preprocess_and_build_queue(underPopulatedProgs)
-  wellPopulatedProgsQueue = preprocess_and_build_queue(wellPopulatedProgs)
-
   describe '.get_total_screen_load' do
     it 'should return the sum of all programme\'s screens' do
       expect(get_total_screen_load(emptyProgs)).to be 0
@@ -68,28 +65,50 @@ RSpec.describe Scheduling, :type => :concern do
   describe '.generate_schedule' do
     context 'when total screen load equals to NO_OF_SCREENS' do
       context 'and there is 1 programme only (overriding case)' do
-        
-        it 'should create schedule with 1 item only' do
-          vis = Visualisation.create({:name => 'Test'})
-          overridingProg = Programme.create({:screens => Const.NO_OF_SCREENS,
-                                             :priority => 1})
-          vis.programmes << overridingProg
+        pending 'delete'
+        #it 'should create schedule with 1 item only' do
+        #  vis = Visualisation.create({:name => 'Test'})
+        #  overridingProg = Programme.create({:screens => Const.NO_OF_SCREENS,
+        #                                     :priority => 1})
+        #  vis.programmes << overridingProg
 
-          overridingTimeslot = Timeslot.create({
-            :start_time => start_time, :end_time => end_time})
-          overridingTimeslot.programmes << overridingProg
+#          overridingTimeslot = Timeslot.create({
+ #           :start_time => start_time, :end_time => end_time})
+  #        overridingTimeslot.programmes << overridingProg
+#
+ #         generate_schedule(overridingTimeslot)
+  #        sessions = PlayoutSession.where(start_time: start_time...end_time)
 
-          generate_schedule(overridingTimeslot)
-          sessions = PlayoutSession.where(start_time: start_time...end_time)
-
-          expect(sessions.length).to be 1
-        end
+   #       expect(sessions.length).to be 1
+        #end
       end
 
       context 'and there is 2-4 programs (cycle-around case)' do
           pending ": to finish writing the test"
       end
 
+    end
+  end
+
+  describe '.initQueue' do
+    context 'to fill in' do
+      it 'does something' do
+        vis1 = Visualisation.create({:name => "Milan"})
+        vis2 = Visualisation.create({:name => "Green", :min_playtime => 2})
+        vis3 = Visualisation.create({:name => "Pink"})
+
+        prog1 = Programme.create({:screens => 2, :priority => 1})
+        prog1.visualisation = vis1
+        prog2 = Programme.create({:screens => 1, :priority => 5})
+        prog2.visualisation = vis2
+        prog3 = Programme.create({:screens => 1, :priority => 4})
+        prog3.visualisation = vis3
+
+        queue = initQueue([prog1, prog2, prog3])
+        expect(queue.delete_min.first.prog).to be prog3
+        expect(queue.delete_min.first.prog).to be prog2
+        expect(queue.delete_min.first.prog).to be prog1
+      end
     end
   end
 

@@ -13,8 +13,8 @@ module Const
     1
   end
 
-  def self.UNIT_TIME
-    1
+  def self.SECONDS_IN_UNIT_TIME
+    60
   end
 
   def self.OVERRIDING_QUEUE_LENGTH
