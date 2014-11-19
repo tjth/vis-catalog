@@ -218,12 +218,16 @@
         opacity:1 !important;
     }
     .top {
-        border-radius: $card-radius;
         padding-top: 1em;
         padding-bottom: 1em;
         height: 40%; 
-        background-repeat: no-repeat; 
+        width:100%;
         background-size: cover;
+        background-repeat: no-repeat;
+        border-top-right-radius: $card-radius;
+        border-top-left-radius: $card-radius;
+        background-position: center;
+        flex-grow:1;
     }
     
     .header {
@@ -287,7 +291,7 @@
     
     .bottom {
         padding-right: 1.5em;
-        padding-left: 1.5em;
+        padding-left: 1.3em;
         height: 2.5em;
         text-align: left;
         vertical-align: middle;
@@ -299,15 +303,26 @@
         background-color: #E0E0E0;
     }
     
+    .inputtext{
+        padding-top: 1em;
+        padding-bottom: 1em;
+        padding-left: 0em;
+        padding-right: 0em;
+        margin-left: 0.4em;
+        text-align: left;
+        font-size: 1.2em;
+        width: calc(100% - #{$head-size} - 3em);
+    }
+    
     .commenttext {
         padding-top: 1em;
         padding-bottom: 1em;
         padding-left: 0em;
         padding-right: 0em;
-        margin-left: 2em;
+        margin-left: calc(#{$head-size} + 1em);
         text-align: left;
         font-size: 1.2em;
-        width: calc(100% - #{$head-size} - 4em);
+        width: calc(100% - #{$head-size} - 2em);
     }
     
     .post {
