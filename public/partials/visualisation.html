@@ -1,6 +1,6 @@
 <section class="container-fluid" ng-controller="visController" >
     <div class="row">
-        <div id="details" class="col-sm-6" class="card vis">
+        <div id="details" class="col-sm-6" class="card vis" style="height:100%;">
             <div class="view card">
                 <div class="visualisation">
                     <div class="top" style="background-image: url({[{ visualisation.link }]});"></div>
@@ -9,7 +9,7 @@
                     <div class="bottom">
                         <div><img class="avatar" align="left" ng-src="{[{commentsimage}]}"/></div>
                         <div class="owner">{[{commentsname}]}</div>
-                        <a class="link" href="https://authorssite.com">https://authorssite.com</a>
+                        <div><a class="link" href="https://authorssite.com">https://authorssite.com</a></div>
                     </div>
                 </div>
             </div>
@@ -18,10 +18,8 @@
             <div class="card view">
                     <div class="comment">
                         <div class="top">
-                            
-                                <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
-                                <textarea placeholder="Comment" class="commenttext" rows="4" wrap="hard"></textarea>
-                            
+                            <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
+                            <textarea placeholder="Comment" class="commenttext" rows="4" wrap="hard"></textarea>
                         </div>
                         <div class="bottom" style="text-align: right;">
                             <button class="post" >POST</button>
@@ -33,24 +31,17 @@
                     <div class="top">
                         <span>
                             <img align="left" class="avatar" ng-src="{[{commentsimage}]}"/>
-                            <textbox class="commenttext">{[{commentstext}]}</textbox>
+                            <div class="commenttext">{[{commentstext}]}</div>
                         </span>
                     </div>
                     <div class="bottom posted">
                         Posted on {[{commentsdate}]}
                     </div>                
-                </div>
+                </div>               
                 
-                
-            </div>
-                
+            </div>                
                 
             </div>
-        
-            
-        
-            
-            
         </div>
     </div>
 </section>

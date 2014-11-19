@@ -116,7 +116,6 @@
     
     &.view {
         height: 100%;
-        text-align: center;
         margin-bottom: 20px;
     }
     
@@ -207,7 +206,7 @@
 .visualisation {
     $head-size: 44px;
     height: 100%;
-    flex: 1;    
+    position: relative;
     
     .avatar {
         padding: 0.3em;
@@ -222,31 +221,34 @@
         border-radius: $card-radius;
         padding-top: 1em;
         padding-bottom: 1em;
-        height: 40vh; 
+        height: 40%; 
         background-repeat: no-repeat; 
         background-size: cover;
     }
     
     .header {
+        padding-left: 1em;
         line-height: 2em;
         vertical-align: middle;
         font-size: 2em;
         height: 2em;
-        background-color: #F4FF81;
     }
     
     .description {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        padding-left: 2em;
+        padding-right: 2em;
+        height: calc(60% - 5em - #{$head-size});
+        font-size: 1em;
         overflow: scroll;
         background-color: #ffffff;
     }
     .bottom {
         padding-right: 1.5em;
         padding-left: 1.5em;
-        height: calc(#{$head-size} + 1em);      
         text-align: left;
         vertical-align: middle;
-        background-color: #F4FF81;
-        text-align: center;
     }
     .owner{
         line-height: $head-size;
@@ -267,9 +269,9 @@
 }
 
 .comment {
-    $head-size: 44px;
+    $head-size: 68px;
     .avatar {
-        padding: 0.3em;
+        padding: 1em;
         vertical-align: top;
         margin: 5px;
         border-radius:50%;
@@ -298,9 +300,14 @@
     }
     
     .commenttext {
-        text-align: justify;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        padding-left: 0em;
+        padding-right: 0em;
+        margin-left: 2em;
+        text-align: left;
         font-size: 1.2em;
-        width: calc(100% - #{$head-size} - 30px);
+        width: calc(100% - #{$head-size} - 4em);
     }
     
     .post {
