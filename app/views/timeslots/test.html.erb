@@ -1,7 +1,11 @@
 <h1>Timeslots#test</h1>
 
-123
-
 <% @test.each do |testElem| %>
-   <%= testElem.whenToPlay %>
+   Start time: <%= testElem.start_time %> &nbsp;
+   End time: <%= testElem.end_time %> &nbsp;
+   Start screen: <%= testElem.start_screen %> &nbsp;
+   End screen: <%= testElem.end_screen %> &nbsp;
+   Visualisation: <%= testElem.visualisation_id %> </br>
 <% end %>
+
+Count: <%= @count %>

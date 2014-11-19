@@ -114,9 +114,31 @@ class TimeslotsController < ApplicationController
   end
 
   def test
-    timeslot = Timeslot.new({:start_time => DateTime.new(2014, 11, 19, 12, 0, 7).utc,
-                             :end_time => DateTime.new(2014, 11, 19, 13, 0, 6).utc})
-    @test = generate_schedule(timeslot)
+    start_time = DateTime.new(2014, 11, 19, 12, 0, 0).utc
+    end_time = DateTime.new(2014, 11, 19, 13, 0, 0).utc
+
+    vis1 = Visualisation.create({:name => "Milan"})
+    vis2 = Visualisation.create({:name => "Green", :min_playtime => 120})
+    vis3 = Visualisation.create({:name => "Pink", :min_playtime => 180})
+
+    prog1 = Programme.create({:screens => 2, :priority => 3})
+    vis1.programmes << prog1
+    prog2 = Programme.create({:screens => 1, :priority => 6})
+    vis2.programmes << prog2
+    prog3 = Programme.create({:screens => 1, :priority => 9})
+    vis3.programmes << prog3
+    
+    timeslot = Timeslot.create({:start_time => start_time,
+                                :end_time => end_time})
+    timeslot.programmes << [prog1, prog2, prog3]
+    
+    generate_schedule(timeslot)
+
+    @test = PlayoutSession.where(start_time: start_time...end_time)
+    @start_time = start_time
+    @end_time = end_time
+    @count = PlayoutSession.count
+
   end
 
   private

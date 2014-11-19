@@ -5,7 +5,7 @@ module Const
     4
   end
 
-  def self.MIN_SCREENS
+  def self.MIN_NO_SCREENS
     1
   end
 
@@ -29,8 +29,8 @@ module Const
     4
   end
 
-  def self.MIN_SCREEN_NUMBER
-    1
+  def self.FIRST_SCREEN
+    0
   end
 
 end
