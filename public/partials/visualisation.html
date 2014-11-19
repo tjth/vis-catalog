@@ -1,15 +1,20 @@
 <section class="container-fluid" ng-controller="visController" >
     <div class="row">
-        <div id="details" class="col-sm-8" class="card vis">
+        <div id="details" class="col-sm-6" class="card vis">
             <div class="guideline card">
-                <div class="content">
-                    <div class="img" style="background-image: url({[{ visualisation.link }]}); height: 70vh; background-repeat: no-repeat; background-size: cover;"></div>
-                    <div class="header" style="font-size: 2em;">{[{ visualisation.name }]}</div>
-                    <div class="desc">{[{ visualisation.description }]}</div>
+                <div class="visualisation">
+                    <div class="top" style="background-image: url({[{ visualisation.link }]});"></div>
+                    <div class="header">{[{ visualisation.name }]}</div>
+                    <div class="description">{[{ visualisation.description }]}</div>
+                    <div class="bottom">
+                        <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
+                        <span class="auhor">{[{commentsname}]}</span>
+                        <span class="link">{[{visualisation.link}]}</p></span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-6">
             <div class="card guideline" style="padding:0px;">
                     <div class="comment">
                         <div class="top">
