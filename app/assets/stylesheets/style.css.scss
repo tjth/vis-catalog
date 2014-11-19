@@ -536,3 +536,8 @@ section.viewport {
     opacity:1;
 }
 
+.page {
+    &.view-visualisation {
+        padding:20px;
+    }
+}

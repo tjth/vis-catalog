@@ -150,6 +150,8 @@
     });
 
     app.controller('visController', function ($scope, $rootScope, Visualisation, $routeParams) {
+        $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : false, class:"view-visualisation"}
+
         //Get ID from current URL
         var currentID = $routeParams.id;
         $scope.currentID = currentID;
