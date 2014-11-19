@@ -232,6 +232,7 @@
     
     .header {
         padding-left: 1em;
+        padding-right: 1em;
         line-height: 2.5em;
         vertical-align: middle;
         font-size: 2em;
@@ -242,10 +243,11 @@
         padding-top: 1em;
         padding-bottom: 1em;
         padding-left: 2em;
-        padding-right: 2em;
+        padding-right: 1em;
         height: calc(60% - 6em - #{$head-size});
         font-size: 1em;
-        overflow: scroll;
+        overflow-y: scroll;
+        overflow-x: hidden;
         background-color: #ffffff;
     }
     .bottom {
@@ -257,6 +259,7 @@
     .owner{
         line-height: $head-size;
         padding-left: 0.7em;
+        padding-right: 0.7em;
         padding-top: 0.3em;
         color: #424242;
         float: left;
@@ -265,6 +268,7 @@
     .link{
         line-height: $head-size;
         padding-left: 0.7em;
+        padding-right: 0.8em;
         padding-top: 0.3em;
         float: right;
         @include link(#00E676);
@@ -285,21 +289,19 @@
             }
 
     .top {
-        padding-top: 1em;
-        padding-bottom: 1em;
     }
     
     .bottom {
         padding-right: 1.5em;
         padding-left: 1.3em;
-        height: 2.5em;
+        height: 3em;
         text-align: left;
         vertical-align: middle;
         color: #9E9E9E;
     }
     
     .posted{
-        line-height: 2.5em;
+        line-height: 3em;
         background-color: #E0E0E0;
     }
     
@@ -318,7 +320,7 @@
         padding-top: 1em;
         padding-bottom: 1em;
         padding-left: 0em;
-        padding-right: 0em;
+        padding-right: 1em;
         margin-left: calc(#{$head-size} + 1em);
         text-align: left;
         font-size: 1.2em;
@@ -326,8 +328,9 @@
     }
     
     .post {
-        line-height: 1em;
+        line-height: 2em;
         font-size: 1.2em;
+        padding-right: 0.7em;
         text-align: right;
         background: transparent;
         border: transparent;
