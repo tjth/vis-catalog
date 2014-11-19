@@ -1,5 +1,7 @@
 class Visualisation < ActiveRecord::Base
   enum content_type: [ :file, :weblink ]
+  enum vis_type: [ :vis, :advert ]
+
   belongs_to :user
   has_many :programmes
   has_many :playout_sessions
@@ -7,6 +9,9 @@ class Visualisation < ActiveRecord::Base
   attr_default :isDefault, false
 
   #some filters!
-  scope :approved, -> (boolean) {where approved: boolean}
+  scope :approved, -> (boolean) {where approved: true}
+  scope :vis, ->  {where vis_type: "vis"}
 
+  mount_uploader :content, ContentUploader
+  mount_uploader :screenshot, ScreenshotUploader
 end
