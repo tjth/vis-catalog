@@ -7,6 +7,7 @@ class Visualisation < ActiveRecord::Base
   has_many :playout_sessions
   attr_default :approved, false
   attr_default :isDefault, false
+  attr_default :min_playtime, 1
 
   #some filters!
   scope :approved, -> (boolean) {where approved: true}
