@@ -10,26 +10,29 @@
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="card guideline">
-                    <div class="heading">Comments</div>
+            <div class="card guideline" style="padding:0px;">
                     <div class="comment">
                         <div class="top">
-                            <img class="avatar" ng-src="{[{commentsimage}]}"/>
-                            <textarea placeholder="Your comment" class="commenttext"></textarea>
+                            
+                                <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
+                                <textarea placeholder="Comment" class="commenttext" rows="4" wrap="hard"></textarea>
+                            
                         </div>
                         <div class="bottom" style="text-align: right;">
                             <button class="post" >POST</button>
                         </div>
                     </div>                        
             </div>
-            <div class="card guideline">
+            <div class="card guideline" style="padding:0px;">
                 <div class="comment">
                     <div class="top">
-                        
-                        {[{commentstext}]}
+                        <span>
+                            <img align="left" class="avatar" ng-src="{[{commentsimage}]}"/>
+                            <textbox class="commenttext">{[{commentstext}]}</textbox>
+                        </span>
                     </div>
-                    <div class="bottom">
-                        <div class="date"> <img class="avatar" ng-src="{[{commentsimage}]}"/>Posted on {[{commentsdate}]}</div>    
+                    <div class="bottom posted">
+                        Posted on {[{commentsdate}]}
                     </div>                
                 </div>
                 
