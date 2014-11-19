@@ -198,27 +198,41 @@
 
 
 .comment {
-    $head-size: 48px;
+    $head-size: 44px;
     .avatar {
-                border-radius:50%;
-                width:$head-size;
-                height:$head-size;
-                opacity:1 !important;
+        padding: 5px;
+        vertical-align: top;
+        margin: 5px;
+        border-radius:50%;
+        width:$head-size;
+        height:$head-size;
+        opacity:1 !important;
             }
 
     .top {
-        
+        padding-top: 1em;
+        padding-bottom: 1em;
     }
     
     .bottom {
+        padding: 1em;
+        height: 3em;
+        text-align: left;
+        vertical-align: middle;
+    }
+    
+    .posted{
         background-color: #E0E0E0;
     }
     
     .commenttext {
-        width: calc(100% - #{$head-size} - 10px);
+        text-align: justify;
+        font-size: 1.2em;
+        width: calc(100% - #{$head-size} - 30px);
     }
     
     .post {
+        font-size: 1.2em;
         text-align: right;
         background: transparent;
         border: transparent;
@@ -229,7 +243,7 @@
             color: #B3E5FC;
         }
     }
-
+}
 #moderate {
     $padding:15px;
     
@@ -311,5 +325,4 @@
             padding:$padding;
         }
     }
-}
 }

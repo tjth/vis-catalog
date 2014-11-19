@@ -1,35 +1,38 @@
 <section class="container-fluid" ng-controller="visController" >
-    <div class="row" color-thief-src="{[{ img }]}">
+    <div class="row">
         <div id="details" class="col-sm-8" class="card vis">
             <div class="guideline card">
                 <div class="content">
-                    <div class="img" style="background-image: url({[{ img }]}); height: 70vh; background-repeat: no-repeat; background-size: cover;"></div>
-                    <div class="header" color-thief-src="{[{ img }]}" style="font-size: 2em;">{[{ name }]}</div>
-                    <div class="desc">{[{ desc }]}</div>
+                    <div class="img" style="background-image: url({[{ visualisation.link }]}); height: 70vh; background-repeat: no-repeat; background-size: cover;"></div>
+                    <div class="header" style="font-size: 2em;">{[{ visualisation.name }]}</div>
+                    <div class="desc">{[{ visualisation.description }]}</div>
                 </div>
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="card guideline">
-                    <div class="heading">Comments</div>
+            <div class="card guideline" style="padding:0px;">
                     <div class="comment">
                         <div class="top">
-                            <img class="avatar" ng-src="{[{commentsimage}]}"/>
-                            <textarea placeholder="Your comment" class="commenttext"></textarea>
+                            
+                                <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
+                                <textarea placeholder="Comment" class="commenttext" rows="4" wrap="hard"></textarea>
+                            
                         </div>
                         <div class="bottom" style="text-align: right;">
                             <button class="post" >POST</button>
                         </div>
                     </div>                        
             </div>
-            <div class="card guideline">
+            <div class="card guideline" style="padding:0px;">
                 <div class="comment">
                     <div class="top">
-                        
-                        {[{commentstext}]}
+                        <span>
+                            <img align="left" class="avatar" ng-src="{[{commentsimage}]}"/>
+                            <textbox class="commenttext">{[{commentstext}]}</textbox>
+                        </span>
                     </div>
-                    <div class="bottom">
-                        <div class="date"> <img class="avatar" ng-src="{[{commentsimage}]}"/>Posted on {[{commentsdate}]}</div>    
+                    <div class="bottom posted">
+                        Posted on {[{commentsdate}]}
                     </div>                
                 </div>
                 
