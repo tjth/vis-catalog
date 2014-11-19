@@ -232,10 +232,10 @@
     
     .header {
         padding-left: 1em;
-        line-height: 2em;
+        line-height: 2.5em;
         vertical-align: middle;
         font-size: 2em;
-        height: 2em;
+        height: 2.5em;
     }
     
     .description {
@@ -243,7 +243,7 @@
         padding-bottom: 1em;
         padding-left: 2em;
         padding-right: 2em;
-        height: calc(60% - 5em - #{$head-size});
+        height: calc(60% - 6em - #{$head-size});
         font-size: 1em;
         overflow: scroll;
         background-color: #ffffff;
