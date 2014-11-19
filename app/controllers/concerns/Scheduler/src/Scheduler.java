@@ -66,12 +66,12 @@ public class Scheduler {
           Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
           boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
           if (startSlot == 0 && blockSize < SCREENS ||
-              startSlot > 0 && startSlot + blockSize < SCREENS &&
-              nextFreeSlot[startSlot - 1] > nextFreeSlot[startSlot + blockSize]) { // better to align left ie. longest to shortest
+              startSlot > 0 && check < SCREENS &&
+              nextFreeSlot[startSlot - 1] < nextFreeSlot[check]) { // better to align left ie. longest to shortest
             ascend = false;
           } else if (startSlot + blockSize == SCREENS && blockSize < SCREENS ||
-              startSlot > 0 && startSlot + blockSize < SCREENS &&
-              nextFreeSlot[startSlot - 1] > nextFreeSlot[startSlot + blockSize]) { // better to align right ie. shortest to longest
+              startSlot > 0 && check < SCREENS &&
+              nextFreeSlot[startSlot - 1] > nextFreeSlot[check]) { // better to align right ie. shortest to longest
             ascend = true;
           } else { // no alignment preference
             ascend = Math.random() < 0.5;
