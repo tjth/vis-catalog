@@ -48,7 +48,7 @@
       return true;
     }
     
-    var app = angular.module("app", ['ngRoute', 'ngAnimate', 'ngResource', 'truncate']);
+    var app = angular.module("app", ['ngRoute', 'ngAnimate', 'ngResource', 'truncate', 'flow']);
 
     app.config(function($interpolateProvider) {
           $interpolateProvider.startSymbol('{[{');
@@ -150,8 +150,6 @@
     });
 
     app.controller('visController', function ($scope, $rootScope, Visualisation, $routeParams) {
-        $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : false, class:"view-visualisation"}
-
         //Get ID from current URL
         var currentID = $routeParams.id;
         $scope.currentID = currentID;
@@ -169,6 +167,10 @@
 
     app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
+        $scope.submit = { img:"assets/camera.png" }
+        $scope.submitVisualistion = function() {
+
+        };
     });
 
     app.controller('moderateController', function($scope, $rootScope, $route) {
