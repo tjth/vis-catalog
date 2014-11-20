@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141112092026) do
+ActiveRecord::Schema.define(version: 20141117132418) do
+
+  create_table "comments", force: true do |t|
+    t.text     "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "visualisation_id"
+  end
 
   create_table "playout_sessions", force: true do |t|
     t.datetime "start_time"
@@ -30,24 +38,20 @@ ActiveRecord::Schema.define(version: 20141112092026) do
     t.integer  "priority"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "visualisations_id"
     t.integer  "timeslot_id"
     t.integer  "visualisation_id"
   end
 
+  add_index "programmes", ["timeslot_id"], name: "index_programmes_on_timeslot_id"
   add_index "programmes", ["visualisation_id"], name: "index_programmes_on_visualisation_id"
-  add_index "programmes", ["visualisations_id"], name: "index_programmes_on_visualisations_id"
 
   create_table "timeslots", force: true do |t|
     t.datetime "start_time"
     t.datetime "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "programmes_id"
     t.date     "date"
   end
-
-  add_index "timeslots", ["programmes_id"], name: "index_timeslots_on_programmes_id"
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",     default: "", null: false
@@ -84,6 +88,8 @@ ActiveRecord::Schema.define(version: 20141112092026) do
     t.boolean  "approved"
     t.string   "content"
     t.boolean  "isDefault"
+    t.integer  "vis_type"
+    t.string   "screenshot"
   end
 
 end

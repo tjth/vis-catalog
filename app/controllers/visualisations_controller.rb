@@ -38,15 +38,25 @@ class VisualisationsController < ApplicationController
       @needsModeration = false
     end
 
+    if params[:onlyVis] != nil
+      @onlyVis = true   
+    else
+      @onlyVis = false
+    end
+
     if params[:userid] == nil
       if params[:newest] != nil
-      @visualisations = get_newest_n(!@needsModeration, params[:newest])
+      @visualisations = get_newest_n(@onlyVis, !@needsModeration, params[:newest])
       end
 
       if @needsModeration
-        @visualisations = @visualisations.select{ |vis| vis.approved == false }
+        @visualisations = @visualisations.select{ |vis| !vis.approved }
       else
-        @visualisations = @visualisations.select{ |vis| vis.approved == true }
+        @visualisations = @visualisations.select{ |vis| vis.approved }
+      end
+
+      if @onlyVis
+        @visualisations = @visualisations.select{ |vis| vis.vis_type = "vis" }
       end
       
     else
@@ -57,17 +67,22 @@ class VisualisationsController < ApplicationController
       end
 
       if params[:needsModeration] != nil
-        @visualisations = u.visualisations.approved(false)
+        @visualisations = u.visualisations.approved(false).vis
       else
-        @visualisations = u.visualisations.approved(true)
+        @visualisations = u.visualisations.approved(true).vis
       end
     end
 
     
   end
 
-  def get_newest_n(approved, n)
-    return Visualisation.where(approved: approved).order(created_at: :desc).take(n)
+  def get_newest_n(onlyvis, approved, n)
+    if onlyvis
+      return Visualisation.where(approved: approved, vis_type: "vis").order(created_at: :desc).take(n)
+    else
+      return Visualisation.where(approved: approved).order(created_at: :desc).take(n)
+
+    end
   end
 
   # GET /visualisations/1
