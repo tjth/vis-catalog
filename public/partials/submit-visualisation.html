@@ -2,14 +2,19 @@
     <div class="row">
 
         <div id="submit-visualisation-col" class="col-sm-8">
-            <form id="form" class="card" ng-submit="submitVisualistion()">
+            <form id="form" class="card" ng-init="visualisation={}" ng-submit="submitVisualistion(visualisation)">
                 <div class="content">
-                    <div flow-init="{singleFile: true}"
+                    <div flow-init="{singleFile: true, target: '/uploaders/content_uploader.rb'}"
                          flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"
+                         flow-name="visualisation.flow"
                         <span class="camera btn" flow-btn>
-                            <img ng-show="!$flow.files.length" class="preview" src="{[{ submit.img }]}" name="image"/>
-                            <img ng-show="$flow.files.length" class="preview" style="max-width:117px;" flow-img="$flow.files[0]"/>
-                            <input type="file" style="visibility: hidden; position: absolute;"/>
+                            <img ng-show="!$flow.files.length" class="preview"
+                                 src="{[{ submit.img }]}"
+                                 name="image"/>
+                            <img ng-show="$flow.files.length" class="preview"
+                                 style="max-width:117px; max-height: 100px;"
+                                 flow-img="$flow.files[0]"/>
+                            <input type="file" style="visibility: hidden; position: absolute;" ng-model="visualisation.image"/>
                         </span>
                     </div>
                     <input type="text" 

@@ -86,7 +86,7 @@
                 redirectTo: '/'
             });
       }]);
-
+    
     app.controller('mainController', function($scope, $rootScope, $route) {
 
 
@@ -103,7 +103,6 @@
         }
         
     });
-    
         
     app.factory('Visualisation', ['$resource',
         function($resource){
@@ -169,7 +168,7 @@
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
         $scope.submit = { img:"assets/camera.png" }
         $scope.submitVisualistion = function() {
-
+            var vis = visualisation.flow.files[0];
         };
     });
 
