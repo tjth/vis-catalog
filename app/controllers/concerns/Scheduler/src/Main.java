@@ -4,18 +4,31 @@ import java.util.Arrays;
 public class Main {
 
   public static void main(String[] args) {
-    Visualisation v1 = new Visualisation(" V01 ", 1);
-    Visualisation v2 = new Visualisation(" V02 ", 2);
-    Visualisation v3 = new Visualisation(" V03 ", 3);
-    Programme p1 = new Programme(v1, 2, 3);
-    Programme p2 = new Programme(v2, 1, 6);
-    Programme p3 = new Programme(v3, 1, 9);
+    int maxM = 5, maxS = 4, maxP = 10;
+    Visualisation[] vs = new Visualisation[maxM + 1];
+    for (int m = 1; m <= maxM; m++) {
+      vs[m] = new Visualisation(" V0" + m + " ", m);
+    }
+    Programme[][][] ps = new Programme[maxM + 1][maxS + 1][maxP + 1];
+    for (int m = 1; m <= maxM; m++) {
+      for (int s = 1; s <= maxS; s++) {
+        for (int p = 1; p <= maxP; p++) {
+          ps[m][s][p] = new Programme(vs[m], s, p);
+        }
+      }
+    }
 
-    Scheduler sc = new Scheduler(8);
-    sc.schedule(new ArrayList<Programme>());
+    Scheduler sc = new Scheduler(15);
+    
+    sc.schedule(Arrays.asList(ps[1][1][3], ps[2][2][5], ps[4][1][10], ps[3][1][7], ps[5][2][10]));
     System.out.println(sc);
     sc.reset();
-    sc.schedule(Arrays.asList(p1, p2, p3));
+    
+    sc.schedule(Arrays.asList(ps[1][3][3]));
+    System.out.println(sc);
+    sc.reset();
+    
+    sc.schedule(new ArrayList<Programme>());
     System.out.println(sc);
     sc.reset();
   }
