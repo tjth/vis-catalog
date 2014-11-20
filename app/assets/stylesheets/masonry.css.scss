@@ -66,11 +66,11 @@
                     color:inherit;    
                 }
             }
+            
             .desc {
                 font-size: 1rem;
                 padding: 1rem;
                 overflow: hidden;
-                flex-grow:0;
             }
 
         }
@@ -88,21 +88,20 @@
 
             .bottom {
                 $arrow-width: 16px;
-                $arrow-padding: 20px;
+                $arrow-padding: 25px;
                 
-                position:relative;
+                display:table;
                 
                 .desc {
-                    display: block;
-                    width:calc(100% - #{$arrow-width} - 2 * #{$arrow-padding});
+                    display:table-cell;
+                    padding: 1rem 0rem 1rem 1rem;
                 }
         
                 .go {
-                    position:absolute;
-                    top:0;
+                    display:table-cell;
                     width:$arrow-width;
                     height:100%;
-                    right:$arrow-padding;
+                    padding:0px $arrow-padding 0px $arrow-padding;
                     background: image-url("blue-arrow-right.png") center no-repeat;
                 }
                 
