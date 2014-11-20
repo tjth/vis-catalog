@@ -32,6 +32,7 @@
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
         margin:$card-shadow-radius;
+        @include clickable();
         
         .content {
             flex-direction:column;
@@ -51,6 +52,7 @@
 
             .header {
                 font-size: 2rem;
+                font-weight: 500;
                 padding: 1rem;
                 flex-grow:0;
                 color:#fff;
@@ -59,10 +61,14 @@
                 &.bright-background {
                     color:#333;
                 }
+                
+                a {
+                    color:inherit;    
+                }
             }
             .desc {
                 font-size: 1rem;
-                margin: 1rem;
+                padding: 1rem;
                 overflow: hidden;
                 flex-grow:0;
             }
@@ -80,9 +86,26 @@
                 }
             }
 
-            .desc {
-                height: 4rem;
-                display: block;
+            .bottom {
+                $arrow-width: 16px;
+                $arrow-padding: 20px;
+                
+                position:relative;
+                
+                .desc {
+                    display: block;
+                    width:calc(100% - #{$arrow-width} - 2 * #{$arrow-padding});
+                }
+        
+                .go {
+                    position:absolute;
+                    top:0;
+                    width:$arrow-width;
+                    height:100%;
+                    right:$arrow-padding;
+                    background: image-url("blue-arrow-right.png") center no-repeat;
+                }
+                
             }
         }
 

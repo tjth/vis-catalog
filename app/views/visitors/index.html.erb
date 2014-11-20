@@ -187,10 +187,14 @@
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
     });
     
-    app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams) {
+    app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams, $location) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
         $scope.visItems = Visualisation.query($routeParams)
+        
+        $scope.goToVisualisation = function(item) {
+            $location.path("/visualisations/"+ item.id);
+        }
     });
 </script>
 ;
