@@ -150,7 +150,7 @@
     .top {
         padding-top: 1em;
         padding-bottom: 1em;
-        height: 40%; 
+        height: 50%; 
         width:100%;
         background-size: cover;
         background-repeat: no-repeat;
@@ -166,17 +166,16 @@
         line-height: 2.5em;
         vertical-align: middle;
         font-size: 2em;
+        font-weight:500;
         height: 2.5em;
+        // Temp
+        background-color:#ececec;
     }
     
     .description {
-        padding-top: 1em;
-        padding-bottom: 1em;
-        padding-left: 2em;
-        padding-right: 1em;
-        height: calc(60% - 6em - #{$head-size});
-        font-size: 1em;
-        overflow-y: scroll;
+        padding:2em;
+        height: calc(50% - 6em - #{$head-size});
+        overflow-y: auto;
         overflow-x: hidden;
         background-color: #ffffff;
     }
@@ -193,7 +192,6 @@
         padding-top: 0.3em;
         color: #424242;
         float: left;
-        font-size: 1.3em;
     }
     .link{
         line-height: $head-size;
@@ -202,7 +200,6 @@
         padding-top: 0.3em;
         float: right;
         @include link(#00E676);
-        font-size: 1.3em;
     }
 }
 
@@ -242,7 +239,6 @@
         padding-right: 0em;
         margin-left: 0.4em;
         text-align: left;
-        font-size: 1.2em;
         width: calc(100% - #{$head-size} - 3em);
     }
     
@@ -253,13 +249,12 @@
         padding-right: 1em;
         margin-left: calc(#{$head-size} + 1em);
         text-align: left;
-        font-size: 1.2em;
         width: calc(100% - #{$head-size} - 2em);
+        font-size:0.9rem;
     }
     
     .post {
         line-height: 2em;
-        font-size: 1.2em;
         padding-right: 0.7em;
         text-align: right;
         background: transparent;

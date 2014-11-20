@@ -152,11 +152,10 @@
 
     });
 
-    app.controller('visController', function ($scope, $rootScope, Visualisation, $routeParams) {
-        //Get ID from current URL
-        var currentID = $routeParams.id;
-        $scope.currentID = currentID;
-        $scope.visualisation = Visualisation.get({ id : $scope.currentID });
+    app.controller('visualisationController', function ($scope, $rootScope, Visualisation, $routeParams) {
+        $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : false, class:"view-visualisation"}
+        
+        $scope.visualisation = Visualisation.get({ id : $routeParams.id });
         $scope.commentsname = "Joe Bloggs";
         $scope.commentsimage = "http://api.randomuser.me/portraits/thumb/men/88.jpg";
         $scope.commentstext = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
