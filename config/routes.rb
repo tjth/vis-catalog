@@ -20,10 +20,12 @@ Rails.application.routes.draw do
   get '/users/:userid/makeadmin' => 'users#make_admin'
 
   get '/schedulingtest/' => 'timeslots#test'
-
   
   delete '/visualisations/:visid/reject' => 'visualisations#reject'
-  
+
+  post '/timeslots/copy_last_seven' => 'timeslots#copy_last_seven'
+
+
   
 
   resources :programmes
