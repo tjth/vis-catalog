@@ -245,6 +245,7 @@ $top-height:$week-height + $axis-height;
 
     
 .content-item {
+    @include animated();
     height:70px;
     display:flex;
     overflow:hidden;
@@ -329,6 +330,25 @@ $top-height:$week-height + $axis-height;
             .user-provided {
                 background-color: #f5f5f5;
                 flex-grow: 1;
+                
+                .data-row {
+                    border-bottom: 1px solid #e7e7e7;
+                    padding:20px;
+                    
+                    .title {
+                        color:#616161;
+                        width:100%;
+                        text-transform:uppercase;
+                    }
+                    
+                    .data {
+                        padding-top: 7px;   
+                    }
+                    
+                    &:last-child {
+                        border-bottom:none;   
+                    }
+                }
             }
         }
         
@@ -360,6 +380,14 @@ $top-height:$week-height + $axis-height;
                     position: absolute;
                     width: 100%;
                     top: calc(50% - 1.2rem);
+                }
+                
+                .content-item {
+                    @include clickable();
+                    
+                    &.active {
+                        box-shadow: 0px 1px 7px rgba(0, 0, 0, 0.7);
+                    }
                 }
             }
         }

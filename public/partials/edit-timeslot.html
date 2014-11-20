@@ -10,14 +10,31 @@
                 <div id="edit">
                     <div id="fields">
                         <div class="editable"></div>
-                        <div class="user-provided">{[{activeContentItem}]}</div>
+                        <div class="user-provided" ng-if="activeContentItem != null">
+                            <div class="data-row">
+                                <div class="title">{[{activeContentItem.type}]}</div>
+                            </div>
+                            <div class="data-row">
+                                <div class="title">Run Time</div>
+                                <div class="data">{[{activeContentItem.runTime / 60}]} mins</div>
+                            </div>
+                            <div class="data-row">
+                                <div class="title">Preferred number of screens</div>
+                                <div class="data">{[{activeContentItem.screens}]}</div>
+                            </div>
+                            <div class="data-row">
+                                <div class="title">Notes</div>
+                                <div class="data">{[{activeContentItem.notes}]}</div>
+                            </div>
+                        </div>
                     </div>
                     <div class="scroll">
                         <div class="content" content-drop-target>
                             <div draggable="true" 
                              ng-repeat="contentItem in timeslotContent"
                              content-item content="contentItem"
-                             ng-click="setActiveContentItem(contentItem)">
+                             ng-click="setActiveContentItem(contentItem)"
+                             ng-class="{'active': contentItem == activeContentItem}">
                             </div>   
                             <div ng-if="timeslotContent.length == 0" id="drag-here">
                                 To show content in this timeslot, drag it here
