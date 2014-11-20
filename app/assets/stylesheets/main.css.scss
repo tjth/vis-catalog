@@ -1,7 +1,7 @@
 @import "variables";
 @import "mixins";
 
-html { height:100%; }
+html { height:100%; overflow-y: hidden; }
 body { 
     height:100%; 
     padding-top:$header-height;
@@ -88,6 +88,7 @@ header {
     width:100%;
     color:#fff;
     font-size:2rem;
+    font-weight:500;
     height:$header-height;
     position:fixed;
     top:0;
@@ -471,61 +472,6 @@ section.viewport {
     .row {
         height:100%   
     }
-}
-
-#submit-visualisation-col {
-    height:100%;
-    
-            
-    @media (max-width: $mobile-width) {
-        height: 70%;
-    }
-    
-    #form {
-        height:100%;
-        padding: 20px;
-        
-        display: flex;
-        flex-direction: column;
-        
-        .content {
-            flex-grow: 1;
-            display:flex;
-            flex-direction: column;
-            
-            input, textarea {
-                width:100%;
-                margin-top:10px;
-
-                &:first-child { margin-top:0px; }
-                
-            }
-            
-            .grow {
-                flex-grow:1;   
-            }
-        }
-        
-        .bottom {
-            > * {
-                float: right;
-                text-transform: uppercase;
-            }
-            
-            .submit {
-                padding: 0.6rem 0px;
-                margin-top: 1rem;
-                color:#1de9b6;
-            }
-        }
-
-    }
-}
-
-#guidelines {
-        @media (max-width: $mobile-width) {
-            margin-top:20px;
-        }   
 }
 
 .page {

@@ -1,17 +1,58 @@
 class TimeslotsController < ApplicationController
   include Scheduling
+  require 'date'
+
+
+  # POST /timeslots/copy_last_seven
+  def copy_last_seven
+    last_week = get_weeks_timeslots(params[:startDay].to_date - 7)
+    curent = DateTime.iso8601(params[:startDay])
+    @this_week  = [] 
+
+    last_week.each do |day|
+      todays_vis = []
+      day.each do |timeslot|
+        new_timeslot = timeslot.dup
+        new_timeslot.date = current
+        new_timeslot.save!
+        todays_vis.push(new_timeslot)
+      end
+      @this_week.push(todays_vis)
+      current = current + 1
+    end
+
+
+  end
+
+  def get_weeks_timeslots(dt_string)
+    dt = DateTime.iso8601(dt_string)
+    days = []
+    
+    for i in 1..7
+      ts = Timeslot.where(:date => dt.to_date)
+      days.push(ts)
+      dt = dt + 1    
+    end
+
+    return days
+  end
 
   def get_todays_timeslots
-  	today = Date.today
-  	@timeslots = Timeslot.where(:date => today)
+    today = Date.today
+    @timeslots = Timeslot.where(:date => today)
   end
 
   def index
-  	if params[:date] != nil
-  		@timeslots = Timeslot.where(:date => params[:date])
-  	else
-		@timeslots = Timeslot.all
-  	end
+    if params[:weekStarting] != nil
+      @timeslots = get_weeks_timeslots(params[:weekStarting])
+      return
+    end
+
+    if params[:datetime] != nil
+      @timeslots = Timeslot.where(:date => DateTime.iso8601(params[:date]).to_date)
+    else
+      @timeslots = Timeslot.all
+    end
   end
 
 	# GET /visualisations/1

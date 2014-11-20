@@ -190,4 +190,201 @@ $top-height:$week-height + $axis-height;
     }
 }
 
+#content-selector {
 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .controls {
+        flex-shrink: 0;
+        
+        .search {
+            box-shadow: 0px 3px 5px -3px rgba(0,0,0,0.5);
+            position: relative;
+            
+            padding:10px 10px 10px calc(10px + 24px);
+            background: image-url("ic_search_black_24dp.png") no-repeat;  
+            background-position: 10px center;
+            
+            input {
+                padding:10px;   
+                width:100%;
+            }
+        }
+        
+        .content-type {
+            display:flex;
+
+            .toggle-button {
+                @include clickable;
+
+                flex-grow:1;
+                display:inline-block;
+                background-color:#f5f5f5;
+                text-align:center;
+                padding:12px 10px;
+
+                &.toggled {
+                    background-color:#e0e0e0   
+                }
+
+                &:first-child {
+                    border-right:1px solid #e0e0e0;
+                }
+            }
+        }
+    }
+    
+    .scroll {
+        overflow-y: scroll;
+        flex-grow: 1;   
+        margin-top:10px;
+    }
+}
+
+    
+.content-item {
+    height:70px;
+    display:flex;
+    overflow:hidden;
+    margin:10px 10px 0px 10px;
+
+    .screenshot, .text {
+        display: inline-block;
+    }
+    
+    .screenshot {
+        height:70px;
+        width:70px;
+        flex-shrink:0;
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .text {
+        flex-grow:1;
+        font-weight:500;
+        padding:10px 15px;
+        padding-top: calc(10px + 0.5rem);
+        
+        .name {
+            color:#616161;
+            font-size:0.95rem;
+        }
+        
+        .author {
+            color:#9e9e9e;
+            font-size:0.8rem;
+        }
+    }
+}
+
+#edit-timeslot {
+    height:100%;
+    display:flex;
+    flex-direction: column;
+    
+    .header {
+        color:#fff;
+        background-color:#616161;
+        display:flex;
+        flex-shrink:0;
+        
+        .day, .time {
+            padding:20px;
+            text-align:center
+        }
+        
+        .day {
+            flex-grow:0;
+            flex-shrink:0;
+            border-right:1px solid white;
+        }
+        
+        .time {
+            flex-grow:1;   
+        }
+    }
+    
+    #edit {
+        flex-grow:1;
+        position: relative;
+        
+        #fields {
+            height: 100%;
+            width: 50%;
+            position: absolute;
+            z-index: 1;
+            box-shadow: 3px 0px 5px -3px rgba(0,0,0,0.5); 
+            display:flex;
+            flex-direction: column;
+            
+            .editable {
+                background-color:white;
+                flex-grow:1;
+                border-bottom:1px solid #e7e7e7;
+            }
+            
+            .user-provided {
+                background-color: #f5f5f5;
+                flex-grow: 1;
+            }
+        }
+        
+        .scroll {
+            position: absolute;
+            height: 100%;
+            width: 50%;
+            left: 50%;
+            
+            background-color: #f5f5f5;
+            overflow-y:auto;
+            @include animated(0.25s);
+            
+            &.dragover {
+                box-shadow:inset 0px 0px 7px 3px rgba(0,0,0,0.2);
+                background-color: #e8e8e8;
+            }
+            
+            .content {
+                width: 100%;
+                min-height: 100%;
+                
+                #drag-here {
+                    font-weight: $font-weight-light;
+                    text-align:center;
+                    vertical-align: middle;
+                    font-size:1.2rem;
+                    color:#777;
+                    position: absolute;
+                    width: 100%;
+                    top: calc(50% - 1.2rem);
+                }
+            }
+        }
+        
+        
+    }
+    
+    .actions {
+        flex-shrink:0;
+        background:white;
+        border-top: 1px solid #e7e7e7;
+        
+        a {
+            text-transform: uppercase;
+            padding:20px;
+            
+            &.save {
+                @include link(#00e676);
+                float:right;
+            }
+            
+            &.cancel {
+                @include link(#ff3d00);
+                float:left;
+            }
+        }
+    }
+}
