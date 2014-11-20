@@ -33,6 +33,18 @@ a { @include clickable(); text-decoration: none !important; }
     }
 }
 
+select {
+    border: 0 none;
+    color: #969696;
+    outline: none;
+    border-bottom: 1px solid #e8e8e8;
+    background: transparent;
+    padding: 0.5rem 0;
+    width: 378px;
+    *width: 350px;
+    *background: #58B14C;
+}
+
 input, textarea {
     padding:0.5rem 0;
     background:none;
@@ -482,3 +494,8 @@ section.viewport {
     opacity:1;
 }
 
+.page {
+    &.view-visualisation {
+        padding:20px;
+    }
+}
