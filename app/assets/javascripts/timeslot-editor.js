@@ -27,8 +27,6 @@ function Timeslot(start, end, min, max) {
         this.setEnd(end);
     }
 
-    
-    
     this.min = min;
     this.max = max;
 }
@@ -409,6 +407,11 @@ $.widget("widgets.timesloteditor", {
             }
         }
         return conflicts;
+    },
+    
+    setTimeslots : function(timeslots) {
+        this.timeslots = timeslots;
+        this.draw();
     }
 
 });

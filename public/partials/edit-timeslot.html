@@ -68,14 +68,21 @@
                                type="text"/>
                     </div>
                     <div class="content-type">
-                        <div class="toggle-button" ng-repeat="category in ['Visualisation', 'Advert']" id="{[{category  | lowercase}]}">{[{category}]}</div>
+                        <div class="toggle-button" 
+                             id="visualisations"
+                             ng-click="showVisualisations = !showVisualisations"
+                             ng-class="{'pressed' : showVisualisations}">Visualisations</div>                       
+                        <div class="toggle-button" 
+                             id="adverts"
+                             ng-click="showAdverts = !showAdverts"
+                             ng-class="{'pressed' : showAdverts}">Adverts</div>
                     </div>
                 </div>
                 
                 <div class="scroll">
                     <div id="content">
                         <div draggable="true" 
-                             ng-repeat="contentItem in content | filter:contentQuery"
+                             ng-repeat="contentItem in content | filter:contentQuery | visualisations:showVisualisations | adverts:showAdverts"
                              content-item content="contentItem">
                         </div>
                     </div>

@@ -1,12 +1,8 @@
 app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
-    $scope.startOfWeek = moment().startOf('isoweek');
     $scope.activeTimeslot = null;
-
-    $scope.timeslots = [ {startTime:"2014-11-13T10:00:00Z", endTime:"2014-11-13T11:00:00Z", visualisations: [1, 2, 3], adverts:[5, 6, 7]} ];
-    //$scope.timeslots = Timeslot.query({startOfWeek: $scope.startOfWeek.format()});
-
+    
     $scope.getShortWeekdayName = function(day) {
         return moment().day(day).format("ddd")   
     }
@@ -14,17 +10,17 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $scope.formatWeek = function() {
         return $scope.startOfWeek.format("Do MMMM") + " - " +  $scope.startOfWeek.clone().add(7, "days").format("Do MMMM")
     }
-
+    
     $scope.nextWeek = function() {
         $scope.startOfWeek.add(7, "days");
-        //$scope.timeslots = Timeslot.query({startOfWeek: $scope.startOfWeek.format()});
     }   
+    
     $scope.previousWeek = function() {
         $scope.startOfWeek.add(-7, "days");
-        //$scope.timeslots = Timeslot.query({startOfWeek: $scope.startOfWeek.format()});
     }
-    $scope.addTimeslot = function(day) {
-           Timeslot.add({date: $scope.getDateForDay(day).format()}); 
+    
+    $scope.addTimeslot = function(day, start, end) {
+        Timeslot.new({date:date.format(), start:start.format(), end:end.format()}); 
     }
     $scope.removeTimeslot = function(day) {
         if ($scope.activeTimeslot != null) {
@@ -33,14 +29,30 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     } 
     $scope.getDateForDay = function(day) {
         return $scope.startOfWeek.clone().add(day, "days");   
+    }    
+    
+    $scope.getTimeslotsForWeek = function(startOfWeek) {
+        var timeslots = {};
+        for (i = 0; i < 7; i++) {
+            var date = startOfWeek.clone().add(i, "days");
+            var dayTimeslots = Timeslot.query({date: date.format()});
+            timeslots[date.format()] = dayTimeslots;
+        }
+        return timeslots;
     }
+    
+    // Watchers
+    $scope.$watch("startOfWeek", function(newStartOfWeek) {
+        $scope.timeslots = $scope.getTimeslotsForWeek($scope.startOfWeek);  
+    });
+    
+    $scope.startOfWeek = moment().startOf('isoweek');
 });
 
-app.controller('editTimeslotController', function($scope, $rootScope, Timeslot) {
+app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, Timeslot) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
-    
-    
-    $scope.timeslot = { date: moment(), start: moment(), end : moment().clone().add(1, "hours")};
+
+    $scope.timeslot = Timeslot.get({ id:$routeParams.id});
     
     $scope.setActiveContentItem = function(contentItem) {
         $scope.activeContentItem = contentItem;  
@@ -66,27 +78,7 @@ app.controller('editTimeslotController', function($scope, $rootScope, Timeslot) 
     $scope.timeslotContent = []
     $scope.activeContentItem = null;
     
-    //$scope.content = Visualisation.query();
-    
-    $scope.content = [{ author: {name : "Tim 'The Power' van Bremen"}, name : "Traffic in Milan", img : "/assets/dummy/milan.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "1"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Green", img : "/assets/dummy/green.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "2"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Pink", img : "/assets/dummy/pink.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "3"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Power", img : "/assets/dummy/power.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "4"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Green", img : "/assets/dummy/green.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "5"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Pink", img : "/assets/dummy/pink.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "6"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Power", img : "/assets/dummy/power.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "7"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Pink", img : "/assets/dummy/pink.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "8"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Power", img : "/assets/dummy/power.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "9"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Traffic in Milan", img : "/assets/dummy/milan.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", url : "1"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Green", img : "/assets/dummy/green.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "10"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Pink", img : "/assets/dummy/pink.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "11"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Power", img : "/assets/dummy/power.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "12"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Green", img : "/assets/dummy/green.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "13"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Pink", img : "/assets/dummy/pink.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "14"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Power", img : "/assets/dummy/power.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "15"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Pink", img : "/assets/dummy/pink.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "16"},
-                                   { author: {name : "Tim 'The Power' van Bremen"}, name : "Power", img : "/assets/dummy/power.png", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", type: "visualisation", screens:2,runTime:150,notes:"I'd like this to be shown when you see me coming out of the JCR so I can see it and show it to my friends.  Yeah if you could do that it'd be great.", id : "17"}];
-    
+    $scope.content = Visualisation.query();
 });
 
     
@@ -98,13 +90,37 @@ app.directive('timeslotEditor', function() {
                 $location.path('/schedule/timeslot/' + timeslot.id);  
                 $scope.$apply();
             }
+            
+            $scope.$watch("timeslots", function(newTimeslots) {
+                if ($scope.editor != undefined) {
+                    $($scope.editor).timesloteditor("setTimeslots", newTimeslots.get(scope.day));   
+                }
+            });
+            
+            $scope.$watch("startOfWeek", function(newStartOfWeek) {
+                $scope.date = newStartOfWeek.clone().add(scope.day, "days");  
+                $scope.editor.timesloteditor("setStartTime", scope.date);
+            });
         }],
 
         link: function(scope, element, attrs) {
-            $(element).timesloteditor({ timeslotclicked : function(event, data) {
-                scope.editTimeslot(data.timeslot);
-            }});
-            $(element).timesloteditor("setStartTime", moment(attrs["startOfWeek"]).add(attrs["day"], "days"));
+            scope.day = attrs.day;
+            
+            scope.editor = $(element).timesloteditor({ 
+                timeslotclicked : function(event, data) {
+                    scope.editTimeslot(data.timeslot);
+                },
+                timeslotRequested : function(event, data) {
+                    var id = scope.createTimeslot(data.start, data.end);
+                    $(element).timesloteditor("create", id, data.start, data.end);
+                },
+                timeslotTimeChanged : function(event, data) {
+                    scope.changeTimeslotTime(data.id, data.start, data.end);
+                },
+                timeslotDeleted : function(event, data) {
+                    scope.deleteTimeslot(data.id);
+                },
+            }); 
         }
     }; 
 }); 
@@ -210,3 +226,23 @@ app.directive('slider', function() {
         }
     }; 
 }); 
+
+app.filter('visualisations', function() {
+  return function(content, showVisualisations) {
+      var show = true;
+      if (showVisualisations) {
+          show = show && content.type == "visualisation";
+      }
+      return show;
+  };
+});
+
+app.filter('adverts', function() {
+  return function(content, showAdverts) {
+      var show = true;
+      if (showAdverts) {
+          show = show && content.type == "adverts";
+      }
+      return show;
+  };
+});
