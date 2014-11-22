@@ -3,7 +3,8 @@ app.controller('moderateController', function(Visualisation, $scope, $rootScope)
     $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
 
     $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true'})
-
+    $scope.externalUsers = [];
+    
     $scope.fadeOutRow = function(childElement, item) {
         var row = $(childElement).parents("tr");
         row.animate({opacity: 0}, 250);

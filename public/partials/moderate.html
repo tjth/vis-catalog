@@ -1,6 +1,24 @@
 <div id="moderate">
 
-    <table>
+     <table class="users">
+       <tbody>
+            <tr class="header">
+                <th>Name</th>
+                <th>Email</th>
+                <th>Purpose</th>
+            </tr>
+           <tr ng-if="externalUsers.length == 0">
+            <td colspan="5" class="no-content">No users to approve</td>
+           </tr>
+            <tr ng-if="externalUsers.length > 0" ng-repeat="user in externalUsers | filter:searchQuery">
+                <td class="title">{[{user.name}]}</td>
+                <td class="email"><a href="mailto:{[{user.email}]}">{[{user.email}]}</a></td>
+                <td class="purpose">{[{user.purpose}]}</div></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <table class="content">
        <tbody>
             <tr class="header">
                 <th>Title</th>
