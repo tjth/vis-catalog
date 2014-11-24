@@ -2,11 +2,12 @@
     <div class="row">
 
         <div id="submit-visualisation-col" class="col-sm-8">
-            <form id="form" class="card" ng-init="visualisation={}" ng-submit="submitVisualistion(visualisation)">
+            <form id="form" class="card" ng-init="visualisation={}" ng-submit="submitVisualistion()">
                 <div class="content">
-                    <div flow-init="{singleFile: true, target: '/uploaders/content_uploader.rb'}"
+                    <div flow-init="{singleFile: true, testChunks:false}"
                          flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"
-                         flow-name="visualisation.flow"
+                         flow-files-submitted="$flow.upload()"
+                         flow-file-success="$file.msg = $message"
                         <span class="camera btn" flow-btn>
                             <img ng-show="!$flow.files.length" class="preview"
                                  src="{[{ submit.img }]}"
@@ -14,7 +15,7 @@
                             <img ng-show="$flow.files.length" class="preview"
                                  style="max-width:117px; max-height: 100px;"
                                  flow-img="$flow.files[0]"/>
-                            <input type="file" style="visibility: hidden; position: absolute;" ng-model="visualisation.image"/>
+                            <input type="file" style="visibility: hidden; position: absolute;"/>
                         </span>
                     </div>
                     <input type="text" 
@@ -25,7 +26,7 @@
                            ng-model="visualisation.website" />    
                     <div class="wrapper">
                         <div  class="content-type side-by-side">CONTENT TYPE</div>
-                        <select name="content-type" class="selection side-by-side">
+                        <select name="content-type" class="selection side-by-side" ng-model="visualisation.content_type">
                             <option value="weblink">Web Link</option>
                             <option value="image">Image</option>
                         </select>

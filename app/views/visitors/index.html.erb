@@ -167,11 +167,32 @@
         $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
     });
 
-    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
+    app.controller('submitVisualisationController', function($scope, $rootScope, $route, $http) {
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
         $scope.submit = { img:"assets/camera.png" }
         $scope.submitVisualistion = function() {
-            var vis = visualisation.flow.files[0];
+            $http.post("http://localhost:3123/visualisations/new", {
+                method: "post",
+                data: {
+                    name: $scope.visualisation.name, 
+                    link: $scope.visualisation.link, 
+                    vis_type: "vis",
+                    image: $scope.visualisation.img.files[0],
+                    description: $scope.visualisation.description,
+                    notes: $scope.visualisation.notes,
+                    url: $scope.visualisation.url,
+                    website: $scope.visualisation.website,
+                    content_type: $scope.visualisation.content_type
+                    
+                }
+                
+            })
+            .success(function(){
+                console.log("done")
+            })
+            .error(function(){
+                console.log("error")
+            });
         };
     });
 
