@@ -166,6 +166,6 @@ class VisualisationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def visualisation_params
-      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot)
+      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot, :min_playtime)
     end
 end
