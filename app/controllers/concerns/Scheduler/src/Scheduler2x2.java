@@ -132,75 +132,73 @@ public class Scheduler2x2 {
   @Override
   public String toString() {
     System.out.println(sessions);
-//    String[][][] visNames = new String[mins][SCREENROWS][SCREENCOLS];
-//    boolean[][][] strokes = new boolean[mins][SCREENROWS][SCREENCOLS];
-//    boolean[][][] dashes = new boolean[mins][SCREENROWS][SCREENCOLS];
-//    boolean[][][] plusses = new boolean[mins][SCREENROWS][SCREENCOLS];
-//    for (int m = 0; m < mins; m++) {
-//      for (int r = 0; r < SCREENROWS; r++) {
-//        for (int c = 0; c < SCREENCOLS; c++) {
-//        visNames[m][r][c] = " NIL ";
-//        strokes[m][r][c] = true;
-//        dashes[m][r][c] = true;
-//        plusses[m][r][c] = true;
+//    String[][] visNames = new String[mins][SCREENS];
+//    boolean[][] strokes = new boolean[mins][SCREENS];
+//    boolean[][] dashes = new boolean[mins][SCREENS];
+//    boolean[][] plusses = new boolean[mins][SCREENS];
+//    for (int r = 0; r < mins; r++) {
+//      for (int c = 0; c < SCREENS; c++) {
+//        visNames[r][c] = "  NIL  ";
+//        strokes[r][c] = true;
+//        dashes[r][c] = true;
+//        plusses[r][c] = true;
 //      }
 //    }
 //    for (Session session : sessions) {
 //      Visualisation vis = session.getVis();
 //      int startTime = session.getStartTime();
 //      int origEndTime = startTime + vis.getDuration();
-//      int screenRow = session.getStartScreen() / SCREENCOLS;
-//      int startScreen = session.getStartScreen() % SCREENCOLS;
-//      int endScreen = session.getEndScreen() % SCREENCOLS;
+//      int startScreen = session.getStartScreen();
+//      int endScreen = session.getEndScreen();
 //      for (int current_time = startTime; current_time < Math.min(origEndTime, mins); current_time++) {
 //        for (int s = startScreen; s <= endScreen; s++) {
-//          visNames[current_time][screenRow][s] = "     ";
+//          visNames[current_time][s] = "       ";
 //        }
 //      }
-//      visNames[startTime][screenRow][startScreen] = vis.toString();
+//      visNames[startTime][startScreen] = vis.toString();
 //      for (int current_time = startTime; current_time < Math.min(origEndTime, mins); current_time++) {
 //        for (int s = startScreen; s <= endScreen - 1; s++) {
-//          strokes[current_time][screenRow][s] = false;
+//          strokes[current_time][s] = false;
 //        }
 //      }
 //      for (int current_time = startTime; current_time < Math.min(origEndTime - 1, mins); current_time++) {
 //        for (int s = startScreen; s <= endScreen; s++) {
-//          dashes[current_time][screenRow][s] = false;
+//          dashes[current_time][s] = false;
 //        }
 //      }
 //      
 //      for (int current_time = startTime; current_time < Math.min(origEndTime - 1, mins); current_time++) {
 //        for (int s = startScreen; s <= endScreen - 1; s++) {
-//          plusses[current_time][screenRow][s] = false;
+//          plusses[current_time][s] = false;
 //        }
 //      }
 //    }
-//    StringBuilder spaces = new StringBuilder("       ");
-//    StringBuilder dash = new StringBuilder("-------");
-
+//    StringBuilder spaces = new StringBuilder("         ");
+//    StringBuilder dash = new StringBuilder("---------");
+    
     StringBuilder disp = new StringBuilder();
 //    disp.append("Screen:");
-//    for (int s = 0; s < SCREENROWS; s++) {
-//      disp.append("    " + (s + 1) + "   ");
+//    for (int s = 0; s < SCREENS; s++) {
+//      disp.append("       " + (s + 1) + "  ");
 //    }
 //    disp.append("\n");
 //
 //    disp.append(spaces + "+");
-//    for (int s = 0; s < SCREENROWS; s++) {
+//    for (int s = 0; s < SCREENS; s++) {
 //      disp.append(dash + "+");
 //    }
 //    disp.append(" 0 \n");
 //
 //    for (int current_time = 0; current_time < mins; current_time++) {
 //      disp.append(spaces + "|");
-//      for (int s = 0; s < SCREENROWS; s++) {
+//      for (int s = 0; s < SCREENS; s++) {
 //        disp.append(" " + visNames[current_time][s] + " ");
 //        disp.append(strokes[current_time][s] ? "|" : " ");
 //      }
 //      disp.append("\n");
 //
 //      disp.append(spaces + "+");
-//      for (int s = 0; s < SCREENROWS; s++) {
+//      for (int s = 0; s < SCREENS; s++) {
 //        disp.append(dashes[current_time][s] ? dash : spaces);
 //        disp.append(plusses[current_time][s] ? "+" : " ");
 //      }
