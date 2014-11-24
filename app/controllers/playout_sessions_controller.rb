@@ -1,0 +1,3 @@
+class PlayoutSessionsController < ApplicationController
+  
+end
