@@ -30,10 +30,9 @@ class TimeslotsController < ApplicationController
       @this_week.push(todays_vis)
       current = current + 1
     end
-
-
   end
 
+  # used by copy_last_seven
   def get_weeks_timeslots(dt_string)
     dt = DateTime.iso8601(dt_string)
     days = []
@@ -47,11 +46,13 @@ class TimeslotsController < ApplicationController
     return days
   end
 
+  # utility func
   def get_todays_timeslots
     today = Date.today
     @timeslots = Timeslot.where(:date => today)
   end
 
+  # GET /timeslots
   def index
     if params[:weekStarting] != nil
       @timeslots = get_weeks_timeslots(params[:weekStarting])
@@ -65,23 +66,23 @@ class TimeslotsController < ApplicationController
     end
   end
 
-	# GET /visualisations/1
-  # GET /visualisations/1.json
+	# GET /timeslots/1
+  # GET /timeslots/1.json
   def show
     @timeslot = Timeslot.find_by_id(params[:id])
   end
 
-  # GET /visualisations/new
+  # GET /timeslots/new
   def new
     @timeslot = Timeslot.new
   end
 
-  # GET /visualisations/1/edit
+  # GET /timeslots/1/edit
   def edit
   end
 
-  # POST /visualisations
-  # POST /visualisations.json
+  # POST /timeslots
+  # POST /timeslots.json
   def create
     pars = timeslot_params
     @timeslot = Timeslot.new(pars)

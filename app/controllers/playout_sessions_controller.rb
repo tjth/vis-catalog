@@ -1,3 +1,2 @@
 class PlayoutSessionsController < ApplicationController
-  
 end
