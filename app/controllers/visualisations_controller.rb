@@ -10,9 +10,10 @@ class VisualisationsController < ApplicationController
       now, now, params[:screennum], params[:screennum]).first
 
     #TODO: this assumes one is there, else we may need to get default visualisation
-    #TODO: give json data
-    @visid = @session.visualisation.id
+    @vis = @session.visualisation
   end
+
+
 
   # PATCH /visualisations/:visid/approve
   def approve
