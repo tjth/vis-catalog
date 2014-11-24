@@ -18,19 +18,22 @@ Rails.application.routes.draw do
   patch '/visualisations/:visid/approve' => 'visualisations#approve'
 
   get '/users/:userid/makeadmin' => 'users#make_admin'
-
-  get '/schedulingtest/' => 'timeslots#test'
   
   delete '/visualisations/:visid/reject' => 'visualisations#reject'
 
   post '/timeslots/copy_last_seven' => 'timeslots#copy_last_seven'
 
+  post '/tokens' => 'tokens#create'
 
-  
+  post '/timeslots/submit' => 'timeslots#submit'  
+
+  get '/visualisations/current/:screennum' => 'visualisations.current'
 
   resources :programmes
   resources :visualisations
   resources :timeslots
 
+
+  get '/schedulingtest/' => 'timeslots#test'
 
 end

@@ -23,3 +23,4 @@ gem 'devise-kerberos-authenticatable', :git => 'https://gitlab.doc.ic.ac.uk/tjt1
 gem 'rspec-rails', :group => [:development, :test]
 gem 'carrierwave'
 gem 'attribute-defaults'
+gem 'PriorityQueue', '~> 0.1.2'

@@ -180,3 +180,33 @@ app.directive('contentItem', function() {
         }
     }; 
 }); 
+
+app.directive('slider', function() {
+    return {
+        scope: {
+        },
+        link: function(scope, element, attrs) {
+            scope.formatVal = function(value) {
+                var val = parseInt(value);
+                return val.toFixed(0);
+            };
+            
+            $(element).noUiSlider({
+                start: [ parseInt(attrs.start) ],
+                step: parseInt(attrs.step),
+                range: {
+                    'min':  parseInt(attrs.min),
+                    'max':  parseInt(attrs.max)
+                },
+                connect: "lower"
+            }).noUiSlider_pips({
+                mode: 'steps',
+                density:1
+            }).on('set', function() {
+                $(this).find(".noUi-handle").html(scope.formatVal($(this).val()));
+            }).on('slide', function() {
+                $(this).find(".noUi-handle").html(scope.formatVal($(this).val()));
+            }).val(parseInt(attrs.start));
+        }
+    }; 
+}); 

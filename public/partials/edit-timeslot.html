@@ -9,7 +9,16 @@
                 </div>
                 <div id="edit">
                     <div id="fields">
-                        <div class="editable"></div>
+                        <div class="editable" ng-if="activeContentItem != null">
+                            <div class="data-row">
+                                <div class="label_">Number of Screens</div>
+                                <div class="control screens" slider min=1 max=4 step=1 start=1></div>
+                            </div>                            
+                            <div class="data-row">
+                                <div class="label_">Duration Priority</div>
+                                <div class="control priority" slider min=1 max=10 step=1 start=4></div>
+                            </div>
+                        </div>
                         <div class="user-provided" ng-if="activeContentItem != null">
                             <div class="data-row">
                                 <div class="title">{[{activeContentItem.type}]}</div>
