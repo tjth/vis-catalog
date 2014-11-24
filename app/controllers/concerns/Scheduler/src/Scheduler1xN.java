@@ -19,12 +19,12 @@ public class Scheduler1xN {
   }
 
   public void schedule(List<Programme> progs) {
-    PriorityQueue<ProgTimer1xN> pq = createQueue(progs);
+    PriorityQueue<ProgTimer> pq = createQueue(progs);
     int[] nextFreeTimeslot = new int[SCREENS]; // tracks the next free slot for each screen
     for (int s = 0; s < SCREENS; s++) {
       nextFreeTimeslot[s] = 0;
     }
-    List<ProgTimer1xN> selectedPTs = new ArrayList<ProgTimer1xN>(); // list of ProgTimers to requeue after scheduling
+    List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
     List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
     for (int current_time = 0; current_time < mins; current_time++) {
       for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at time current_time
@@ -39,13 +39,8 @@ public class Scheduler1xN {
           curr_screen += block_size; // move curr_screen to end of free block
           int filled_blocks = 0; // records number of filled_blocks slots in block
           while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
-<<<<<<< HEAD:app/controllers/concerns/Scheduler/src/Scheduler1xN.java
-            ProgTimer1xN pt = pq.peek();
-            if (pt.prog.getScreens() > block_size - filled_blocks) { // selected programme is too big
-=======
             ProgTimer pt = pq.peek();
             if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
->>>>>>> origin/scheduling:app/controllers/concerns/Scheduler/src/Scheduler.java
               break;
             }
             pq.remove(); // remove selected programme from queue
@@ -59,19 +54,6 @@ public class Scheduler1xN {
               // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
           }
-<<<<<<< HEAD:app/controllers/concerns/Scheduler/src/Scheduler1xN.java
-          
-          int try_fill = 0;
-          while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) { // fill remainder of block with default programmes
-            Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
-            try_fill++; // stop if no default programme that can fit is found after a few tries
-            if (filled_blocks + defProg.getScreens() <= block_size) { // selected programme can fit
-              selectedProgs.add(defProg);
-              filled_blocks += defProg.getScreens();
-              try_fill = 0; // reset and pick another default programme
-            }
-          }
-=======
 //          int try_fill = 0;
 //          while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) { // fill remainder of block with default programmes
 //            Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
@@ -82,7 +64,6 @@ public class Scheduler1xN {
 //              try_fill = 0; // reset and pick another default programme
 //            }
 //          }
->>>>>>> origin/scheduling:app/controllers/concerns/Scheduler/src/Scheduler.java
           Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
 
           boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
@@ -128,16 +109,16 @@ public class Scheduler1xN {
     }
   }
 
-  private PriorityQueue<ProgTimer1xN> createQueue(List<Programme> progs) {
-    PriorityQueue<ProgTimer1xN> pq = new PriorityQueue<ProgTimer1xN>();
+  private PriorityQueue<ProgTimer> createQueue(List<Programme> progs) {
+    PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
     for (Programme prog : progs) {
-      pq.add(new ProgTimer1xN(prog));
+      pq.add(new ProgTimer(prog));
     }
     return pq;
   }
   
-  private void requeue(List<ProgTimer1xN> pts, PriorityQueue<ProgTimer1xN> pq) {
-    for (ProgTimer1xN pt : pts) {
+  private void requeue(List<ProgTimer> pts, PriorityQueue<ProgTimer> pq) {
+    for (ProgTimer pt : pts) {
       pt.setNextPlay();
       pq.add(pt);
     }
@@ -221,11 +202,11 @@ public class Scheduler1xN {
     return disp.toString();
   }
 
-  private class ProgTimer1xN implements Comparable<ProgTimer1xN> {
+  private class ProgTimer implements Comparable<ProgTimer> {
     Programme prog;
     float whenToPlay;
     
-    ProgTimer1xN(Programme prog) {
+    ProgTimer(Programme prog) {
       this.prog = prog;
       whenToPlay = prog.getPeriod();
     }
@@ -240,16 +221,12 @@ public class Scheduler1xN {
     }
     
     @Override
-<<<<<<< HEAD:app/controllers/concerns/Scheduler/src/Scheduler1xN.java
-    public int compareTo(ProgTimer1xN p) {
-=======
     public boolean equals(Object o) {
       return o != null && getClass() == o.getClass() && prog == ((ProgTimer)o).prog;
     }
     
     @Override
     public int compareTo(ProgTimer p) {
->>>>>>> origin/scheduling:app/controllers/concerns/Scheduler/src/Scheduler.java
       float timeDiff = whenToPlay - p.whenToPlay;
       return (int)Math.signum(Math.abs(timeDiff) < 0.00001 ? Math.random() * 2 - 1 : timeDiff);
     }
