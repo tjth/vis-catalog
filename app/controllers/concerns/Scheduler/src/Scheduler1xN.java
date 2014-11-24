@@ -3,13 +3,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class Scheduler {
+public class Scheduler1xN {
 
   private static final int SCREENS = 4;
   private int mins;
   private List<Session> sessions = new ArrayList<Session>();
 
-  public Scheduler(int mins) {
+  public Scheduler1xN(int mins) {
     this.mins = mins;
     reset();
   }
@@ -27,9 +27,6 @@ public class Scheduler {
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
     List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
     for (int current_time = 0; current_time < mins; current_time++) {
-      for (ProgTimer pt: pq) {
-        pt.timesSelected = 0;
-      }
       for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at time current_time
         if (nextFreeTimeslot[curr_screen] <= current_time) { // free slot found
           int start_screen = curr_screen; // start of free slot
@@ -43,17 +40,15 @@ public class Scheduler {
           int filled_blocks = 0; // records number of filled_blocks slots in block
           while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
             ProgTimer pt = pq.peek();
-            if (pt.prog.getScreens() > block_size - filled_blocks || pt.timesSelected * pt.prog.getScreens() >= SCREENS / 2) { // selected programme is too big or has already been selected
+            if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
               break;
             }
             pq.remove(); // remove selected programme from queue
-            pt.timesSelected++;
             if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
               selectedProgs.add(pt.prog); // schedule programme
-              pt.setNextPlay();
-              pq.add(pt); // queue again
+              selectedPTs.add(pt); // shortlist programme
+              requeue(pt, pq); // requeue programme
               filled_blocks += pt.prog.getScreens();
-              selectedPTs.add(pt); // requeue programme
             } else {
               // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
@@ -78,7 +73,6 @@ public class Scheduler {
           } else if (start_screen + block_size == SCREENS && block_size < SCREENS ||
               start_screen > 0 && curr_screen < SCREENS &&
               nextFreeTimeslot[start_screen - 1] > nextFreeTimeslot[curr_screen]) { // better to align right ie. shortest to longest
-
             ascend = true;
           } else { // no alignment preference
             ascend = Math.random() < 0.5;
@@ -106,11 +100,10 @@ public class Scheduler {
               }
             }
           }
-          selectedProgs.clear();
-//          requeue(selectedPTs, pq);
-          selectedPTs.clear();
         }
       }
+      selectedProgs.clear();
+      selectedPTs.clear();
     }
   }
 
@@ -122,10 +115,14 @@ public class Scheduler {
     return pq;
   }
   
-  private void requeue(List<ProgTimer> pts, PriorityQueue<ProgTimer> pq) {
+  private void requeue(ProgTimer pt, PriorityQueue<ProgTimer> pq) {
+    pt.setNextPlay();
+    pq.add(pt);
+  }
+  
+  private void requeueAll(List<ProgTimer> pts, PriorityQueue<ProgTimer> pq) {
     for (ProgTimer pt : pts) {
-      pt.setNextPlay();
-      pq.add(pt);
+      requeue(pt, pq);
     }
   }
   
@@ -138,7 +135,7 @@ public class Scheduler {
     boolean[][] plusses = new boolean[mins][SCREENS];
     for (int r = 0; r < mins; r++) {
       for (int c = 0; c < SCREENS; c++) {
-        visNames[r][c] = " NIL ";
+        visNames[r][c] = "  NIL  ";
         strokes[r][c] = true;
         dashes[r][c] = true;
         plusses[r][c] = true;
@@ -152,7 +149,7 @@ public class Scheduler {
       int endScreen = session.getEndScreen();
       for (int current_time = startTime; current_time < Math.min(origEndTime, mins); current_time++) {
         for (int s = startScreen; s <= endScreen; s++) {
-          visNames[current_time][s] = "     ";
+          visNames[current_time][s] = "       ";
         }
       }
       visNames[startTime][startScreen] = vis.toString();
@@ -173,13 +170,13 @@ public class Scheduler {
         }
       }
     }
-    StringBuilder spaces = new StringBuilder("       ");
-    StringBuilder dash = new StringBuilder("-------");
+    StringBuilder spaces = new StringBuilder("         ");
+    StringBuilder dash = new StringBuilder("---------");
     
     StringBuilder disp = new StringBuilder();
     disp.append("Screen:");
     for (int s = 0; s < SCREENS; s++) {
-      disp.append("    " + (s + 1) + "   ");
+      disp.append("       " + (s + 1) + "  ");
     }
     disp.append("\n");
 
@@ -210,12 +207,10 @@ public class Scheduler {
   private class ProgTimer implements Comparable<ProgTimer> {
     Programme prog;
     float whenToPlay;
-    int timesSelected;
     
     ProgTimer(Programme prog) {
       this.prog = prog;
       whenToPlay = prog.getPeriod();
-      timesSelected = 0;
     }
 
     void setNextPlay() {
