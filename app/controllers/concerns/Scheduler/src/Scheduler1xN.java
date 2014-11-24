@@ -27,6 +27,9 @@ public class Scheduler1xN {
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
     List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
     for (int current_time = 0; current_time < mins; current_time++) {
+      for (ProgTimer pt: pq) {
+        pt.timesSelected = 0;
+      }
       for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at time current_time
         if (nextFreeTimeslot[curr_screen] <= current_time) { // free slot found
           int start_screen = curr_screen; // start of free slot
@@ -40,10 +43,11 @@ public class Scheduler1xN {
           int filled_blocks = 0; // records number of filled_blocks slots in block
           while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
             ProgTimer pt = pq.peek();
-            if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
+            if (pt.prog.getScreens() > block_size - filled_blocks || pt.timesSelected * pt.prog.getScreens() >= SCREENS / 2) { // selected programme is too big or has already been selected
               break;
             }
             pq.remove(); // remove selected programme from queue
+            pt.timesSelected++;
             if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
               selectedProgs.add(pt.prog); // schedule programme
               pt.setNextPlay();
@@ -205,10 +209,12 @@ public class Scheduler1xN {
   private class ProgTimer implements Comparable<ProgTimer> {
     Programme prog;
     float whenToPlay;
+    int timesSelected;
     
     ProgTimer(Programme prog) {
       this.prog = prog;
       whenToPlay = prog.getPeriod();
+      timesSelected = 0;
     }
 
     void setNextPlay() {
