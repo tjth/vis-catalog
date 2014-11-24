@@ -3,6 +3,7 @@ class VisualisationsController < ApplicationController
 
   # PATCH /visualisations/:visid/approve
   def approve
+    puts current_user
     if current_user.isAdmin
       v = Visualisation.find_by_id(params[:visid])
       unless v == nil

@@ -11,7 +11,9 @@ class ApplicationController < ActionController::Base
     if params[:authentication_key].present?
       @user = User.find_by_authentication_token(params[:authentication_key]) # we are finding 
       sign_in @user if @user # we are siging in user if it exist. sign_in is devise method 
-      redirect_to root_path # now we are redirecting the user to root_path i,e our home page
+      if @user == nil
+	render :status=>400, :json=>{:message=>"Invalid token."}
+      end
     end
   end
 
