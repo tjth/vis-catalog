@@ -20,7 +20,7 @@ public class Main {
 
     Scheduler sc = new Scheduler(15);
     
-    sc.schedule(Arrays.asList(ps[1][1][3], ps[2][2][5], ps[4][1][10], ps[3][1][7], ps[5][2][10]));
+    sc.schedule(Arrays.asList(ps[1][2][1], ps[2][1][5], ps[1][1][10]));
     System.out.println(sc);
     sc.reset();
     
