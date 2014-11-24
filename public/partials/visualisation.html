@@ -1,48 +1,47 @@
-<section class="container-fluid" ng-controller="visController" >
-    <div class="row" color-thief-src="{[{ img }]}">
-        <div id="details" class="col-sm-8" class="card vis">
-            <div class="guideline card">
-                <div class="content">
-                    <div class="img" style="background-image: url({[{ img }]}); height: 70vh; background-repeat: no-repeat; background-size: cover;"></div>
-                    <div class="header" color-thief-src="{[{ img }]}" style="font-size: 2em;">{[{ name }]}</div>
-                    <div class="desc">{[{ desc }]}</div>
+<section class="container-fluid" ng-controller="visualisationController" > 
+    <div class="row">
+        <div id="details" class="col-sm-6" class="card vis" style="height:100%;">
+            <div class="view card">
+                <div class="visualisation">
+                    <div class="top" style="background-image: url({[{ visualisation.link }]});"></div>
+                    <div class="header">{[{ visualisation.name }]}</div>
+                    <div class="description">{[{ visualisation.description }]}</div>
+                    <div class="bottom">
+                        <div><img class="avatar" align="left" ng-src="{[{commentsimage}]}"/></div>
+                        <div class="owner">{[{commentsname}]}</div>
+                        <div><a class="link" href="https://authorssite.com">https://authorssite.com</a></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
-            <div class="card guideline">
-                    <div class="heading">Comments</div>
+        <div class="col-sm-6">
+            <div class="card view">
                     <div class="comment">
                         <div class="top">
-                            <img class="avatar" ng-src="{[{commentsimage}]}"/>
-                            <textarea placeholder="Your comment" class="commenttext"></textarea>
+                            <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
+                            <textarea placeholder="Comment" class="inputtext" rows="4" wrap="hard"></textarea>
                         </div>
                         <div class="bottom" style="text-align: right;">
                             <button class="post" >POST</button>
                         </div>
                     </div>                        
             </div>
-            <div class="card guideline">
+            <div class="card view">
                 <div class="comment">
                     <div class="top">
-                        
-                        {[{commentstext}]}
+                        <span>
+                            <img align="left" class="avatar" ng-src="{[{commentsimage}]}"/>
+                            <div class="commenttext">{[{commentstext}]}</div>
+                        </span>
                     </div>
-                    <div class="bottom">
-                        <div class="date"> <img class="avatar" ng-src="{[{commentsimage}]}"/>Posted on {[{commentsdate}]}</div>    
+                    <div class="bottom posted">
+                        Posted on {[{commentsdate}]}
                     </div>                
-                </div>
+                </div>               
                 
-                
-            </div>
-                
+            </div>                
                 
             </div>
-        
-            
-        
-            
-            
         </div>
     </div>
 </section>

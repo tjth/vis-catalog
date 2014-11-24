@@ -33,6 +33,18 @@ a { @include clickable(); text-decoration: none !important; }
     }
 }
 
+select {
+    border: 0 none;
+    color: #969696;
+    outline: none;
+    border-bottom: 1px solid #e8e8e8;
+    background: transparent;
+    padding: 0.5rem 0;
+    width: 378px;
+    *width: 350px;
+    *background: #58B14C;
+}
+
 input, textarea {
     padding:0.5rem 0;
     background:none;
@@ -76,6 +88,7 @@ header {
     width:100%;
     color:#fff;
     font-size:2rem;
+    font-weight:500;
     height:$header-height;
     position:fixed;
     top:0;
@@ -481,3 +494,14 @@ section.viewport {
     opacity:1;
 }
 
+.page {
+    &.view-visualisation {
+        padding:20px;
+    }
+}
+
+.page {
+    &.view-visualisation {
+        padding:20px;
+    }
+}
