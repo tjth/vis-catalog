@@ -5,14 +5,6 @@ Rails.application.routes.draw do
   devise_for :users, :token_authentication_key => 'authentication_key'
   resources :users
 
-  #get '/visualisations' => 'visualisations#index' 
-  
-  #get '/visualisations/:visid' => 'visualisations#show'
-
- # delete '/visualisations/:visid' => 'visualisations#delete'
-
-  #get '/visualisations/new' => 'visualisations#create'
-
   post '/visualisations' => 'visualisations#create'
 
   patch '/visualisations/:visid/approve' => 'visualisations#approve'
@@ -27,7 +19,7 @@ Rails.application.routes.draw do
 
   post '/timeslots/submit' => 'timeslots#submit'  
 
-  get '/visualisations/current/:screennum' => 'visualisations.current'
+  get '/visualisations/current/:screennum' => 'visualisations#current'
 
   resources :programmes
   resources :visualisations
