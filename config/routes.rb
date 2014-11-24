@@ -23,6 +23,7 @@ Rails.application.routes.draw do
 
   post '/timeslots/copy_last_seven' => 'timeslots#copy_last_seven'
 
+  post '/tokens' => 'tokens#create'
 
   
 
