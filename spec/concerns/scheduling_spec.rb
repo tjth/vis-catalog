@@ -66,21 +66,29 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.generate_schedule' do
     context 'schedule playout with time proportional to priority' do
-      def getTotalPlaytime (visids, playouts)
+      def getTotalPlaytime (playouts)
         playtimes = {}
-        visids.each do |visid|
-          associated_playouts = 
-            playouts.select{|playout| playout.visualisation_id == visid}
 
-          totalTime = 0
-          associated_playouts.each do |playout|
-            puts "vis_id : " << playout.visualisation_id.to_s << " start_time: " <<
-                 playout.start_time.to_s << " end_time: " << playout.end_time.to_s
-            totalTime += (playout.end_time - playout.start_time)            
+        start_time = playouts.minimum("start_time")
+        end_time = playouts.maximum("end_time")
+
+        time_elapsed = 0
+        while start_time + time_elapsed < end_time
+          playout_vis =
+            playouts.where("start_time <= :now AND :now < end_time",
+                           {now: (start_time + time_elapsed)}).
+              select(:visualisation_id).distinct
+
+          playout_vis.each do |vis|
+            if (!playtimes.has_key?(vis.visualisation_id)) 
+              playtimes[vis.visualisation_id] = 0
+            end
+            playtimes[vis.visualisation_id] += Const.SECONDS_IN_UNIT_TIME
           end
 
-          playtimes[visid] = totalTime
+          time_elapsed += Const.SECONDS_IN_UNIT_TIME
         end
+        
         return playtimes
       end
 
@@ -91,29 +99,28 @@ RSpec.describe Scheduling, :type => :concern do
         vis1 = Visualisation.create({:name => "Milan"})
         vis2 = Visualisation.create({:name => "Green", :min_playtime => 120})
         vis3 = Visualisation.create({:name => "Pink"})
-        vis4 = Visualisation.create({:name => "Power", :min_playtime => 120})
+        vis4 = Visualisation.create({:name => "Power"})
+        vis5 = Visualisation.create({:name => "Test"})
 
         prog1 = Programme.create({:screens => 2, :priority => 1})
         vis1.programmes << prog1
         prog2 = Programme.create({:screens => 1, :priority => 5})
-        vis2.programmes << prog2
+        prog2.visualisation = vis2
         prog3 = Programme.create({:screens => 1, :priority => 10})
-        vis3.programmes << prog3
-        prog4 = Programme.create({:screens => 1, :priority => 10})
-        vis4.programmes << prog4
+        prog3.visualisation = vis3
        
 
         start_time = DateTime.new(2014, 9, 2, 12, 0, 0).utc
-        end_time = DateTime.new(2014, 9, 2, 12, 15, 0).utc
+        end_time = DateTime.new(2014, 9, 2, 13, 0, 0).utc
 
         timeslot = Timeslot.create({:start_time => start_time,
                                     :end_time => end_time})
-        timeslot.programmes << [prog1, prog2, prog3, prog4]
+        timeslot.programmes << [prog1, prog2, prog3]
         generate_schedule(timeslot)
 
         playouts = PlayoutSession.where(start_time: start_time...end_time)
 
-        playtimes = getTotalPlaytime([vis1.id, vis2.id, vis3.id, vis4.id], playouts)
+        playtimes = getTotalPlaytime(playouts)
         expect(playtimes).to be 1
       end
     end  
