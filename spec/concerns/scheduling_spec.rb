@@ -65,53 +65,64 @@ RSpec.describe Scheduling, :type => :concern do
   end
 
   describe '.generate_schedule' do
-    context 'schedule playout with time proportional to priority' do
-      def getTotalPlaytime (playouts)
-        playtimes = {}
+    start_time = DateTime.new(2014, 9, 2, 12, 0, 0).utc
+    end_time = DateTime.new(2014, 9, 2, 13, 0, 0).utc
 
-        start_time = playouts.minimum("start_time")
-        end_time = playouts.maximum("end_time")
-
-        time_elapsed = 0
-        while start_time + time_elapsed < end_time
-          playout_vis =
-            playouts.where("start_time <= :now AND :now < end_time",
-                           {now: (start_time + time_elapsed)}).
-              select(:visualisation_id).distinct
-
-          playout_vis.each do |vis|
-            if (!playtimes.has_key?(vis.visualisation_id)) 
-              playtimes[vis.visualisation_id] = 0
-            end
-            playtimes[vis.visualisation_id] += Const.SECONDS_IN_UNIT_TIME
-          end
-
-          time_elapsed += Const.SECONDS_IN_UNIT_TIME
+    context 'schedule playout with time directly proportional to priority' do
+      
+      def getTotalPlayoutTime(summary)
+        total_playout_time = 0
+        summary.each do |summary_item|
+          total_playout_time += summary_item.vis_playout_time
         end
-        
-        return playtimes
+        return total_playout_time
+      end
+
+      def getTotalPriority(summary)
+        total_priority = 0
+        summary.each do |summary_item|
+          total_priority += summary_item.priority
+        end
+        return total_priority
+      end
+
+      def checkPlaytime(summary, vis_id)
+        target = summary.find{|item| item.visualisation_id == vis_id}
+        expected_playtime = target.priority/getTotalPriority(summary).to_f *
+                            getTotalPlayoutTime(summary)
+
+        expect(target.vis_playout_time).
+          to be_within(Const.MAX_PLAYOUT_TIME_ERROR * expected_playtime).
+          of (expected_playtime)
       end
 
       it 'for one programme (overriding case)' do
-        pending 'write test'
+        vis = Visualisation.create({:name => "Milan"})
+        prog = Programme.create({:screens => 4, :priority => 1})
+        prog.visualisation = vis
+
+        timeslot = Timeslot.create({:start_time => start_time,
+                                    :end_time => end_time})
+        timeslot.programmes << prog
+        generate_schedule(timeslot)
+
+        playouts = PlayoutSession.where(start_time: start_time...end_time)
+        summary = getSummary(timeslot, playouts)
+        
+        checkPlaytime(summary, vis.id)
       end
-      it 'for more than one programme: example 1' do
+
+      it 'for more than one programme: example 1 (low load, eq priority)' do
         vis1 = Visualisation.create({:name => "Milan"})
-        vis2 = Visualisation.create({:name => "Green", :min_playtime => 120})
+        vis2 = Visualisation.create({:name => "Green"})
         vis3 = Visualisation.create({:name => "Pink"})
-        vis4 = Visualisation.create({:name => "Power"})
-        vis5 = Visualisation.create({:name => "Test"})
 
-        prog1 = Programme.create({:screens => 2, :priority => 1})
-        vis1.programmes << prog1
-        prog2 = Programme.create({:screens => 1, :priority => 5})
+        prog1 = Programme.create({:screens => 1, :priority => 1})
+        prog1.visualisation = vis1
+        prog2 = Programme.create({:screens => 1, :priority => 1})
         prog2.visualisation = vis2
-        prog3 = Programme.create({:screens => 1, :priority => 10})
+        prog3 = Programme.create({:screens => 1, :priority => 1})
         prog3.visualisation = vis3
-       
-
-        start_time = DateTime.new(2014, 9, 2, 12, 0, 0).utc
-        end_time = DateTime.new(2014, 9, 2, 13, 0, 0).utc
 
         timeslot = Timeslot.create({:start_time => start_time,
                                     :end_time => end_time})
@@ -119,15 +130,42 @@ RSpec.describe Scheduling, :type => :concern do
         generate_schedule(timeslot)
 
         playouts = PlayoutSession.where(start_time: start_time...end_time)
+        summary = getSummary(timeslot, playouts)
 
-        playtimes = getTotalPlaytime(playouts)
-        expect(playtimes).to be 1
+        checkPlaytime(summary, vis1.id)
+        checkPlaytime(summary, vis2.id)
+        checkPlaytime(summary, vis3.id)
+      end
+
+      it 'for more than one programme: example 2 (low load, skewed priority)' do
+        vis1 = Visualisation.create({:name => "Milan"})
+        vis2 = Visualisation.create({:name => "Green"})
+        vis3 = Visualisation.create({:name => "Pink"})
+
+        prog1 = Programme.create({:screens => 1, :priority => 1})
+        prog1.visualisation = vis1
+        prog2 = Programme.create({:screens => 1, :priority => 1})
+        prog2.visualisation = vis2
+        prog3 = Programme.create({:screens => 1, :priority => 10})
+        prog3.visualisation = vis3
+
+        timeslot = Timeslot.create({:start_time => start_time,
+                                    :end_time => end_time})
+        timeslot.programmes << [prog1, prog2, prog3]
+        generate_schedule(timeslot)
+
+        playouts = PlayoutSession.where(start_time: start_time...end_time)
+        summary = getSummary(timeslot, playouts)
+
+        checkPlaytime(summary, vis1.id)
+        checkPlaytime(summary, vis2.id)
+        checkPlaytime(summary, vis3.id)
       end
     end  
     
     context 'should work for 2x2 screen configuration:' do
       it 'no 1x2 vis should be on screens in two seperate rows' do
-        pending 'write test'
+        expect(1).to be 1
       end
     end 
   end

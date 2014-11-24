@@ -33,4 +33,8 @@ module Const
     0
   end
 
+  def self.MAX_PLAYOUT_TIME_ERROR
+    0.20
+  end
+
 end
