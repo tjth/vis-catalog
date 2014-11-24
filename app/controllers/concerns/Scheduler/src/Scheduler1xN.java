@@ -3,13 +3,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class Scheduler {
+public class Scheduler1xN {
 
   private static final int SCREENS = 4;
   private int mins;
   private List<Session> sessions = new ArrayList<Session>();
 
-  public Scheduler(int mins) {
+  public Scheduler1xN(int mins) {
     this.mins = mins;
     reset();
   }
@@ -19,12 +19,12 @@ public class Scheduler {
   }
 
   public void schedule(List<Programme> progs) {
-    PriorityQueue<ProgTimer> pq = createQueue(progs);
+    PriorityQueue<ProgTimer1xN> pq = createQueue(progs);
     int[] nextFreeTimeslot = new int[SCREENS]; // tracks the next free slot for each screen
     for (int s = 0; s < SCREENS; s++) {
       nextFreeTimeslot[s] = 0;
     }
-    List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
+    List<ProgTimer1xN> selectedPTs = new ArrayList<ProgTimer1xN>(); // list of ProgTimers to requeue after scheduling
     List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
     for (int current_time = 0; current_time < mins; current_time++) {
       for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at time current_time
@@ -39,7 +39,7 @@ public class Scheduler {
           curr_screen += block_size; // move curr_screen to end of free block
           int filled_blocks = 0; // records number of filled_blocks slots in block
           while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
-            ProgTimer pt = pq.peek();
+            ProgTimer1xN pt = pq.peek();
             if (pt.prog.getScreens() > block_size - filled_blocks) { // selected programme is too big
               break;
             }
@@ -52,6 +52,7 @@ public class Scheduler {
               // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
           }
+          
           int try_fill = 0;
           while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) { // fill remainder of block with default programmes
             Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
@@ -72,7 +73,6 @@ public class Scheduler {
           } else if (start_screen + block_size == SCREENS && block_size < SCREENS ||
               start_screen > 0 && curr_screen < SCREENS &&
               nextFreeTimeslot[start_screen - 1] > nextFreeTimeslot[curr_screen]) { // better to align right ie. shortest to longest
-
             ascend = true;
           } else { // no alignment preference
             ascend = Math.random() < 0.5;
@@ -108,16 +108,16 @@ public class Scheduler {
     }
   }
 
-  private PriorityQueue<ProgTimer> createQueue(List<Programme> progs) {
-    PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
+  private PriorityQueue<ProgTimer1xN> createQueue(List<Programme> progs) {
+    PriorityQueue<ProgTimer1xN> pq = new PriorityQueue<ProgTimer1xN>();
     for (Programme prog : progs) {
-      pq.add(new ProgTimer(prog));
+      pq.add(new ProgTimer1xN(prog));
     }
     return pq;
   }
   
-  private void requeue(List<ProgTimer> pts, PriorityQueue<ProgTimer> pq) {
-    for (ProgTimer pt : pts) {
+  private void requeue(List<ProgTimer1xN> pts, PriorityQueue<ProgTimer1xN> pq) {
+    for (ProgTimer1xN pt : pts) {
       pt.setNextPlay();
       pq.add(pt);
     }
@@ -201,11 +201,11 @@ public class Scheduler {
     return disp.toString();
   }
 
-  private class ProgTimer implements Comparable<ProgTimer> {
+  private class ProgTimer1xN implements Comparable<ProgTimer1xN> {
     Programme prog;
     float whenToPlay;
     
-    ProgTimer(Programme prog) {
+    ProgTimer1xN(Programme prog) {
       this.prog = prog;
       whenToPlay = prog.getPeriod();
     }
@@ -220,7 +220,7 @@ public class Scheduler {
     }
     
     @Override
-    public int compareTo(ProgTimer p) {
+    public int compareTo(ProgTimer1xN p) {
       float timeDiff = whenToPlay - p.whenToPlay;
       return (int)Math.signum(Math.abs(timeDiff) < 0.00001 ? Math.random() * 2 - 1 : timeDiff);
     }

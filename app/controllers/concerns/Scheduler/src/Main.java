@@ -18,19 +18,25 @@ public class Main {
       }
     }
 
-    Scheduler sc = new Scheduler(15);
+//    Scheduler1xN sc1xn = new Scheduler1xN(15);
+//    
+//    sc1xn.schedule(Arrays.asList(ps[1][1][3], ps[2][2][5], ps[4][1][10], ps[3][1][7], ps[5][2][10]));
+//    System.out.println(sc1xn);
+//    sc1xn.reset();
+//    
+//    sc1xn.schedule(Arrays.asList(ps[1][3][3]));
+//    System.out.println(sc1xn);
+//    sc1xn.reset();
+//    
+//    sc1xn.schedule(new ArrayList<Programme>());
+//    System.out.println(sc1xn);
+//    sc1xn.reset();
     
-    sc.schedule(Arrays.asList(ps[1][1][3], ps[2][2][5], ps[4][1][10], ps[3][1][7], ps[5][2][10]));
-    System.out.println(sc);
-    sc.reset();
+    Scheduler2x2 sc2x2 = new Scheduler2x2(6);
     
-    sc.schedule(Arrays.asList(ps[1][3][3]));
-    System.out.println(sc);
-    sc.reset();
-    
-    sc.schedule(new ArrayList<Programme>());
-    System.out.println(sc);
-    sc.reset();
+    sc2x2.schedule(new ArrayList<Programme>());
+    System.out.println(sc2x2);
+    sc2x2.reset();
   }
 
 }
