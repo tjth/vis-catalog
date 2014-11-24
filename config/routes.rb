@@ -27,6 +27,8 @@ Rails.application.routes.draw do
 
   post '/timeslots/submit' => 'timeslots#submit'  
 
+  get '/visualisations/current/:screennum' => 'visualisations.current'
+
   resources :programmes
   resources :visualisations
   resources :timeslots

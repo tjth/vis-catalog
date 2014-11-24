@@ -1,5 +1,18 @@
 class VisualisationsController < ApplicationController
+  require 'date'
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
+
+  # GET /visualisations/current/:screennum
+  def current
+    now = DateTime.now
+    @session = PlayoutSession.where(
+      "start_time <= ? AND end_time >= ? AND start_screen <= ? AND end_screen >= ? ",
+      now, now, params[:screennum], params[:screennum]).first
+
+    #TODO: this assumes one is there, else we may need to get default visualisation
+    #TODO: give json data
+    @visid = @session.visualisation.id
+  end
 
   # PATCH /visualisations/:visid/approve
   def approve
