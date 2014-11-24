@@ -25,7 +25,7 @@ Rails.application.routes.draw do
 
   post '/tokens' => 'tokens#create'
 
-  
+  post '/timeslots/submit' => 'timeslots#submit'  
 
   resources :programmes
   resources :visualisations
