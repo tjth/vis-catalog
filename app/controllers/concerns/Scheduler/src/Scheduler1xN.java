@@ -39,19 +39,27 @@ public class Scheduler1xN {
           curr_screen += block_size; // move curr_screen to end of free block
           int filled_blocks = 0; // records number of filled_blocks slots in block
           while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
+<<<<<<< HEAD:app/controllers/concerns/Scheduler/src/Scheduler1xN.java
             ProgTimer1xN pt = pq.peek();
             if (pt.prog.getScreens() > block_size - filled_blocks) { // selected programme is too big
+=======
+            ProgTimer pt = pq.peek();
+            if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
+>>>>>>> origin/scheduling:app/controllers/concerns/Scheduler/src/Scheduler.java
               break;
             }
             pq.remove(); // remove selected programme from queue
             if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
               selectedProgs.add(pt.prog); // schedule programme
+              pt.setNextPlay();
+              pq.add(pt); // queue again
               filled_blocks += pt.prog.getScreens();
               selectedPTs.add(pt); // requeue programme
             } else {
               // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
           }
+<<<<<<< HEAD:app/controllers/concerns/Scheduler/src/Scheduler1xN.java
           
           int try_fill = 0;
           while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) { // fill remainder of block with default programmes
@@ -63,6 +71,18 @@ public class Scheduler1xN {
               try_fill = 0; // reset and pick another default programme
             }
           }
+=======
+//          int try_fill = 0;
+//          while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) { // fill remainder of block with default programmes
+//            Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
+//            try_fill++; // stop if no default programme that can fit is found after a few tries
+//            if (filled_blocks + defProg.getScreens() <= block_size) { // selected programme can fit
+//              selectedProgs.add(defProg);
+//              filled_blocks += defProg.getScreens();
+//              try_fill = 0; // reset and pick another default programme
+//            }
+//          }
+>>>>>>> origin/scheduling:app/controllers/concerns/Scheduler/src/Scheduler.java
           Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
 
           boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
@@ -101,7 +121,7 @@ public class Scheduler1xN {
             }
           }
           selectedProgs.clear();
-          requeue(selectedPTs, pq);
+//          requeue(selectedPTs, pq);
           selectedPTs.clear();
         }
       }
@@ -220,7 +240,16 @@ public class Scheduler1xN {
     }
     
     @Override
+<<<<<<< HEAD:app/controllers/concerns/Scheduler/src/Scheduler1xN.java
     public int compareTo(ProgTimer1xN p) {
+=======
+    public boolean equals(Object o) {
+      return o != null && getClass() == o.getClass() && prog == ((ProgTimer)o).prog;
+    }
+    
+    @Override
+    public int compareTo(ProgTimer p) {
+>>>>>>> origin/scheduling:app/controllers/concerns/Scheduler/src/Scheduler.java
       float timeDiff = whenToPlay - p.whenToPlay;
       return (int)Math.signum(Math.abs(timeDiff) < 0.00001 ? Math.random() * 2 - 1 : timeDiff);
     }

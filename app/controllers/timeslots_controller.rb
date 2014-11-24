@@ -119,14 +119,14 @@ class TimeslotsController < ApplicationController
 
     vis1 = Visualisation.create({:name => "Milan"})
     vis2 = Visualisation.create({:name => "Green", :min_playtime => 120})
-    vis3 = Visualisation.create({:name => "Pink", :min_playtime => 180})
+    vis3 = Visualisation.create({:name => "Pink"})
 
-    prog1 = Programme.create({:screens => 2, :priority => 3})
-    vis1.programmes << prog1
-    prog2 = Programme.create({:screens => 1, :priority => 6})
-    vis2.programmes << prog2
-    prog3 = Programme.create({:screens => 1, :priority => 9})
-    vis3.programmes << prog3
+        prog1 = Programme.create({:screens => 2, :priority => 1})
+        prog1.visualisation = vis1
+        prog2 = Programme.create({:screens => 1, :priority => 5})
+        prog2.visualisation = vis2
+        prog3 = Programme.create({:screens => 1, :priority => 6})
+        prog3.visualisation = vis3
     
     timeslot = Timeslot.create({:start_time => start_time,
                                 :end_time => end_time})

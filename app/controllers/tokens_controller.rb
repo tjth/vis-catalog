@@ -5,9 +5,9 @@ class TokensController < ApplicationController
       username = params[:username]
       password = params[:password]
       if request.format != :json
-        render :status=>406, :json=>{:message=>"The request must be json"}
+        render :status=>406, :json=>{:message=>"The request must be JSON."}
         return
-       end
+      end
  
     if username.nil? or password.nil?
        render :status=>400,
@@ -15,23 +15,18 @@ class TokensController < ApplicationController
        return
     end
  
-    @user=User.find_by_username(username)
- 
-    if @user.nil?
-      logger.info("User #{username} failed signin, user cannot be found.")
-      render :status=>401, :json=>{:message=>"Invalid email or passoword."}
+    @user=User.authenticate_with_kerberos(params)
+puts "HLEOERJIO"
+    puts @user
+ puts "ROFL"
+    if @user == nil
+      render :status=>400, :json=>{:message=>"Invalid username or password."}
       return
     end
- 
-    # http://rdoc.info/github/plataformatec/devise/master/Devise/Models/TokenAuthenticatable
+# http://rdoc.info/github/plataformatec/devise/master/Devise/Models/TokenAuthenticatable
     @user.ensure_authentication_token!
  
-    if not @user.valid_password?(password)
-      logger.info("User #{username} failed signin, password \"#{password}\" is invalid")
-      render :status=>401, :json=>{:message=>"Invalid email or password."}
-    else
-      render :status=>200, :json=>{:token=>@user.authentication_token}
-    end
+    render :status=>200, :json=>{:token=>@user.authentication_token}
   end
  
   def destroy
