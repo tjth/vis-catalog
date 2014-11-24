@@ -119,7 +119,7 @@
 
     app.factory('SubmitVisualisation', ['$resource',
         function($resource){
-            return $resource('visualisations/new', {}, {
+            return $resource('visualisations', {}, {
                 save: {
                     method: 'POST'
                 }
@@ -177,15 +177,14 @@
         $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
     });
 
-    app.controller('submitVisualisationController', function($scope, $rootScope, SubmitVisualisation, $route) {
+    app.controller('submitVisualisationController', function($scope, $rootScope, SubmitVisualisation, $route, $location) {
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
         $scope.submit = { img:"assets/camera.png" }
         $scope.submitVisualistion = function() {
             $scope.newvis = new SubmitVisualisation();
             $scope.newvis.name = $scope.visualisation.name;
-            $scope.newvis.link = $scope.visualisation.link;
+            $scope.newvis.link = $scope.visualisation.image;
             $scope.newvis.vis_type = "vis";
-            $scope.newvis.image = $scope.visualisation.image;
             $scope.newvis.description = $scope.visualisation.description;
             $scope.newvis.notes = $scope.visualisation.notes;
             $scope.newvis.url = $scope.visualisation.url;
