@@ -2,7 +2,7 @@
     <div class="row">
 
         <div id="submit-visualisation-col" class="col-sm-8">
-            <form id="form" class="card" ng-init="visualisation={}" ng-submit="submitVisualistion()">
+            <form id="form" class="card" ng-init="visualisation={ image: $flow.files[0] }" ng-submit="submitVisualistion()">
                 <div class="content">
                     <div flow-init="{singleFile: true, testChunks:false}"
                          flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"

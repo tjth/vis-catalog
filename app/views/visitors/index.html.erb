@@ -116,6 +116,16 @@
                 reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
             });
     }]);
+
+    app.factory('SubmitVisualisation', ['$resource',
+        function($resource){
+            return $resource('visualisations/new', {}, {
+                save: {
+                    method: 'POST'
+                }
+            });
+        }
+    ]);
     
     app.factory('Timeslot', ['$resource',
         function($resource){
@@ -167,33 +177,24 @@
         $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
     });
 
-    app.controller('submitVisualisationController', function($scope, $rootScope, $route, $http) {
+    app.controller('submitVisualisationController', function($scope, $rootScope, SubmitVisualisation, $route) {
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
         $scope.submit = { img:"assets/camera.png" }
         $scope.submitVisualistion = function() {
-            $http.post("http://localhost:3123/visualisations/new", {
-                method: "post",
-                data: {
-                    name: $scope.visualisation.name, 
-                    link: $scope.visualisation.link, 
-                    vis_type: "vis",
-                    image: $scope.visualisation.img.files[0],
-                    description: $scope.visualisation.description,
-                    notes: $scope.visualisation.notes,
-                    url: $scope.visualisation.url,
-                    website: $scope.visualisation.website,
-                    content_type: $scope.visualisation.content_type
-                    
-                }
+            $scope.newvis = new SubmitVisualisation();
+            $scope.newvis.name = $scope.visualisation.name;
+            $scope.newvis.link = $scope.visualisation.link;
+            $scope.newvis.vis_type = "vis";
+            $scope.newvis.image = $scope.visualisation.image;
+            $scope.newvis.description = $scope.visualisation.description;
+            $scope.newvis.notes = $scope.visualisation.notes;
+            $scope.newvis.url = $scope.visualisation.url;
+            $scope.newvis.website = $scope.visualisation.website;
+            $scope.newvis.content_type = $scope.visualisation.content_type;
+            SubmitVisualisation.save($scope.newvis, function(){
                 
-            })
-            .success(function(){
-                console.log("done")
-            })
-            .error(function(){
-                console.log("error")
             });
-        };
+        }
     });
 
     app.controller('moderateController', function($scope, $rootScope, $route) {
