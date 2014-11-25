@@ -13,6 +13,25 @@ class TimeslotsController < ApplicationController
     end
   end
 
+
+  # POST /timeslots/copy_from_last_week
+  def copy_from_last_week
+    current_day = DateTime.iso8601(params[:day])
+    last_week_day = current_day - 7
+
+    @new_timeslots = []
+
+    ts_last = Timeslot.where(:date => current_day_.to_date)
+    ts_last.each do |ts|
+      ts_new = ts.dup
+      ts_new.date = current_day.to_date
+      #keep start and end time the same
+      ts_new.save
+      @new_timeslots.push(ts_new)
+    end
+
+  end
+
   # POST /timeslots/copy_last_seven
   def copy_last_seven
     last_week = get_weeks_timeslots(params[:startDay].to_date - 7)
