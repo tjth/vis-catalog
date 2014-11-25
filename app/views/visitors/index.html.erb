@@ -180,16 +180,24 @@
     app.controller('submitVisualisationController', function($scope, $rootScope, SubmitVisualisation, $route, $location) {
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
         $scope.submit = { img:"assets/camera.png" }
+        $scope.obj = {};
+        $scope.content_type = [ {type : 'weblink'}, {type : 'file'}];
         $scope.submitVisualistion = function() {
             $scope.newvis = new SubmitVisualisation();
             $scope.newvis.name = $scope.visualisation.name;
-            $scope.newvis.content = $scope.visualisation.image;
             $scope.newvis.vis_type = "vis";
+            $scope.newvis.content_type = $scope.visualisation.content_type.type;
+            console.log($scope.obj.flow.files[0]);
+            if ($scope.visualisation.content_type == 'weblink'){
+                $scope.newvis.content = $scope.visualisation.url;
+            } else {
+                $scope.newvis.content = $scope.obj.flow.files[0].file;
+            }
             $scope.newvis.description = $scope.visualisation.description;
             $scope.newvis.notes = $scope.visualisation.notes;
             $scope.newvis.url = $scope.visualisation.url;
             $scope.newvis.website = $scope.visualisation.website;
-            $scope.newvis.content_type = $scope.visualisation.content_type;
+            
             SubmitVisualisation.save($scope.newvis, function(){
                 
             });
