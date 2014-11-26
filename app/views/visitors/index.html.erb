@@ -187,20 +187,33 @@
             $scope.newvis.name = $scope.visualisation.name;
             $scope.newvis.vis_type = "vis";
             $scope.newvis.content_type = $scope.visualisation.content_type.type;
-            console.log($scope.obj.flow.files[0]);
-            if ($scope.visualisation.content_type == 'weblink'){
-                $scope.newvis.content = $scope.visualisation.url;
-            } else {
-                $scope.newvis.content = $scope.obj.flow.files[0].file;
-            }
             $scope.newvis.description = $scope.visualisation.description;
             $scope.newvis.notes = $scope.visualisation.notes;
             $scope.newvis.url = $scope.visualisation.url;
             $scope.newvis.website = $scope.visualisation.website;
             
-            SubmitVisualisation.save($scope.newvis, function(){
-                
-            });
+            
+            if ($scope.newvis.content_type == 'weblink'){
+                console.log($scope.visualisation.url);
+                $scope.newvis.content.url = $scope.visualisation.url;
+            } else {
+                var fileReader = new FileReader();image
+                fileReader.readAsDataURL($scope.obj.flow.files[0].file);
+                fileReader.onload = function (event) {
+                    var binary = atob(event.target.result.split(',')[1]);
+                    var array = [];
+                    for(var i = 0; i < binary.length; i++) {
+                        array.push(binary.charCodeAt(i));
+                    }
+                    $scope.newvis.content = new Blob([new Uint8Array(array)], {type: 'image/png'});
+                    console.log($scope.newvis.content);
+                SubmitVisualisation.save($scope.newvis, function(){
+                    
+                });
+            }
+            }   
+            
+            
         }
     });
 

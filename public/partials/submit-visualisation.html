@@ -2,7 +2,7 @@
     <div class="row">
 
         <div id="submit-visualisation-col" class="col-sm-8">
-            <form id="form" class="card" ng-init="visualisation={ }" ng-submit="submitVisualistion()">
+            <form id="form" class="card" ng-init="visualisation={ image: $flow.files[0] }" ng-submit="submitVisualistion()">
                 <div class="content">
                     <div flow-init="{singleFile: true, testChunks:false}"
                          flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"
@@ -43,13 +43,13 @@
                            ng-model="visualisation.notes" />
                 </div>
                 <div class="bottom">
-                <input type="submit" id="submit" value="submit" class="submit"/>
+                <input type="submit" flow-files-submitted="$flow.upload()" id="submit" value="submit" class="submit"/>
             </div>
             </form>
         </div>
 
         <div id="guidelines" class="col-sm-4">
-            <div class="card guideline blue">c.selected as c
+            <div class="card guideline blue">
                 <div class="title">Content Types</div>
                 <div class="item">
                     <div class="heading">Web Link</div>
