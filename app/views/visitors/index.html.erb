@@ -189,28 +189,72 @@
             $scope.newvis.content_type = $scope.visualisation.content_type.type;
             $scope.newvis.description = $scope.visualisation.description;
             $scope.newvis.notes = $scope.visualisation.notes;
-            $scope.newvis.url = $scope.visualisation.url;
-            $scope.newvis.website = $scope.visualisation.website;
-            
             
             if ($scope.newvis.content_type == 'weblink'){
-                console.log($scope.visualisation.url);
-                $scope.newvis.content.url = $scope.visualisation.url;
-            } else {
-                var fileReader = new FileReader();image
-                fileReader.readAsDataURL($scope.obj.flow.files[0].file);
+                //makes link the url
+                $scope.newvis.link = $scope.visualisation.url;
+                
+                //makes content null
+                $scope.newvis.content = null;
+                //filereader to read as data uri from flow-img
+                var fileReader = new FileReader();
+                fileReader.readAsDataURL($scope.visualisation.screenshot.files[0].file);
                 fileReader.onload = function (event) {
-                    var binary = atob(event.target.result.split(',')[1]);
-                    var array = [];
-                    for(var i = 0; i < binary.length; i++) {
-                        array.push(binary.charCodeAt(i));
+                    var dataURI = event.target.result;
+                    //convert from uri to unsigned 8 bit array
+                    var byteString = atob(dataURI.split(',')[1]);
+                    var ab = new ArrayBuffer(byteString.length);
+                    var ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) {$scope.newvis.link =
+                        ia[i] = byteString.charCodeAt(i);
                     }
-                    $scope.newvis.content = new Blob([new Uint8Array(array)], {type: 'image/png'});
-                    console.log($scope.newvis.content);
-                SubmitVisualisation.save($scope.newvis, function(){
+                    //screenshot is type blob
+                    $scope.newvis.screenshot = new Blob([ab], { type: 'image/jpeg' });
+                    //post to backend
+                    SubmitVisualisation.save($scope.newvis, function(){
                     
-                });
-            }
+                    });
+                }
+            } else {
+                //makes link null
+                $scope.newvis.link = null;
+                
+                //filereader to read as data uri from flow-img
+                var fileReader = new FileReader();
+                fileReader.readAsDataURL($scope.visualisation.screenshot.files[0].file);
+                fileReader.onload = function (event) {
+                    
+                    var dataURI = event.target.result;
+                    //convert from uri to unsigned 8 bit array
+                    var byteString = atob(dataURI.split(',')[1]);
+                    var ab = new ArrayBuffer(byteString.length);
+                    var ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    //screenshot is type blob
+                    $scope.newvis.screenshot =  new Blob([ab], { type: 'image/png' });;                
+                }
+                //filereader to read as data uri from flow-img
+                var fileReader2 = new FileReader();
+                fileReader2.readAsDataURL($scope.visualisation.content.files[0].file);
+                fileReader2.onload = function (event) {
+                    
+                    var dataURI = event.target.result;
+                    //convert from uri to unsigned 8 bit array
+                    var byteString = atob(dataURI.split(',')[1]);
+                    var ab = new ArrayBuffer(byteString.length);
+                    var ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    //content is type blob
+                    $scope.newvis.content =  new Blob([ab], { type: 'image/png' });;                
+                    //post to backend
+                    SubmitVisualisation.save($scope.newvis, function(){
+                    
+                    });
+                }
             }   
             
             

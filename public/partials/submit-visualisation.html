@@ -4,10 +4,13 @@
         <div id="submit-visualisation-col" class="col-sm-8">
             <form id="form" class="card" ng-init="visualisation={ image: $flow.files[0] }" ng-submit="submitVisualistion()">
                 <div class="content">
+                    <div class="wrapper">
+                    <div  class="content-type side-by-side">SCREENSHOT</div>
                     <div flow-init="{singleFile: true, testChunks:false}"
                          flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"
                          flow-file-success="$file.msg = $message"
-                         flow-name="obj.flow"
+                         flow-name="visualisation.screenshot"
+                         class="side-by-side">
                         <span class="camera btn" flow-btn>
                             <img ng-show="!$flow.files.length" class="preview"
                                  src="{[{ submit.img }]}"
@@ -17,6 +20,23 @@
                                  flow-img="$flow.files[0]"/>
                             <input type="file" style="visibility: hidden; position: absolute;"/>
                         </span>
+                    </div>
+                    <div  class="content-type side-by-side">CONTENT</div>
+                    <div flow-init="{singleFile: true, testChunks:false}"
+                         flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"
+                         flow-file-success="$file.msg = $message"
+                         flow-name="visualisation.content"
+                         class="side-by-side">
+                        <span class="camera btn" flow-btn>
+                            <img ng-show="!$flow.files.length" class="preview"
+                                 src="{[{ submit.img }]}"
+                                 name="image"/>
+                            <img ng-show="$flow.files.length" class="preview"
+                                 style="max-width:117px; max-height: 100px;"
+                                 flow-img="$flow.files[0]"/>
+                            <input type="file" style="visibility: hidden; position: absolute;"/>
+                        </span>
+                    </div>
                     </div>
                     <input type="text" 
                            placeholder="Visualisation Name" 
@@ -43,7 +63,7 @@
                            ng-model="visualisation.notes" />
                 </div>
                 <div class="bottom">
-                <input type="submit" flow-files-submitted="$flow.upload()" id="submit" value="submit" class="submit"/>
+                <input type="submit" id="submit" value="submit" class="submit"/>
             </div>
             </form>
         </div>
