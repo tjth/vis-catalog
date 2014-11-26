@@ -27,11 +27,11 @@ public class Scheduler1xN {
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
     List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
     for (int current_time = 0; current_time < mins; current_time++) {
-      for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at time current_time
+      for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at current_time
         if (nextFreeTimeslot[curr_screen] <= current_time) { // free slot found
           int start_screen = curr_screen; // start of free slot
           int block_size;
-          for (block_size = 1; curr_screen + block_size < SCREENS; block_size++) { // curr_screen for consecutive free slots at time current_time
+          for (block_size = 1; curr_screen + block_size < SCREENS; block_size++) { // curr_screen for consecutive free slots at current_time
             if (nextFreeTimeslot[curr_screen + block_size] > current_time) { // end of free block
               break;
             }
@@ -53,6 +53,7 @@ public class Scheduler1xN {
               // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
           }
+          
 //          int try_fill = 0;
 //          while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) { // fill remainder of block with default programmes
 //            Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
@@ -135,7 +136,7 @@ public class Scheduler1xN {
     boolean[][] plusses = new boolean[mins][SCREENS];
     for (int r = 0; r < mins; r++) {
       for (int c = 0; c < SCREENS; c++) {
-        visNames[r][c] = "  NIL  ";
+        visNames[r][c] = "$$$$$$$";
         strokes[r][c] = true;
         dashes[r][c] = true;
         plusses[r][c] = true;
@@ -163,43 +164,43 @@ public class Scheduler1xN {
           dashes[current_time][s] = false;
         }
       }
-      
       for (int current_time = startTime; current_time < Math.min(origEndTime - 1, mins); current_time++) {
         for (int s = startScreen; s <= endScreen - 1; s++) {
           plusses[current_time][s] = false;
         }
       }
     }
-    StringBuilder spaces = new StringBuilder("         ");
-    StringBuilder dash = new StringBuilder("---------");
     
     StringBuilder disp = new StringBuilder();
-    disp.append("Screen:");
+    String indent = "       ";
+    String spaces = "         ";
+    String dash = "---------";
+    disp.append("Screen: ");
     for (int s = 0; s < SCREENS; s++) {
-      disp.append("       " + (s + 1) + "  ");
+      disp.append("    " + (s + 1) + "     ");
     }
     disp.append("\n");
 
-    disp.append(spaces + "+");
+    disp.append(indent + "+");
     for (int s = 0; s < SCREENS; s++) {
       disp.append(dash + "+");
     }
-    disp.append(" 0 \n");
+    disp.append(String.format(" %2d\n", 0));
 
     for (int current_time = 0; current_time < mins; current_time++) {
-      disp.append(spaces + "|");
+      disp.append(indent + "|");
       for (int s = 0; s < SCREENS; s++) {
         disp.append(" " + visNames[current_time][s] + " ");
         disp.append(strokes[current_time][s] ? "|" : " ");
       }
       disp.append("\n");
 
-      disp.append(spaces + "+");
+      disp.append(indent + "+");
       for (int s = 0; s < SCREENS; s++) {
         disp.append(dashes[current_time][s] ? dash : spaces);
         disp.append(plusses[current_time][s] ? "+" : " ");
       }
-      disp.append(" " + (current_time + 1) + "\n");
+      disp.append(String.format(" %2d\n", current_time + 1));
     }
     return disp.toString();
   }
