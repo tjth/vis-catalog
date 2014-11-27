@@ -22,6 +22,7 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $scope.addTimeslot = function(day, start, end) {
         Timeslot.new({date:date.format(), start:start.format(), end:end.format()}); 
     }
+    
     $scope.removeTimeslot = function(day) {
         if ($scope.activeTimeslot != null) {
             Timeslot.remove({id: activeTimeslot.id});   
