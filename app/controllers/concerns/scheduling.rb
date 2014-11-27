@@ -30,10 +30,13 @@ module Scheduling
   end
 
   class SummaryItem
-    attr_accessor :visualisation_id, :priority, :screens, :vis_playout_time
+    attr_accessor :programme_id,
+                  :visualisation_id, :priority, 
+                  :screens, :vis_playout_time
     
-    def initialize(visualisation_id, priority, screens, vis_playout_time)
-      @visualisation_id = visualisation_id
+    def initialize(prog_id, vis_id, priority, screens, vis_playout_time)
+      @programme_id = prog_id
+      @visualisation_id = vis_id
       @priority = priority
       @screens = screens
       @vis_playout_time = vis_playout_time
@@ -48,14 +51,6 @@ module Scheduling
 
     vis.programmes << prog
     return prog
-  end
-
-  def get_total_screen_load(programmes)
-    scrLoad = 0
-    programmes.each do |programme|
-      scrLoad = scrLoad + programme.screens
-    end
-    return scrLoad
   end
 
   def clean_old_sessions(start_time, end_time)
@@ -170,7 +165,6 @@ module Scheduling
       end
 
       # Clean up selected programmes/ProgTime queues
-      selectedProgrammes.clear
       selectedProgTimes.clear   
 
       # Advance to next unit time
@@ -205,11 +199,13 @@ module Scheduling
     prog.visualisation.playout_sessions << s
   end
 
-  def getSummary(timeslot, playouts)
-    vis_playtimes = {}
+  def getSummary(timeslot)
+    start_time = timeslot.start_time
+    end_time = timeslot.end_time
 
-    start_time = playouts.minimum("start_time")
-    end_time = playouts.maximum("end_time")
+    playouts = PlayoutSession.where(start_time: start_time...end_time)
+
+    vis_playtimes = {}
 
     time_elapsed = 0
     while start_time + time_elapsed < end_time
@@ -231,7 +227,7 @@ module Scheduling
     summary = []
     
     timeslot.programmes.each do |prog|
-      summary << SummaryItem.new(prog.visualisation_id,
+      summary << SummaryItem.new(prog.id, prog.visualisation_id,
                                  prog.priority, prog.screens,
                                  vis_playtimes[prog.visualisation_id])
     end
