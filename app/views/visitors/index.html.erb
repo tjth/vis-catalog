@@ -119,8 +119,9 @@
     
     app.factory('Timeslot', ['$resource',
         function($resource){
-            return $resource('timeslots', {}, {
-                query: { method:'GET', isArray:true },
+            return $resource('timeslots/:id.json', {}, {
+                query: { method:'GET', url:'timeslots.json', isArray:true },
+                new: { method:'POST', url:'timeslots/new'},
             });
     }]);
     

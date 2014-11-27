@@ -10,7 +10,29 @@ app.factory('Visualisation', ['$resource',
 
 app.factory('Timeslot', ['$resource',
     function($resource){
-        return $resource('timeslots', {}, {
-            query: { method:'GET', isArray:true },
+        return $resource('timeslots/:id.json', {id:"@id"}, {
+            query: { method:'GET', url: 'timeslots.json', isArray:true,
+                     transformResponse: function(data, header) {
+                         var transformed = [];
+                         var objs = angular.fromJson(data);
+                         
+                         for (var i = 0; i < objs.length; i++) {
+                            transformed.push(transformTimeslotResponse(objs[i])); 
+                         }
+                         return transformed;
+                     }},            
+            get: { transformResponse: function(data, header) {
+                         return transformTimeslotResponse(angular.fromJson(data));
+                 }},
+            new:   { method:'POST', url: 'timeslots.json', responseType: 'json'},
+            remove:{ method:'DELETE', responseType: 'json'},
+            update:{ method:'PATCH', responseType: 'json'},
         });
 }]);
+
+function transformTimeslotResponse(obj) {
+     var transformed = {id:obj.id};
+     transformed.start = moment(obj.start_time);
+     transformed.end = moment(obj.end_time);
+     return transformed;  
+}

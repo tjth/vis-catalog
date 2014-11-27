@@ -1,1 +1,1 @@
-json.extract! @timeslot, :start_time, :end_time, :date
+json.extract! @timeslot, :start_time, :end_time, :id

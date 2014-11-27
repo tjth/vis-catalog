@@ -14,7 +14,9 @@ function isNear(x, x1, tolerance, handle) {
     return diffX <= tolerance && diffX > 0;
 }
 
-function Timeslot(start, end, min, max) {
+function Timeslot(id, start, end, min, max) {
+    this.id = id;
+    
     if (start < min) {
         this.setStart(min);   
     } else {
@@ -27,8 +29,6 @@ function Timeslot(start, end, min, max) {
         this.setEnd(end);
     }
 
-    
-    
     this.min = min;
     this.max = max;
 }
@@ -137,7 +137,7 @@ $.widget("widgets.timesloteditor", {
 
     _on_keyup: function(event) {
         // Delete key
-        if (event.keyCode == 46) this.removeTimeslot();
+        if (event.keyCode == 46) this._requestRemoveTimeslot();
     }, 
 
     _on_mousemove: function(event) {
@@ -235,6 +235,12 @@ $.widget("widgets.timesloteditor", {
     _on_mouseup: function(event) {
         this._fix_event(event);
         
+        if (this.selected != null) {
+            this._onTimeslotChanged(this.timeslots[this.selected].id, 
+                            this.timeslots[this.selected].start, 
+                            this.timeslots[this.selected].end)   
+        }
+        
         this.mousedown = false;
         this.dragXOffset = -1;
 
@@ -250,9 +256,9 @@ $.widget("widgets.timesloteditor", {
         var timeslot = this._get_timeslot_at_pos(event.offsetX);
         
         if (timeslot == null) {
-            this.addTimeslot(event.offsetX - 100/2);
+            this._requestAddTimeslot(event.offsetX - 100/2);
         } else {
-            this._trigger("timeslotclicked", event, {timeslot:timeslot});   
+            this._trigger("timeslotClicked", event, timeslot.id);   
         }
     },
 
@@ -337,23 +343,39 @@ $.widget("widgets.timesloteditor", {
         return this.timeslots;
     },
 
-    addTimeslot: function(x) {
+    _requestAddTimeslot: function(x) {
         var default_size = 100;
         x = x || Math.floor((this.width - default_size)/2);
-        
-        this.selected = this.timeslots.push(new Timeslot(this._get_time(x), 
-                                                         this._get_time(x).add(1, "hours"), 
-                                                         this.startTime, this.endTime)) - 1;
 
+        this._trigger("timeslotAddRequested", null, {start: this._get_time(x), end: this._get_time(x).add(1, "hours")});
+    },
+    
+    addTimeslot : function(id, start, end) {
+        this.selected = this.timeslots.push(new Timeslot(id, start, end, this.startTime, this.endTime)) - 1;
         this._draw();
     },
 
-    removeTimeslot: function() {
+    _requestRemoveTimeslot: function() {
         if (this.selected != null) {
-            
-            this.timeslots.splice(this.selected, 1);
-            this.selected = null;
-            this._draw();
+            this._trigger("timeslotRemoveRequested", null, this.timeslots[this.selected].id)
+        }
+    },
+    
+    _onTimeslotChanged: function(id, start, end) {
+        if (!this.hasConflicts()) {
+            this._trigger("timeslotChanged", null, {id:id, start:start, end:end});
+        }
+    },
+    
+    removeTimeslot: function(id) {
+        for (var i = 0; i < this.timeslots.length; i++) {
+            if (this.timeslots[i].id == id) {
+                this.timeslots.splice(i, 1);
+                
+                if (this.selected == i) this.selected = null;
+                this._draw();
+                return;
+            }
         }
     },
 
@@ -409,6 +431,28 @@ $.widget("widgets.timesloteditor", {
             }
         }
         return conflicts;
+    },
+    
+    hasConflicts : function() {
+        for (var i = 0; i < this.timeslots.length; i++) {
+            var timeslot = this.timeslots[i];
+            if (this._conflicts(null, null, timeslot)) return true;
+        }
+        return false;
+    },
+    
+    setTimeslots : function(timeslots) {
+        
+        this.timeslots = []
+        for (var i = 0; i < timeslots.length; i++) {
+
+            this.timeslots.push(new Timeslot(timeslots[i].id, 
+                                             timeslots[i].start, 
+                                             timeslots[i].end, 
+                                             this.startTime, this.endTime));
+        }
+        
+        this._draw();
     }
 
 });
