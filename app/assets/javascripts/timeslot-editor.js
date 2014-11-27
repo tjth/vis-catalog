@@ -137,7 +137,7 @@ $.widget("widgets.timesloteditor", {
 
     _on_keyup: function(event) {
         // Delete key
-        if (event.keyCode == 46) this.removeTimeslot();
+        if (event.keyCode == 46) this._requestRemoveTimeslot();
     }, 
 
     _on_mousemove: function(event) {
@@ -349,12 +349,21 @@ $.widget("widgets.timesloteditor", {
         this._draw();
     },
 
-    removeTimeslot: function() {
+    _requestRemoveTimeslot: function() {
         if (this.selected != null) {
-            
-            this.timeslots.splice(this.selected, 1);
-            this.selected = null;
-            this._draw();
+            this._trigger("requestRemoveTimeslot", null, this.timeslots[this.selected].id)
+        }
+    },
+    
+    removeTimeslot: function(id) {
+        for (var i = 0; i < this.timeslots.length; i++) {
+            if (this.timeslots[i].id == id) {
+                this.timeslots.splice(i, 1);
+                
+                if (this.selected == i) this.selected = null;
+                this._draw();
+                return;
+            }
         }
     },
 

@@ -23,35 +23,44 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
         return Timeslot.new({start_time:start.format(), end_time:end.format()}, 
             // Success
             function(timeslot) {
-            
-                console.log(timeslot)
-            
-                $(element).timesloteditor("create", id, start, end);
+                $(element).timesloteditor("create", timeslot.id, start, end);
             }); 
     }
     
-    $scope.removeTimeslot = function(day) {
-        if ($scope.activeTimeslot != null) {
-            Timeslot.remove({id: activeTimeslot.id});   
-        }
+    $scope.deleteTimeslot = function(id) {
+        Timeslot.remove({id: id}, 
+            // Success
+            function(timeslot) {
+                $(element).timesloteditor("removeTimeslot", timeslot.id);
+            }
+        ); 
     } 
     $scope.getDateForDay = function(day) {
         return $scope.startOfWeek.clone().add(day, "days");   
     }    
-    
-    $scope.getTimeslotsForWeek = function(startOfWeek) {
-        var timeslots = {};
-        for (i = 0; i < 7; i++) {
-            var date = startOfWeek.clone().add(i, "days");
-            var dayTimeslots = Timeslot.query({date: date.format()});
-            timeslots[date.format()] = dayTimeslots;
-        }
-        return timeslots;
-    }
+
     
     // Watchers
     $scope.$watch("startOfWeek", function(newStartOfWeek) {
-        $scope.timeslots = $scope.getTimeslotsForWeek($scope.startOfWeek);  
+        var timeslots = {};
+        
+        var done = 7;
+        
+        for (i = 0; i < 7; i++) {
+            var date = $scope.startOfWeek.clone().add(i, "days");
+            Timeslot.query({startOfDay: date.format()},         
+                // Success
+                function(dayTimeslots) {
+                
+                    console.log(dayTimeslots)
+                
+                    timeslots[date.format()] = dayTimeslots;
+                    done--;
+                
+                    if (done == 0) $scope.timeslots = timeslots;  
+                }
+            );
+        } 
     });
     
     $scope.startOfWeek = moment().startOf('isoweek');
@@ -118,16 +127,16 @@ app.directive('timeslotEditor', function() {
             
             scope.editor = $(element).timesloteditor({ 
                 timeslotclicked : function(event, data) {
-                    scope.editTimeslot(data.timeslot);
+                    scope.$parent.editTimeslot(data.timeslot);
                 },
-                timeslotRequested : function(event, data) {
-                    var id = scope.$parent.addTimeslot(data.start, data.end, $(element));
+                timeslotAddRequested : function(event, data) {
+                    scope.$parent.addTimeslot(data.start, data.end, $(element));
                 },
                 timeslotTimeChanged : function(event, data) {
                     scope.changeTimeslotTime(data.id, data.start, data.end);
                 },
-                timeslotDeleted : function(event, data) {
-                    scope.deleteTimeslot(data.id);
+                timeslotDeleteRequested : function(event, data) {
+                    scope.$parent.deleteTimeslot(data.id, $(element));
                 },
             }); 
         }
