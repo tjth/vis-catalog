@@ -13,13 +13,9 @@ Rails.application.routes.draw do
   
   delete '/visualisations/:visid/reject' => 'visualisations#reject'
 
-  post '/timeslots/copy_last_seven' => 'timeslots#copy_last_seven'
-
   post '/timeslots/copy_from_last_week' => 'timeslots#copy_from_last_week'
 
-  post '/tokens' => 'tokens#create'
-
-  #post '/timeslots/submit' => 'timeslots#submit'  
+  post '/tokens' => 'tokens#create'  
 
   get '/visualisations/current/:screennum' => 'visualisations#current'
 
