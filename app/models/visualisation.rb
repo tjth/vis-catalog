@@ -1,4 +1,5 @@
 class Visualisation < ActiveRecord::Base
+
   enum content_type: [ :file, :weblink ]
   enum vis_type: [ :vis, :advert ]
 
@@ -7,7 +8,7 @@ class Visualisation < ActiveRecord::Base
   has_many :playout_sessions
   attr_default :approved, false
   attr_default :isDefault, false
-  attr_default :min_playtime, 60
+  attr_default :min_playtime, Const.SECONDS_IN_UNIT_TIME
 
   #some filters!
   scope :approved, -> (boolean) {where approved: true}

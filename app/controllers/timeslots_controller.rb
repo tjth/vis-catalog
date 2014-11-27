@@ -113,21 +113,26 @@ class TimeslotsController < ApplicationController
     end
   end
 
+  def visNames
+        ['Milan', 'Green', 'Pink', 'Power', 'Test', 'BomWowWow']
+      end
+
+      def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
+        return Visualisation.create({:name => visNames.sample,
+                                     :min_playtime => min_playtime})
+      end
+
   def test
     start_time = DateTime.new(2014, 11, 19, 12, 0, 0).utc
-    end_time = DateTime.new(2014, 11, 19, 13, 0, 0).utc
+    end_time = DateTime.new(2014, 11, 19, 12, 10, 0).utc
 
-    vis1 = Visualisation.create({:name => "Milan"})
-    vis2 = Visualisation.create({:name => "Green", :min_playtime => 120})
-    vis3 = Visualisation.create({:name => "Pink"})
+     prog1 = Programme.create({:screens => 2, :priority => 1})
+          prog1.visualisation = getVis
+          prog2 = Programme.create({:screens => 2, :priority => 1})
+          prog2.visualisation = getVis
+          prog3 = Programme.create({:screens => 2, :priority => 10})
+          prog3.visualisation = getVis
 
-        prog1 = Programme.create({:screens => 2, :priority => 1})
-        prog1.visualisation = vis1
-        prog2 = Programme.create({:screens => 1, :priority => 5})
-        prog2.visualisation = vis2
-        prog3 = Programme.create({:screens => 1, :priority => 6})
-        prog3.visualisation = vis3
-    
     timeslot = Timeslot.create({:start_time => start_time,
                                 :end_time => end_time})
     timeslot.programmes << [prog1, prog2, prog3]

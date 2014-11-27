@@ -59,10 +59,8 @@ module Scheduling
   end
 
   def generate_schedule(timeslot)
-    start_time = timeslot.start_time - 
-                 timeslot.start_time.to_i.modulo(Const.SECONDS_IN_UNIT_TIME)
-    end_time = timeslot.end_time - 
-               timeslot.end_time.to_i.modulo(Const.SECONDS_IN_UNIT_TIME)
+    start_time = timeslot.start_time.beginning_of_minute() 
+    end_time = timeslot.end_time.beginning_of_minute()
     progs = timeslot.programmes
 
     clean_old_sessions(start_time, end_time)
@@ -229,7 +227,8 @@ module Scheduling
     timeslot.programmes.each do |prog|
       summary << SummaryItem.new(prog.id, prog.visualisation_id,
                                  prog.priority, prog.screens,
-                                 vis_playtimes[prog.visualisation_id])
+                                 vis_playtimes.has_key?(prog.visualisation_id)? 
+                                   vis_playtimes[prog.visualisation_id] : 0)
     end
 
     return summary
