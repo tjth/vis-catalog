@@ -13,7 +13,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     }
     
     $scope.nextWeek = function() {
-        $scope.startOfWeek.add(7, "days");
+        $scope.startOfWeek = $scope.startOfWeek.add(7, "days");
     }   
     
     $scope.previousWeek = function() {
@@ -44,7 +44,6 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     
     $scope.editTimeslot = function(id) {
         $location.path('/schedule/timeslot/' + id);  
-        $scope.$apply();
     }
     
     $scope.getDateForDay = function(day) {
@@ -76,7 +75,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
                 })(i)
             );
         } 
-    });
+    }, true);
     
     $scope.startOfWeek = moment().startOf('isoweek');
 });
@@ -138,7 +137,7 @@ app.directive('timeslotEditor', function() {
                 
                 $scope.date = $scope.$parent.startOfWeek.clone().add($scope.day, "days");  
                 $scope.editor.timesloteditor("setStartTime", $scope.date);
-            });
+            }, true);
         }],
 
         link: function(scope, element, attrs) {

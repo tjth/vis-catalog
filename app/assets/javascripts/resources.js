@@ -32,7 +32,7 @@ app.factory('Timeslot', ['$resource',
 
 function transformTimeslotResponse(obj) {
      var transformed = {id:obj.id};
-     transformed.start = moment(obj.start_time)
-     transformed.end = moment(obj.end_time)
+     transformed.start = moment(obj.start_time);
+     transformed.end = moment(obj.end_time);
      return transformed;  
 }
