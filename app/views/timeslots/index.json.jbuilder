@@ -1,3 +1,3 @@
 json.array!(@timeslots) do |timeslot|
-   json.extract! timeslot, :start_time, :end_time, :date, :id
+   json.extract! timeslot, :start_time, :end_time, :id
 end
