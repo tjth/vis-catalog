@@ -1,8 +1,23 @@
 class VisualisationsController < ApplicationController
+  require 'date'
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
+
+  # GET /visualisations/current/:screennum
+  def current
+    now = DateTime.now
+    @session = PlayoutSession.where(
+      "start_time <= ? AND end_time >= ? AND start_screen <= ? AND end_screen >= ? ",
+      now, now, params[:screennum], params[:screennum]).first
+
+    #TODO: this assumes one is there, else we may need to get default visualisation
+    @vis = @session.visualisation
+  end
+
+
 
   # PATCH /visualisations/:visid/approve
   def approve
+    puts current_user
     if current_user.isAdmin
       v = Visualisation.find_by_id(params[:visid])
       unless v == nil
@@ -151,6 +166,6 @@ class VisualisationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def visualisation_params
-      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved)
+      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot, :min_playtime)
     end
 end

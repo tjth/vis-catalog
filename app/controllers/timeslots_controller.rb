@@ -2,6 +2,35 @@ class TimeslotsController < ApplicationController
   include Scheduling
   require 'date'
 
+  # POST /timeslots/submit
+  def submit
+    //todo: get list of timeslot ids from params
+    timeslots = []
+
+    timeslots.each do |tid|
+      t = Timeslot.find_by_id(tid)
+      generate_schedule(t) if t != nil
+    end
+  end
+
+
+  # POST /timeslots/copy_from_last_week
+  def copy_from_last_week
+    current_day = DateTime.iso8601(params[:day])
+    last_week_day = current_day - 7
+
+    @new_timeslots = []
+
+    ts_last = Timeslot.where(:date => current_day_.to_date)
+    ts_last.each do |ts|
+      ts_new = ts.dup
+      ts_new.date = current_day.to_date
+      #keep start and end time the same
+      ts_new.save
+      @new_timeslots.push(ts_new)
+    end
+
+  end
 
   # POST /timeslots/copy_last_seven
   def copy_last_seven
@@ -20,10 +49,9 @@ class TimeslotsController < ApplicationController
       @this_week.push(todays_vis)
       current = current + 1
     end
-
-
   end
 
+  # used by copy_last_seven
   def get_weeks_timeslots(dt_string)
     dt = DateTime.iso8601(dt_string)
     days = []
@@ -37,11 +65,13 @@ class TimeslotsController < ApplicationController
     return days
   end
 
+  # utility func
   def get_todays_timeslots
     today = Date.today
     @timeslots = Timeslot.where(:date => today)
   end
 
+  # GET /timeslots
   def index
     if params[:weekStarting] != nil
       @timeslots = get_weeks_timeslots(params[:weekStarting])
@@ -55,23 +85,23 @@ class TimeslotsController < ApplicationController
     end
   end
 
-	# GET /visualisations/1
-  # GET /visualisations/1.json
+	# GET /timeslots/1
+  # GET /timeslots/1.json
   def show
     @timeslot = Timeslot.find_by_id(params[:id])
   end
 
-  # GET /visualisations/new
+  # GET /timeslots/new
   def new
     @timeslot = Timeslot.new
   end
 
-  # GET /visualisations/1/edit
+  # GET /timeslots/1/edit
   def edit
   end
 
-  # POST /visualisations
-  # POST /visualisations.json
+  # POST /timeslots
+  # POST /timeslots.json
   def create
     pars = timeslot_params
     @timeslot = Timeslot.new(pars)
@@ -113,13 +143,38 @@ class TimeslotsController < ApplicationController
     end
   end
 
+  def test
+    start_time = DateTime.new(2014, 11, 19, 12, 0, 0).utc
+    end_time = DateTime.new(2014, 11, 19, 13, 0, 0).utc
+
+    vis1 = Visualisation.create({:name => "Milan"})
+    vis2 = Visualisation.create({:name => "Green", :min_playtime => 120})
+    vis3 = Visualisation.create({:name => "Pink", :min_playtime => 180})
+
+    prog1 = Programme.create({:screens => 2, :priority => 3})
+    vis1.programmes << prog1
+    prog2 = Programme.create({:screens => 1, :priority => 6})
+    vis2.programmes << prog2
+    prog3 = Programme.create({:screens => 1, :priority => 9})
+    vis3.programmes << prog3
+    
+    timeslot = Timeslot.create({:start_time => start_time,
+                                :end_time => end_time})
+    timeslot.programmes << [prog1, prog2, prog3]
+    
+    generate_schedule(timeslot)
+
+    @test = PlayoutSession.where(start_time: start_time...end_time)
+    @start_time = start_time
+    @end_time = end_time
+    @count = PlayoutSession.count
+
+  end
+
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def timeslot_params
       params[:timeslot].permit(:start_time, :end_time, :date)
     end
 
-  def test
-    @test = get_a_default_programme
-  end
 end
