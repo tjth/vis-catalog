@@ -122,6 +122,7 @@ class TimeslotsController < ApplicationController
   def update
     respond_to do |format|
       if @timeslot.update(timeslot_params)
+        generate_schedule(@timeslot)
         format.html { redirect_to @timeslot, notice: 'timeslot was successfully updated.' }
         format.json { render :show, status: :ok, location: @timeslot }
       else
