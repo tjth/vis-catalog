@@ -7,25 +7,22 @@ public class Scheduler1xN {
 
   private static final int SCREENS = 4;
   private int mins;
-  private List<Session> sessions = new ArrayList<Session>();
+  private List<Session> sessions;
 
   public Scheduler1xN(int mins) {
     this.mins = mins;
-    reset();
-  }
-
-  public void reset() {
-    sessions.clear();
+    sessions = new ArrayList<Session>();
   }
 
   public void schedule(List<Programme> progs) {
+    sessions.clear();
     PriorityQueue<ProgTimer> pq = createQueue(progs);
     int[] nextFreeTimeslot = new int[SCREENS]; // tracks the next free slot for each screen
     for (int s = 0; s < SCREENS; s++) {
       nextFreeTimeslot[s] = 0;
     }
-    List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // list of ProgTimers to requeue after scheduling
-    List<Programme> selectedProgs = new ArrayList<Programme>(); // list of Programmes to schedule
+    List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // ProgTimers selected for a certain time
+    List<Programme> selectedProgs = new ArrayList<Programme>(); // Programmes selected for a certain block
     for (int current_time = 0; current_time < mins; current_time++) {
       for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at current_time
         if (nextFreeTimeslot[curr_screen] <= current_time) { // free slot found
@@ -64,8 +61,8 @@ public class Scheduler1xN {
 //              try_fill = 0; // reset and pick another default programme
 //            }
 //          }
+          
           Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
-
           boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
           if (start_screen == 0 && block_size < SCREENS ||
               start_screen > 0 && curr_screen < SCREENS &&
@@ -78,7 +75,7 @@ public class Scheduler1xN {
           } else { // no alignment preference
             ascend = Math.random() < 0.5;
           }
-          if (ascend) { // schedule selected programmes in ascending duration order
+          if (ascend) { // schedule and clear selected programmes in ascending duration order
             start_screen += block_size - filled_blocks; // starting position of 1st selected programme
             while (!selectedProgs.isEmpty()) {
               Programme prog = selectedProgs.remove(0);
@@ -89,7 +86,7 @@ public class Scheduler1xN {
               }
               start_screen += prog.getScreens(); // shift to starting position of next selected programme
             }
-          } else { // schedule selected programmes in descending duration order
+          } else { // schedule and clear selected programmes in descending duration order
             start_screen += filled_blocks; // ending position of 1st selected programme
             while (!selectedProgs.isEmpty()) {
               Programme prog = selectedProgs.remove(0);
@@ -103,9 +100,9 @@ public class Scheduler1xN {
           }
         }
       }
-      selectedProgs.clear();
       selectedPTs.clear();
     }
+    System.out.println(this);
   }
 
   private PriorityQueue<ProgTimer> createQueue(List<Programme> progs) {
@@ -119,12 +116,6 @@ public class Scheduler1xN {
   private void requeue(ProgTimer pt, PriorityQueue<ProgTimer> pq) {
     pt.setNextPlay();
     pq.add(pt);
-  }
-  
-  private void requeueAll(List<ProgTimer> pts, PriorityQueue<ProgTimer> pq) {
-    for (ProgTimer pt : pts) {
-      requeue(pt, pq);
-    }
   }
   
   @Override

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
@@ -21,33 +22,16 @@ public class Main {
       }
     }
 
-    Scheduler1xN sc1xn = new Scheduler1xN(15);
-    
+    Scheduler1xN sc1xn = new Scheduler1xN(15);    
 //    sc1xn.schedule(Arrays.asList(ps[1][2][1], ps[2][1][1], ps[1][1][2], ps[2][1][1], ps[1][2][1]));
-//    System.out.println(sc1xn);
-//    sc1xn.reset();
-
 //    sc1xn.schedule(Arrays.asList(ps[1][1][3], ps[2][2][5], ps[4][1][10], ps[3][1][7], ps[5][2][10]));
-//    System.out.println(sc1xn);
-//    sc1xn.reset();
-    
 //    sc1xn.schedule(Arrays.asList(ps[1][3][3]));
-//    System.out.println(sc1xn);
-//    sc1xn.reset();
-    
 //    sc1xn.schedule(new ArrayList<Programme>());
-//    System.out.println(sc1xn);
-//    sc1xn.reset();
     
-    Scheduler2x2 sc2x2 = new Scheduler2x2(3);
-    
-    sc2x2.schedule(Arrays.asList(ps[2][2][3], ps[1][1][2], ps[1][1][1]));
-    System.out.println(sc2x2);
-    sc2x2.reset();
-    
-    sc2x2.schedule(new ArrayList<Programme>());
-    System.out.println(sc2x2);
-    sc2x2.reset();
+    Scheduler2x2 sc2x2 = new Scheduler2x2(10);
+//    sc2x2.schedule(Arrays.asList(ps[2][2][3], ps[1][1][2], ps[1][1][1]));
+    sc2x2.schedule(Arrays.asList(ps[1][1][1]));
+//    sc2x2.schedule(new ArrayList<Programme>());
   }
 
 }
