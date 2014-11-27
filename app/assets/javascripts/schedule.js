@@ -78,6 +78,8 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     }, true);
     
     $scope.startOfWeek = moment().startOf('isoweek');
+    
+    $scope.scrolled = false;
 });
 
 app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, Visualisation, Timeslot) {
@@ -141,7 +143,7 @@ app.directive('timeslotEditor', function() {
         }],
 
         link: function(scope, element, attrs) {
-            scope.day = attrs.day; // IS AN INT!
+            scope.day = attrs.day;
             
             scope.editor = $(element).timesloteditor({ 
                 timeslotClicked : function(event, id) {
@@ -157,6 +159,13 @@ app.directive('timeslotEditor', function() {
                     scope.$parent.removeTimeslot(id, $(element));
                 },
             }); 
+            
+            if (!scope.$parent.scrolled) {
+                console.log(scope.editor.timesloteditor("getStartPosition"))
+                
+                $(".scroll").animate({scrollLeft:scope.editor.timesloteditor("getStartPosition")}, 0);
+                scope.$parent.scrolled = true;
+            }
         }
     }; 
 }); 

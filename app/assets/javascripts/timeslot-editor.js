@@ -84,6 +84,7 @@ $.widget("widgets.timesloteditor", {
 
     options: {},
     BORDER_COLOURS : ["#999999", "#ebebeb", "#999999"],
+    STARTING_HOUR : 9,
 
     _create: function() {
         this.height = 0;
@@ -453,6 +454,10 @@ $.widget("widgets.timesloteditor", {
         }
         
         this._draw();
+    },
+    
+    getStartPosition : function() {
+        return this.minuteWidth * this.STARTING_HOUR * 60 - 30;
     }
 
 });
