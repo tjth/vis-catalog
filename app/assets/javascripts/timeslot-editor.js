@@ -14,7 +14,9 @@ function isNear(x, x1, tolerance, handle) {
     return diffX <= tolerance && diffX > 0;
 }
 
-function Timeslot(start, end, min, max) {
+function Timeslot(id, start, end, min, max) {
+    this.id = id;
+    
     if (start < min) {
         this.setStart(min);   
     } else {
@@ -338,11 +340,12 @@ $.widget("widgets.timesloteditor", {
     addTimeslot: function(x) {
         var default_size = 100;
         x = x || Math.floor((this.width - default_size)/2);
-        
-        this.selected = this.timeslots.push(new Timeslot(this._get_time(x), 
-                                                         this._get_time(x).add(1, "hours"), 
-                                                         this.startTime, this.endTime)) - 1;
 
+        this._trigger("timeslotRequested", null, {start: this._get_time(x), end: this._get_time(x).add(1, "hours")});
+    },
+    
+    create : function(id, start, end) {
+        this.selected = this.timeslots.push(new Timeslot(id, start, end, this.startTime, this.endTime)) - 1;
         this._draw();
     },
 

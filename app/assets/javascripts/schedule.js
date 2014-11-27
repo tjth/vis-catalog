@@ -19,8 +19,15 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
         $scope.startOfWeek.add(-7, "days");
     }
     
-    $scope.addTimeslot = function(day, start, end) {
-        Timeslot.new({date:date.format(), start:start.format(), end:end.format()}); 
+    $scope.addTimeslot = function(start, end, element) {
+        return Timeslot.new({start_time:start.format(), end_time:end.format()}, 
+            // Success
+            function(timeslot) {
+            
+                console.log(timeslot)
+            
+                $(element).timesloteditor("create", id, start, end);
+            }); 
     }
     
     $scope.removeTimeslot = function(day) {
@@ -114,8 +121,7 @@ app.directive('timeslotEditor', function() {
                     scope.editTimeslot(data.timeslot);
                 },
                 timeslotRequested : function(event, data) {
-                    var id = scope.createTimeslot(data.start, data.end);
-                    $(element).timesloteditor("create", id, data.start, data.end);
+                    var id = scope.$parent.addTimeslot(data.start, data.end, $(element));
                 },
                 timeslotTimeChanged : function(event, data) {
                     scope.changeTimeslotTime(data.id, data.start, data.end);

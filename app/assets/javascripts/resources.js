@@ -10,7 +10,8 @@ app.factory('Visualisation', ['$resource',
 
 app.factory('Timeslot', ['$resource',
     function($resource){
-        return $resource('timeslots', {}, {
+        return $resource('timeslots.json', {}, {
             query: { method:'GET', isArray:true },
+            new:   { method:'POST', url: 'timeslots.json', responseType: 'json'}
         });
 }]);
