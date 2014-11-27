@@ -72,6 +72,8 @@ class TimeslotsController < ApplicationController
   # PATCH/PUT /timeslots/1
   # PATCH/PUT /timeslots/1.json
   def update
+    @timeslot = Timeslot.find_by_id(params[:id])
+      
     respond_to do |format|
       if @timeslot.update(timeslot_params)
         generate_schedule(@timeslot)

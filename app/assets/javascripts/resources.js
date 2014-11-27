@@ -10,8 +10,10 @@ app.factory('Visualisation', ['$resource',
 
 app.factory('Timeslot', ['$resource',
     function($resource){
-        return $resource('timeslots.json', {}, {
-            query: { method:'GET', isArray:true },
-            new:   { method:'POST', url: 'timeslots.json', responseType: 'json'}
+        return $resource('timeslots/:id.json', {id:"@id"}, {
+            query: { method:'GET', url: 'timeslots.json', isArray:true },
+            new:   { method:'POST', url: 'timeslots.json', responseType: 'json'},
+            remove:{ method:'DELETE', responseType: 'json'},
+            update:{ method:'PATCH', responseType: 'json'},
         });
 }]);

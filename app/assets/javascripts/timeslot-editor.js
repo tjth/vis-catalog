@@ -235,6 +235,12 @@ $.widget("widgets.timesloteditor", {
     _on_mouseup: function(event) {
         this._fix_event(event);
         
+        if (this.selected != null) {
+            this._onTimeslotChanged(this.timeslots[this.selected].id, 
+                            this.timeslots[this.selected].start, 
+                            this.timeslots[this.selected].end)   
+        }
+        
         this.mousedown = false;
         this.dragXOffset = -1;
 
@@ -250,9 +256,9 @@ $.widget("widgets.timesloteditor", {
         var timeslot = this._get_timeslot_at_pos(event.offsetX);
         
         if (timeslot == null) {
-            this.addTimeslot(event.offsetX - 100/2);
+            this._requestAddTimeslot(event.offsetX - 100/2);
         } else {
-            this._trigger("timeslotclicked", event, {timeslot:timeslot});   
+            this._trigger("timeslotClicked", event, {timeslot:timeslot});   
         }
     },
 
@@ -337,21 +343,27 @@ $.widget("widgets.timesloteditor", {
         return this.timeslots;
     },
 
-    addTimeslot: function(x) {
+    _requestAddTimeslot: function(x) {
         var default_size = 100;
         x = x || Math.floor((this.width - default_size)/2);
 
-        this._trigger("timeslotRequested", null, {start: this._get_time(x), end: this._get_time(x).add(1, "hours")});
+        this._trigger("timeslotAddRequested", null, {start: this._get_time(x), end: this._get_time(x).add(1, "hours")});
     },
     
-    create : function(id, start, end) {
+    addTimeslot : function(id, start, end) {
         this.selected = this.timeslots.push(new Timeslot(id, start, end, this.startTime, this.endTime)) - 1;
         this._draw();
     },
 
     _requestRemoveTimeslot: function() {
         if (this.selected != null) {
-            this._trigger("requestRemoveTimeslot", null, this.timeslots[this.selected].id)
+            this._trigger("timeslotRemoveRequested", null, this.timeslots[this.selected].id)
+        }
+    },
+    
+    _onTimeslotChanged: function(id, start, end) {
+        if (!this.hasConflicts()) {
+            this._trigger("timeslotChanged", null, {id:id, start:start, end:end});
         }
     },
     
@@ -421,9 +433,28 @@ $.widget("widgets.timesloteditor", {
         return conflicts;
     },
     
+    hasConflicts : function() {
+        for (var i = 0; i < this.timeslots.length; i++) {
+            var timeslot = this.timeslots[i];
+            if (this._conflicts(null, null, timeslot)) return true;
+        }
+        return false;
+    },
+    
     setTimeslots : function(timeslots) {
-        this.timeslots = timeslots;
-        this.draw();
+        
+        this.timeslots = []
+        for (var i = 0; i < timeslots.length; i++) {
+            
+            console.log(timeslots[i].start_time)
+            
+            this.timeslots.push(new Timeslot(timeslots[i].id, 
+                                             moment(timeslots[i].start_time), 
+                                             moment(timeslots[i].end_time), 
+                                             this.startTime, this.endTime));
+        }
+        
+        this._draw();
     }
 
 });

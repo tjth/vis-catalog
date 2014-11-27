@@ -2,6 +2,7 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
     $scope.activeTimeslot = null;
+    $scope.timeslots = [];
     
     $scope.getShortWeekdayName = function(day) {
         return moment().day(day).format("ddd")   
@@ -23,18 +24,29 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
         return Timeslot.new({start_time:start.format(), end_time:end.format()}, 
             // Success
             function(timeslot) {
-                $(element).timesloteditor("create", timeslot.id, start, end);
+            
+                $(element).timesloteditor("addTimeslot", timeslot.id, start, end);
             }); 
     }
     
-    $scope.deleteTimeslot = function(id) {
+    $scope.removeTimeslot = function(id, element) {
         Timeslot.remove({id: id}, 
             // Success
             function(timeslot) {
-                $(element).timesloteditor("removeTimeslot", timeslot.id);
+                $(element).timesloteditor("removeTimeslot", id);
             }
         ); 
-    } 
+    }
+    
+    $scope.updateTimeslot = function(id, start, end) {
+        Timeslot.update({id: id, start_time : start, end_time: end}, 
+            // Success
+            function(timeslot) {
+                console.log("hi");
+            }
+        ); 
+    }
+    
     $scope.getDateForDay = function(day) {
         return $scope.startOfWeek.clone().add(day, "days");   
     }    
@@ -42,23 +54,26 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     
     // Watchers
     $scope.$watch("startOfWeek", function(newStartOfWeek) {
-        var timeslots = {};
+        var timeslots = [];
         
         var done = 7;
         
-        for (i = 0; i < 7; i++) {
+        for (var i = 0; i < 7; i++) {
             var date = $scope.startOfWeek.clone().add(i, "days");
-            Timeslot.query({startOfDay: date.format()},         
-                // Success
-                function(dayTimeslots) {
-                
-                    console.log(dayTimeslots)
-                
-                    timeslots[date.format()] = dayTimeslots;
-                    done--;
-                
-                    if (done == 0) $scope.timeslots = timeslots;  
-                }
+            
+            Timeslot.query({startOfDay: date.format()},   
+                // Success      
+                (function(i) {
+                    return function(dayTimeslots) {
+                        
+                        timeslots[i] = dayTimeslots;
+                        done--;
+
+                        if (done == 0) {
+                            $scope.timeslots = timeslots;  
+                        }
+                    }
+                })(i)
             );
         } 
     });
@@ -108,10 +123,10 @@ app.directive('timeslotEditor', function() {
                 $scope.$apply();
             }
             
-            $scope.$parent.$watch("timeslots", function(newTimeslots) {
-                if ($scope.editor != undefined || newTimeslots != undefined) return;
+            $scope.$parent.$watch("timeslots", function() {
+                if ($scope.editor == undefined || $scope.$parent.timeslots.length == 0) return;
                 
-                $($scope.editor).timesloteditor("setTimeslots", newTimeslots.get(scope.day));   
+                $($scope.editor).timesloteditor("setTimeslots", $scope.$parent.timeslots[$scope.day]);   
             });
             
             $scope.$parent.$watch("startOfWeek", function(newStartOfWeek) {
@@ -123,20 +138,20 @@ app.directive('timeslotEditor', function() {
         }],
 
         link: function(scope, element, attrs) {
-            scope.day = attrs.day;
+            scope.day = attrs.day; // IS AN INT!
             
             scope.editor = $(element).timesloteditor({ 
-                timeslotclicked : function(event, data) {
+                timeslotClicked : function(event, data) {
                     scope.$parent.editTimeslot(data.timeslot);
                 },
                 timeslotAddRequested : function(event, data) {
                     scope.$parent.addTimeslot(data.start, data.end, $(element));
                 },
-                timeslotTimeChanged : function(event, data) {
-                    scope.changeTimeslotTime(data.id, data.start, data.end);
+                timeslotChanged : function(event, data) {
+                    scope.$parent.updateTimeslot(data.id, data.start, data.end);
                 },
-                timeslotDeleteRequested : function(event, data) {
-                    scope.$parent.deleteTimeslot(data.id, $(element));
+                timeslotRemoveRequested : function(event, id) {
+                    scope.$parent.removeTimeslot(id, $(element));
                 },
             }); 
         }
