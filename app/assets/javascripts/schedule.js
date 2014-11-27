@@ -91,15 +91,17 @@ app.directive('timeslotEditor', function() {
                 $scope.$apply();
             }
             
-            $scope.$watch("timeslots", function(newTimeslots) {
-                if ($scope.editor != undefined) {
-                    $($scope.editor).timesloteditor("setTimeslots", newTimeslots.get(scope.day));   
-                }
+            $scope.$parent.$watch("timeslots", function(newTimeslots) {
+                if ($scope.editor != undefined || newTimeslots != undefined) return;
+                
+                $($scope.editor).timesloteditor("setTimeslots", newTimeslots.get(scope.day));   
             });
             
-            $scope.$watch("startOfWeek", function(newStartOfWeek) {
-                $scope.date = newStartOfWeek.clone().add(scope.day, "days");  
-                $scope.editor.timesloteditor("setStartTime", scope.date);
+            $scope.$parent.$watch("startOfWeek", function(newStartOfWeek) {
+                if (newStartOfWeek == undefined) return;
+                
+                $scope.date = newStartOfWeek.clone().add($scope.day, "days");  
+                $scope.editor.timesloteditor("setStartTime", $scope.date);
             });
         }],
 
