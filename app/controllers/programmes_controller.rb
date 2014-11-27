@@ -78,6 +78,6 @@ class ProgrammesController < ApplicationController
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def programme_params
-      params[:programme].permit(:priority, :srceens, :visualisation_id)
+      params[:programme].permit(:priority, :screens, :visualisation_id)
     end
 end

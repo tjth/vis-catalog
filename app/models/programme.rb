@@ -2,6 +2,10 @@ class Programme < ActiveRecord::Base
   belongs_to :visualisation
   belongs_to :timeslot
 
+  validates :screens, presence: true
+  validates :priority, presence: true
+
+
   def duration
     return self.visualisation.min_playtime
   end
