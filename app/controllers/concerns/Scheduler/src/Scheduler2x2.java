@@ -26,80 +26,87 @@ public class Scheduler2x2 {
     }
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // ProgTimers selected for a certain time
     List<Programme> selectedProgs = new ArrayList<Programme>(); // Programmes selected for a certain block
+    boolean multi_row = false; // indicates if a multirow programme is found
+    boolean assign_complete = false;
     for (int current_time = 0; current_time < mins; current_time++) {
-      boolean multi_row = false; // indicates if a multirow programme is found
       List<Integer> allRows = permutate(SCREENROWS);
       for (int curr_row : allRows) { // pick a random row
-        for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) { // curr_col for free slots at current_time
-          if (nextFreeTimeslot[curr_row][curr_col] <= current_time) { // free slot found
-            int start_col = curr_col; // start of free slot
-            int block_size;
-            for (block_size = 1; curr_col + block_size < SCREENCOLS; block_size++) { // curr_col for consecutive free slots at current_time
-              if (nextFreeTimeslot[curr_row][curr_col + block_size] > current_time) { // end of free block
-                break;
+        if (!multi_row) {
+          for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) { // curr_col for free slots at current_time
+            if (nextFreeTimeslot[curr_row][curr_col] <= current_time) { // free slot found
+              int start_col = curr_col; // start of free slot
+              int block_size;
+              for (block_size = 1; curr_col + block_size < SCREENCOLS; block_size++) { // curr_col for consecutive free slots at current_time
+                if (nextFreeTimeslot[curr_row][curr_col + block_size] > current_time) { // end of free block
+                  break;
+                }
               }
-            }
-            curr_col += block_size; // move curr_col to end of free block
-            int filled_blocks = 0; // records number of filled_blocks slots in block
-            while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
-              ProgTimer pt = pq.peek();
-              if (pt.prog.getScreens() > SCREENCOLS) { // selected programme must occupy >1 row
-                multi_row = true;
-                break;
+              curr_col += block_size; // move curr_col to end of free block
+              int filled_blocks = 0; // records number of filled_blocks slots in block
+              while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
+                ProgTimer pt = pq.peek();
+                if (pt.prog.getScreens() > SCREENCOLS) { // selected programme must occupy >1 row
+                  multi_row = true;
+                  break;
+                }
+                if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
+                  break;
+                }
+                pq.remove(); // remove selected programme from queue
+                if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
+                  selectedProgs.add(pt.prog); // schedule programme
+                  selectedPTs.add(pt); // shortlist programme
+                  requeue(pt, pq); // requeue programme
+                  filled_blocks += pt.prog.getScreens();
+                } else {
+                  // programme cannot be selected to play at a later time anyway, don't bother requeueing
+                }
               }
-              if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
-                break;
-              }
-              pq.remove(); // remove selected programme from queue
-              if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
-                selectedProgs.add(pt.prog); // schedule programme
-                selectedPTs.add(pt); // shortlist programme
-                requeue(pt, pq); // requeue programme
-                filled_blocks += pt.prog.getScreens();
-              } else {
-                // programme cannot be selected to play at a later time anyway, don't bother requeueing
-              }
-            }
 
-            Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
-            boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
-            if (start_col == 0 && block_size < SCREENCOLS ||
-                start_col > 0 && curr_col < SCREENCOLS &&
-                nextFreeTimeslot[curr_row][start_col - 1] < nextFreeTimeslot[curr_row][curr_col]) { // better to align left ie. longest to shortest
-              ascend = false;
-            } else if (start_col + block_size == SCREENCOLS && block_size < SCREENCOLS ||
-                start_col > 0 && curr_col < SCREENCOLS &&
-                nextFreeTimeslot[curr_row][start_col - 1] > nextFreeTimeslot[curr_row][curr_col]) { // better to align right ie. shortest to longest
-              ascend = true;
-            } else { // no alignment preference
-              ascend = Math.random() < 0.5;
+              Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
+              boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
+              if (start_col == 0 && block_size < SCREENCOLS ||
+                  start_col > 0 && curr_col < SCREENCOLS &&
+                  nextFreeTimeslot[curr_row][start_col - 1] < nextFreeTimeslot[curr_row][curr_col]) { // better to align left ie. longest to shortest
+                ascend = false;
+              } else if (start_col + block_size == SCREENCOLS && block_size < SCREENCOLS ||
+                  start_col > 0 && curr_col < SCREENCOLS &&
+                  nextFreeTimeslot[curr_row][start_col - 1] > nextFreeTimeslot[curr_row][curr_col]) { // better to align right ie. shortest to longest
+                ascend = true;
+              } else { // no alignment preference
+                ascend = Math.random() < 0.5;
+              }
+              if (ascend) { // schedule and clear selected programmes in ascending duration order
+                start_col += block_size - filled_blocks; // starting position of 1st selected programme
+                while (!selectedProgs.isEmpty()) {
+                  Programme prog = selectedProgs.remove(0);
+                  int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+                  sessions.add(new Session(prog, SCREENCOLS * curr_row + start_col, current_time, prog_end_time));
+                  for (int i = 0; i < prog.getScreens(); i++) {
+                    nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
+                  }
+                  start_col += prog.getScreens(); // shift to starting position of next selected programme
+                }
+              } else { // schedule and clear selected programmes in descending duration order
+                start_col += filled_blocks; // ending position of 1st selected programme
+                while (!selectedProgs.isEmpty()) {
+                  Programme prog = selectedProgs.remove(0);
+                  start_col -= prog.getScreens(); // shift to starting position of current selected programme
+                  int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+                  sessions.add(new Session(prog, SCREENCOLS * curr_row + start_col, current_time, prog_end_time));
+                  for (int i = 0; i < prog.getScreens(); i++) {
+                    nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
+                  }
+                }
+              }
             }
-            if (ascend) { // schedule and clear selected programmes in ascending duration order
-              start_col += block_size - filled_blocks; // starting position of 1st selected programme
-              while (!selectedProgs.isEmpty()) {
-                Programme prog = selectedProgs.remove(0);
-                int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-                sessions.add(new Session(prog, SCREENCOLS * curr_row + start_col, current_time, prog_end_time));
-                for (int i = 0; i < prog.getScreens(); i++) {
-                  nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
-                }
-                start_col += prog.getScreens(); // shift to starting position of next selected programme
-              }
-            } else { // schedule and clear selected programmes in descending duration order
-              start_col += filled_blocks; // ending position of 1st selected programme
-              while (!selectedProgs.isEmpty()) {
-                Programme prog = selectedProgs.remove(0);
-                start_col -= prog.getScreens(); // shift to starting position of current selected programme
-                int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-                sessions.add(new Session(prog, SCREENCOLS * curr_row + start_col, current_time, prog_end_time));
-                for (int i = 0; i < prog.getScreens(); i++) {
-                  nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
-                }
-              }
+            if (multi_row) {
+              break; // break out of normal curr_col mode
             }
           }
-          
-        }
+        } else { // multi_row mode
+
+        } // end of multi_row mode
       }
       selectedPTs.clear();
     }
