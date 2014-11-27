@@ -11,7 +11,7 @@ class TimeslotsController < ApplicationController
 
     @new_timeslots = []
 
-    ts_last = Timeslot.where(:start_time.to_date => last_week_day.to_date)
+    ts_last = Timeslot.where("start_time >= ? AND end_time < ?", last_week_day, last_week_day + 24.hours)
     ts_last.each do |ts|
       new_timeslot = ts.dup
       new_timeslot.start_date += 7
@@ -30,7 +30,8 @@ class TimeslotsController < ApplicationController
     end
 
     if params[:startOfDay] != nil
-      @timeslots = Timeslot.where(:start_time.to_date => DateTime.iso8601(params[:startOfDay]).to_date)
+      dt = DateTime.iso8601(params[:startOfDay])
+      @timeslots = Timeslot.where("start_time >= ? AND end_time < ?", dt, dt.advance(:hours => 24))
     else
       @timeslots = Timeslot.all
     end
