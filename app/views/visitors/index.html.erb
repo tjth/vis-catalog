@@ -117,16 +117,6 @@
             });
     }]);
 
-    app.factory('SubmitVisualisation', ['$resource',
-        function($resource){
-            return $resource('visualisations', {}, {
-                save: {
-                    method: 'POST'
-                }
-            });
-        }
-    ]);
-    
     app.factory('Timeslot', ['$resource',
         function($resource){
             return $resource('timeslots', {}, {
@@ -177,86 +167,28 @@
         $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
     });
 
-    app.controller('submitVisualisationController', function($scope, $rootScope, SubmitVisualisation, $route, $location) {
+    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
         $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
         $scope.submit = { img:"assets/camera.png" }
-        $scope.obj = {};
-        $scope.content_type = [ {type : 'weblink'}, {type : 'file'}];
         $scope.submitVisualistion = function() {
-            $scope.newvis = new SubmitVisualisation();
-            $scope.newvis.name = $scope.visualisation.name;
-            $scope.newvis.vis_type = "vis";
-            $scope.newvis.content_type = $scope.visualisation.content_type.type;
-            $scope.newvis.description = $scope.visualisation.description;
-            $scope.newvis.notes = $scope.visualisation.notes;
-            
-            if ($scope.newvis.content_type == 'weblink'){
-                //makes link the url
-                $scope.newvis.link = $scope.visualisation.url;
-                
-                //makes content null
-                $scope.newvis.content = null;
-                //filereader to read as data uri from flow-img
-                var fileReader = new FileReader();
-                fileReader.readAsDataURL($scope.visualisation.screenshot.files[0].file);
-                fileReader.onload = function (event) {
-                    var dataURI = event.target.result;
-                    //convert from uri to unsigned 8 bit array
-                    var byteString = atob(dataURI.split(',')[1]);
-                    var ab = new ArrayBuffer(byteString.length);
-                    var ia = new Uint8Array(ab);
-                    for (var i = 0; i < byteString.length; i++) {$scope.newvis.link =
-                        ia[i] = byteString.charCodeAt(i);
-                    }
-                    //screenshot is type blob
-                    $scope.newvis.screenshot = new Blob([ab], { type: 'image/jpeg' });
-                    //post to backend
-                    SubmitVisualisation.save($scope.newvis, function(){
-                    
-                    });
-                }
-            } else {
-                //makes link null
-                $scope.newvis.link = null;
-                
-                //filereader to read as data uri from flow-img
-                var fileReader = new FileReader();
-                fileReader.readAsDataURL($scope.visualisation.screenshot.files[0].file);
-                fileReader.onload = function (event) {
-                    
-                    var dataURI = event.target.result;
-                    //convert from uri to unsigned 8 bit array
-                    var byteString = atob(dataURI.split(',')[1]);
-                    var ab = new ArrayBuffer(byteString.length);
-                    var ia = new Uint8Array(ab);
-                    for (var i = 0; i < byteString.length; i++) {
-                        ia[i] = byteString.charCodeAt(i);
-                    }
-                    //screenshot is type blob
-                    $scope.newvis.screenshot =  new Blob([ab], { type: 'image/png' });;                
-                }
-                //filereader to read as data uri from flow-img
-                var fileReader2 = new FileReader();
-                fileReader2.readAsDataURL($scope.visualisation.content.files[0].file);
-                fileReader2.onload = function (event) {
-                    
-                    var dataURI = event.target.result;
-                    //convert from uri to unsigned 8 bit array
-                    var byteString = atob(dataURI.split(',')[1]);
-                    var ab = new ArrayBuffer(byteString.length);
-                    var ia = new Uint8Array(ab);
-                    for (var i = 0; i < byteString.length; i++) {
-                        ia[i] = byteString.charCodeAt(i);
-                    }
-                    //content is type blob
-                    $scope.newvis.content =  new Blob([ab], { type: 'image/png' });;                
-                    //post to backend
-                    SubmitVisualisation.save($scope.newvis, function(){
-                    
-                    });
-                }
-            }   
-            
+            var fd = new FormData($("form.upload")[0]);
+			var content_type = document.getElementById("content_type");
+			var value = content_type.options[content_type.selectedIndex].value;
+			fd.append('visualisation.vis_type', 'vis');
+			if (value == 'weblink'){
+				fd.append('content', null);
+			} else {
+				fd.append('link', null);
+			}
+			$.ajax({
+				url: "/visualisations",
+				data: fd,
+				cache: false,
+				contentType: false,
+				processData: false,
+				type: 'POST'
+			});
+
             
         }
     });
