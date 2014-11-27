@@ -2,16 +2,6 @@ class TimeslotsController < ApplicationController
   include Scheduling
   require 'date'
 
-  # POST /timeslots/submit
-  def submit
-    //todo: get list of timeslot ids from params
-    timeslots = []
-
-    timeslots.each do |tid|
-      t = Timeslot.find_by_id(tid)
-      generate_schedule(t) if t != nil
-    end
-  end
 
 
   # POST /timeslots/copy_from_last_week
