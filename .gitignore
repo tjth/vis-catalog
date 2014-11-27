@@ -80,3 +80,6 @@ pickle-email-*.html
 
 # Temp files
 *~
+
+# Uploaded files
+public/uploads

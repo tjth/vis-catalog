@@ -2,9 +2,51 @@
     <div class="row">
 
         <div id="submit-visualisation-col" class="col-sm-8">
+            
+                                 
+                    <!-- this form holds the data -->
+                        
+                    <form class="upload">
+                        
+                        <input type="text" 
+                               placeholder="Visualisation Name" 
+                               ng-model="visualisation.name"
+                               name="visualisation[name]"/>
+                        <input type="text" 
+                               placeholder="Visualisation Description" 
+                               ng-model="visualisation.description"
+                               name="visualisation[description]"/>
+
+                        
+                         <!-- the names of the elements are IMPORTANT, they needs to be modelName[fieldName] for rails to pick them up and insert into the right place  -->
+                                <input type="file" name="visualisation[screenshot]"/>
+                    </form>
+            
+            
+                    <!-- To submit the data from above, the following code works (we're not submitting the form, just getting the data from the form and submitting it with ajax)
+
+
+var formData = new FormData($("form.upload")[0]);
+$.ajax({
+  url: "/visualisations.json",
+  data: formData,
+  cache: false,
+  contentType: false,
+  processData: false,
+  type: 'POST'
+});
+                 
+                    <!-- -->
+            
+            
+            
             <form id="form" class="card" ng-init="visualisation={ image: $flow.files[0] }" ng-submit="submitVisualistion()">
                 <div class="content">
                     <div class="wrapper">
+                        
+                        
+                        
+                        
                     <div  class="content-type side-by-side">SCREENSHOT</div>
                     <div flow-init="{singleFile: true, testChunks:false}"
                          flow-file-added="!!{png:1,jpg:1,jpeg:1}[$file.getExtension()]"
@@ -34,7 +76,7 @@
                             <img ng-show="$flow.files.length" class="preview"
                                  style="max-width:117px; max-height: 100px;"
                                  flow-img="$flow.files[0]"/>
-                            <input type="file" style="visibility: hidden; position: absolute;"/>
+                            <input type="file" class="this"/>
                         </span>
                     </div>
                     </div>
