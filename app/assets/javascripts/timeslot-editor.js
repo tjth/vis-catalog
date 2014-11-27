@@ -258,7 +258,7 @@ $.widget("widgets.timesloteditor", {
         if (timeslot == null) {
             this._requestAddTimeslot(event.offsetX - 100/2);
         } else {
-            this._trigger("timeslotClicked", event, {timeslot:timeslot});   
+            this._trigger("timeslotClicked", event, timeslot.id);   
         }
     },
 
@@ -445,12 +445,10 @@ $.widget("widgets.timesloteditor", {
         
         this.timeslots = []
         for (var i = 0; i < timeslots.length; i++) {
-            
-            console.log(timeslots[i].start_time)
-            
+
             this.timeslots.push(new Timeslot(timeslots[i].id, 
-                                             moment(timeslots[i].start_time), 
-                                             moment(timeslots[i].end_time), 
+                                             timeslots[i].start, 
+                                             timeslots[i].end, 
                                              this.startTime, this.endTime));
         }
         

@@ -1,4 +1,4 @@
-app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
+app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
     $scope.activeTimeslot = null;
@@ -39,12 +39,12 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     }
     
     $scope.updateTimeslot = function(id, start, end) {
-        Timeslot.update({id: id, start_time : start, end_time: end}, 
-            // Success
-            function(timeslot) {
-                console.log("hi");
-            }
-        ); 
+        Timeslot.update({id: id, start_time : start, end_time: end}); 
+    }
+    
+    $scope.editTimeslot = function(id) {
+        $location.path('/schedule/timeslot/' + id);  
+        $scope.$apply();
     }
     
     $scope.getDateForDay = function(day) {
@@ -81,20 +81,29 @@ app.controller('scheduleController', function($scope, $rootScope, Timeslot) {
     $scope.startOfWeek = moment().startOf('isoweek');
 });
 
-app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, Timeslot) {
+app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, Visualisation, Timeslot) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
 
-    $scope.timeslot = Timeslot.get({ id:$routeParams.id});
+    Timeslot.get({id:$routeParams.id}, 
+        // Success
+        function(timeslot) {
+            console.log(timeslot)
+        
+            $scope.timeslot = timeslot;
+        }                             
+    );
     
     $scope.setActiveContentItem = function(contentItem) {
         $scope.activeContentItem = contentItem;  
     }
     
     $scope.formatDay = function(date) {
+        if (date == undefined) return "";
         return date.format("ddd").toUpperCase();
     }
     
     $scope.formatTime = function(start, end) {
+        if (start == undefined || end == undefined) return "";
         return start.format("HH:mm") + " - " +  end.format("HH:mm")
     }
     
@@ -118,21 +127,16 @@ app.directive('timeslotEditor', function() {
     return {
         scope: {item:'='},
         controller: ['$scope', "$location", function($scope, $location) {
-            $scope.editTimeslot = function(timeslot) {
-                $location.path('/schedule/timeslot/' + timeslot.id);  
-                $scope.$apply();
-            }
-            
             $scope.$parent.$watch("timeslots", function() {
                 if ($scope.editor == undefined || $scope.$parent.timeslots.length == 0) return;
                 
                 $($scope.editor).timesloteditor("setTimeslots", $scope.$parent.timeslots[$scope.day]);   
             });
             
-            $scope.$parent.$watch("startOfWeek", function(newStartOfWeek) {
-                if (newStartOfWeek == undefined) return;
+            $scope.$parent.$watch("startOfWeek", function() {
+                if ($scope.$parent.startOfWeek == undefined) return;
                 
-                $scope.date = newStartOfWeek.clone().add($scope.day, "days");  
+                $scope.date = $scope.$parent.startOfWeek.clone().add($scope.day, "days");  
                 $scope.editor.timesloteditor("setStartTime", $scope.date);
             });
         }],
@@ -141,8 +145,8 @@ app.directive('timeslotEditor', function() {
             scope.day = attrs.day; // IS AN INT!
             
             scope.editor = $(element).timesloteditor({ 
-                timeslotClicked : function(event, data) {
-                    scope.$parent.editTimeslot(data.timeslot);
+                timeslotClicked : function(event, id) {
+                    scope.$parent.editTimeslot(id);
                 },
                 timeslotAddRequested : function(event, data) {
                     scope.$parent.addTimeslot(data.start, data.end, $(element));
