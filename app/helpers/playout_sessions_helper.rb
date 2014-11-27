@@ -6,5 +6,4 @@ require 'date'
 
     PlayoutSession.where("end_time < ?", now).delete_all
   end
-
 end

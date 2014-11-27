@@ -23,6 +23,8 @@ Rails.application.routes.draw do
 
   get '/visualisations/current/:screennum' => 'visualisations#current'
 
+  get '/playout_sessions/info' => 'playout_sessions#get_info'
+
   resources :programmes
   resources :visualisations
   resources :timeslots
