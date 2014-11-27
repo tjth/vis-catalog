@@ -3,6 +3,25 @@ class TimeslotsController < ApplicationController
   require 'date'
 
 
+
+  # POST /timeslots/copy_from_last_week
+  def copy_from_last_week
+    current_day = DateTime.iso8601(params[:day])
+    last_week_day = current_day - 7
+
+    @new_timeslots = []
+
+    ts_last = Timeslot.where(:date => current_day_.to_date)
+    ts_last.each do |ts|
+      ts_new = ts.dup
+      ts_new.date = current_day.to_date
+      #keep start and end time the same
+      ts_new.save
+      @new_timeslots.push(ts_new)
+    end
+
+  end
+
   # POST /timeslots/copy_last_seven
   def copy_last_seven
     last_week = get_weeks_timeslots(params[:startDay].to_date - 7)
@@ -20,10 +39,9 @@ class TimeslotsController < ApplicationController
       @this_week.push(todays_vis)
       current = current + 1
     end
-
-
   end
 
+  # used by copy_last_seven
   def get_weeks_timeslots(dt_string)
     dt = DateTime.iso8601(dt_string)
     days = []
@@ -37,11 +55,13 @@ class TimeslotsController < ApplicationController
     return days
   end
 
+  # utility func
   def get_todays_timeslots
     today = Date.today
     @timeslots = Timeslot.where(:date => today)
   end
 
+  # GET /timeslots
   def index
     if params[:weekStarting] != nil
       @timeslots = get_weeks_timeslots(params[:weekStarting])
@@ -55,23 +75,23 @@ class TimeslotsController < ApplicationController
     end
   end
 
-	# GET /visualisations/1
-  # GET /visualisations/1.json
+	# GET /timeslots/1
+  # GET /timeslots/1.json
   def show
     @timeslot = Timeslot.find_by_id(params[:id])
   end
 
-  # GET /visualisations/new
+  # GET /timeslots/new
   def new
     @timeslot = Timeslot.new
   end
 
-  # GET /visualisations/1/edit
+  # GET /timeslots/1/edit
   def edit
   end
 
-  # POST /visualisations
-  # POST /visualisations.json
+  # POST /timeslots
+  # POST /timeslots.json
   def create
     pars = timeslot_params
     @timeslot = Timeslot.new(pars)
@@ -92,6 +112,7 @@ class TimeslotsController < ApplicationController
   def update
     respond_to do |format|
       if @timeslot.update(timeslot_params)
+        generate_schedule(@timeslot)
         format.html { redirect_to @timeslot, notice: 'timeslot was successfully updated.' }
         format.json { render :show, status: :ok, location: @timeslot }
       else
