@@ -15,11 +15,15 @@ class UsersController < ApplicationController
   end
 
   def index
-    @users = User.all
+    if params[:token] != nil
+      @users = User.where(:authentication_token => params[:token])
+    else
+      @users = User.all
+    end
   end
 
   def show
-    @user = User.find(params[:id])
+    @user = User.find_by_id(params[:id])
     unless @user == current_user
       redirect_to :back, :alert => "Access denied."
     end
