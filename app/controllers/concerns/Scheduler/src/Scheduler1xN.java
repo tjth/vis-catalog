@@ -22,7 +22,6 @@ public class Scheduler1xN {
       nextFreeTimeslot[s] = 0;
     }
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // ProgTimers selected for a certain time
-    List<Programme> selectedProgs = new ArrayList<Programme>(); // Programmes selected for a certain block
     for (int current_time = 0; current_time < mins; current_time++) {
       for (int curr_screen = 0; curr_screen < SCREENS; curr_screen++) { // curr_screen for free slots at current_time
         if (nextFreeTimeslot[curr_screen] <= current_time) { // free slot found
@@ -34,6 +33,7 @@ public class Scheduler1xN {
             }
           }
           curr_screen += block_size; // move curr_screen to end of free block
+          List<Programme> selectedProgs = new ArrayList<Programme>(); // Programmes selected for a certain block
           int filled_blocks = 0; // records number of filled_blocks slots in block
           while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
             ProgTimer pt = pq.peek();
@@ -125,12 +125,12 @@ public class Scheduler1xN {
     boolean[][] strokes = new boolean[mins][SCREENS];
     boolean[][] dashes = new boolean[mins][SCREENS];
     boolean[][] plusses = new boolean[mins][SCREENS];
-    for (int r = 0; r < mins; r++) {
-      for (int c = 0; c < SCREENS; c++) {
-        visNames[r][c] = "$$$$$$$";
-        strokes[r][c] = true;
-        dashes[r][c] = true;
-        plusses[r][c] = true;
+    for (int m = 0; m < mins; m++) {
+      for (int s = 0; s < SCREENS; s++) {
+        visNames[m][s] = "$$$$$$$";
+        strokes[m][s] = true;
+        dashes[m][s] = true;
+        plusses[m][s] = true;
       }
     }
     for (Session session : sessions) {
@@ -139,25 +139,25 @@ public class Scheduler1xN {
       int origEndTime = startTime + vis.getDuration();
       int startScreen = session.getStartScreen();
       int endScreen = session.getEndScreen();
-      for (int current_time = startTime; current_time < Math.min(origEndTime, mins); current_time++) {
+      for (int m = startTime; m < Math.min(origEndTime, mins); m++) {
         for (int s = startScreen; s <= endScreen; s++) {
-          visNames[current_time][s] = "       ";
+          visNames[m][s] = "       ";
         }
       }
       visNames[startTime][startScreen] = vis.toString();
-      for (int current_time = startTime; current_time < Math.min(origEndTime, mins); current_time++) {
+      for (int m = startTime; m < Math.min(origEndTime, mins); m++) {
         for (int s = startScreen; s <= endScreen - 1; s++) {
-          strokes[current_time][s] = false;
+          strokes[m][s] = false;
         }
       }
-      for (int current_time = startTime; current_time < Math.min(origEndTime - 1, mins); current_time++) {
+      for (int m = startTime; m < Math.min(origEndTime - 1, mins); m++) {
         for (int s = startScreen; s <= endScreen; s++) {
-          dashes[current_time][s] = false;
+          dashes[m][s] = false;
         }
       }
-      for (int current_time = startTime; current_time < Math.min(origEndTime - 1, mins); current_time++) {
+      for (int m = startTime; m < Math.min(origEndTime - 1, mins); m++) {
         for (int s = startScreen; s <= endScreen - 1; s++) {
-          plusses[current_time][s] = false;
+          plusses[m][s] = false;
         }
       }
     }
@@ -178,20 +178,20 @@ public class Scheduler1xN {
     }
     disp.append(String.format(" %2d\n", 0));
 
-    for (int current_time = 0; current_time < mins; current_time++) {
+    for (int m = 0; m < mins; m++) {
       disp.append(indent + "|");
       for (int s = 0; s < SCREENS; s++) {
-        disp.append(" " + visNames[current_time][s] + " ");
-        disp.append(strokes[current_time][s] ? "|" : " ");
+        disp.append(" " + visNames[m][s] + " ");
+        disp.append(strokes[m][s] ? "|" : " ");
       }
       disp.append("\n");
 
       disp.append(indent + "+");
       for (int s = 0; s < SCREENS; s++) {
-        disp.append(dashes[current_time][s] ? dash : spaces);
-        disp.append(plusses[current_time][s] ? "+" : " ");
+        disp.append(dashes[m][s] ? dash : spaces);
+        disp.append(plusses[m][s] ? "+" : " ");
       }
-      disp.append(String.format(" %2d\n", current_time + 1));
+      disp.append(String.format(" %2d\n", m + 1));
     }
     return disp.toString();
   }

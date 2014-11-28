@@ -1,11 +1,10 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Main {
 
   public static void main(String[] args) {
-    int maxMins = 5, maxScreens = 4, maxPriority = 10;
+    int maxMins = 5, maxScreens = 8, maxPriority = 10;
     Visualisation[] vs = new Visualisation[maxMins + 1];
     for (int m = 1; m <= maxMins; m++) {
       vs[m] = new Visualisation(" V0" + m + " ", m);
@@ -28,10 +27,11 @@ public class Main {
 //    sc1xn.schedule(Arrays.asList(ps[1][3][3]));
 //    sc1xn.schedule(new ArrayList<Programme>());
     
-    Scheduler2x2 sc2x2 = new Scheduler2x2(10);
+    SchedulerMxN sc2x2 = new SchedulerMxN(10);
 //    sc2x2.schedule(Arrays.asList(ps[2][2][3], ps[1][1][2], ps[1][1][1]));
-    sc2x2.schedule(Arrays.asList(ps[1][1][1]));
-//    sc2x2.schedule(new ArrayList<Programme>());
+//    sc2x2.schedule(Arrays.asList(ps[1][1][1]));
+    sc2x2.schedule(Arrays.asList(ps[1][1][2], ps[2][8][4]));
+    sc2x2.schedule(new ArrayList<Programme>());
   }
 
 }

@@ -25,6 +25,10 @@ public class Programme implements Comparable<Programme> {
     return vis;
   }
 
+  public void setScreens(int screens) {
+    this.screens = screens;
+  }
+  
   public int getScreens() {
     return screens;
   }
