@@ -159,6 +159,10 @@
         $scope.logOut = function() {
             localStorage.removeItem("auth_token")
         }
+        
+        $scope.getSignInUrl = function() {
+            return "#/sign-in?return=" + $location.path();   
+        }
     });
 
     app.controller('visualisationController', function ($scope, $rootScope, Visualisation, $routeParams) {

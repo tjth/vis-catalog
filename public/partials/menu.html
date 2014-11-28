@@ -25,7 +25,7 @@
     <section class="bottom">
         <div class="user item">
             <img class="icon avatar" ng-if="!loggedIn()" src=""/>
-            <a href="#/sign-in" class="name" ng-if="!loggedIn()">Sign in...</a>
+            <a ng-href="{[{getSignInUrl()}]}" class="name" ng-if="!loggedIn()">Sign in...</a>
             
             <img class="icon avatar" ng-if="loggedIn()" ng-src="{[{user.image}]}"/>
             <div class="name" ng-if="loggedIn()">{[{user.name}]}</div>
