@@ -4,20 +4,22 @@ public class Programme implements Comparable<Programme> {
   private int screens;
   private int priority;
 
-  public static final Programme[] defProgs = {
-    new Programme(Visualisation.defVis[0], 1),
-    new Programme(Visualisation.defVis[1], 2),
-    new Programme(Visualisation.defVis[2], 3)};
+//  public static final Programme[] defProgs = {
+//    new Programme(Visualisation.defVis[0], 1),
+//    new Programme(Visualisation.defVis[1], 2),
+//    new Programme(Visualisation.defVis[2], 3)};
 
-  private Programme(Visualisation vis, int screens) { // for default programmes only
-    this.vis = vis;
-    this.screens = screens;
-    priority = 0;
-  }
+//  private Programme(Visualisation vis, int screens) { // for default programmes only
+//    this.vis = vis;
+//    this.screens = screens;
+//    priority = 0;
+//  }
 
   public Programme(Visualisation vis, int screens, int priority) {
-    this(vis, screens);
+    assert screens > 0: "Invalid nuumber of screens!";
     assert priority > 0: "Invalid priority!";
+    this.vis = vis;
+    this.screens = screens;
     this.priority = priority;
   }
 

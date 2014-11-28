@@ -108,6 +108,9 @@ public class Scheduler1xN {
   private PriorityQueue<ProgTimer> createQueue(List<Programme> progs) {
     PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
     for (Programme prog : progs) {
+      if (prog.getScreens() > SCREENS) { // force-fit the programme into the screens available
+        prog.setScreens(SCREENS);
+      }
       pq.add(new ProgTimer(prog));
     }
     return pq;

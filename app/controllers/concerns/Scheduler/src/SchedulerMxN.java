@@ -29,34 +29,6 @@ public class SchedulerMxN {
     for (int current_time = 0; current_time < mins; current_time++) {
       List<Integer> allRows = permutate(SCREENROWS);
       findSpace: for (int curr_row : allRows) { // pick a random row
-        if (multi_row) { // multi-row mode, treat screens as 1 very long row
-          ProgTimer pt = pq.peek();
-          int prog_rows = pt.prog.getScreens() / SCREENCOLS;
-          if (curr_row + prog_rows <= SCREENROWS) { // enough rows for multi-row programme
-            for (int r = 0; r < prog_rows; r++) {
-              for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) {
-                if (nextFreeTimeslot[curr_row + r][curr_col] > current_time) { // free slot not found
-                  continue findSpace;
-                }
-              }
-            }
-            pq.remove();
-            if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
-              selectedPTs.add(pt); // shortlist programme
-              requeue(pt, pq); // requeue programme
-              int prog_end_time = Math.min(current_time + pt.prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-              sessions.add(new Session(pt.prog, SCREENCOLS * curr_row, current_time, prog_end_time));
-              for (int r = 0; r < prog_rows; r++) {
-                for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) {
-                  nextFreeTimeslot[curr_row + r][curr_col] = prog_end_time; // update next free slot for each screen
-                }
-              }
-              multi_row = false;
-            } else {
-              // programme cannot be selected to play at a later time anyway, don't bother requeueing
-            }
-          }
-        }
         if (!multi_row) {
           for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) { // curr_col for free slots at current_time
             if (nextFreeTimeslot[curr_row][curr_col] <= current_time) { // free slot found
@@ -74,11 +46,8 @@ public class SchedulerMxN {
                 ProgTimer pt = pq.peek();
                 int prog_screens = pt.prog.getScreens();
                 if (prog_screens > SCREENCOLS) { // selected programme occupies >1 row
-                  pt.prog.setScreens(prog_screens - prog_screens % SCREENCOLS); // rounds down number os screens used for visualisation
-                  if (pt.prog.getScreens() > SCREENCOLS) { // selected programme still occupies >1 row
-                    multi_row = true;
-                    break;
-                  }
+                  multi_row = true;
+                  break;
                 }
                 if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
                   break;
@@ -133,6 +102,34 @@ public class SchedulerMxN {
             }
           }
         }
+        if (multi_row) { // multi-row mode, treat screens as 1 very long row
+          ProgTimer pt = pq.peek();
+          int prog_rows = pt.prog.getScreens() / SCREENCOLS;
+          if (curr_row + prog_rows <= SCREENROWS) { // enough rows for multi-row programme
+            for (int r = 0; r < prog_rows; r++) {
+              for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) {
+                if (nextFreeTimeslot[curr_row + r][curr_col] > current_time) { // free slot not found
+                  continue findSpace;
+                }
+              }
+            }
+            pq.remove();
+            if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
+              selectedPTs.add(pt); // shortlist programme
+              requeue(pt, pq); // requeue programme
+              int prog_end_time = Math.min(current_time + pt.prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+              sessions.add(new Session(pt.prog, SCREENCOLS * curr_row, current_time, prog_end_time));
+              for (int r = 0; r < prog_rows; r++) {
+                for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) {
+                  nextFreeTimeslot[curr_row + r][curr_col] = prog_end_time; // update next free slot for each screen
+                }
+              }
+              multi_row = false;
+            } else {
+              // programme cannot be selected to play at a later time anyway, don't bother requeueing
+            }
+          }
+        }
       }
       selectedPTs.clear();
     }
@@ -142,6 +139,10 @@ public class SchedulerMxN {
   private PriorityQueue<ProgTimer> createQueue(List<Programme> progs) {
     PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
     for (Programme prog : progs) {
+      int prog_screens = prog.getScreens();
+      if (prog_screens > SCREENCOLS) {  // force-fit the programme into the screens available
+        prog.setScreens(prog_screens - prog_screens % SCREENCOLS); // rounds down number of screens
+      }
       pq.add(new ProgTimer(prog));
     }
     return pq;
