@@ -140,7 +140,9 @@ public class SchedulerMxN {
     PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
     for (Programme prog : progs) {
       int prog_screens = prog.getScreens();
-      if (prog_screens > SCREENCOLS) {  // force-fit the programme into the screens available
+      if (prog_screens > SCREENROWS * SCREENCOLS) { // force-fit the programme into the screens available
+        prog.setScreens(SCREENROWS * SCREENCOLS); // rounds down number of screens
+      } else if (prog_screens > SCREENCOLS) { // force-fit the programme into the screens available
         prog.setScreens(prog_screens - prog_screens % SCREENCOLS); // rounds down number of screens
       }
       pq.add(new ProgTimer(prog));
