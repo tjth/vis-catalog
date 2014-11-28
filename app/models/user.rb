@@ -10,4 +10,5 @@ class User < ActiveRecord::Base
 
   before_save :ensure_authentication_token
   attr_default :isAdmin, false
+  attr_default :isApproved, true
 end
