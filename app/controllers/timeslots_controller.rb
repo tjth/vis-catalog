@@ -63,7 +63,6 @@ class TimeslotsController < ApplicationController
         format.html { redirect_to @timeslot, notice: 'timeslot was successfully created.' }
         format.json { render :show, status: :created, location: @timeslot }
       else
-        format.html { render :new }
         format.json { render json: @timeslot.errors, status: :unprocessable_entity }
       end
     end
@@ -134,7 +133,7 @@ class TimeslotsController < ApplicationController
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def timeslot_params
-      params[:timeslot].permit(:start_time, :end_time)
+      params.require(:timeslot).permit(:start_time, :end_time)
     end
 
 end

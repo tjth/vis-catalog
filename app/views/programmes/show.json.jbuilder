@@ -1,0 +1,1 @@
+json.extract! @programme, :screens, :priority, :visualisation_id, :timeslot_id
