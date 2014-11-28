@@ -4,6 +4,8 @@ class Programme < ActiveRecord::Base
 
   validates :screens, presence: true
   validates :priority, presence: true
+  validates :visualisation_id, presence: true
+  validates :timeslot_id, presence: true
 
 
   def duration

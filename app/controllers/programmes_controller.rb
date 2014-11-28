@@ -24,18 +24,32 @@ class ProgrammesController < ApplicationController
   def create
     pars = programme_params
     @programme = Programme.new(pars)
-    v = Visualisation.find_by_id(params[:visualisation_id])
-    if v != null
-    	v.programmes << @programme
-    else
-    	return "No such visualisation"
-   	end
 
-    t = Timeslot.find_by_id(params[:tsid])
-    if t == nil
-      return "No such timeslot"
+    puts params[:programme][:visualisation_id]
+    puts params[:programme][:timeslot_id]
+
+    if (params[:programme][:visualisation_id] == nil or params[:programme][:timeslot_id] == nil)
+      @programme.delete
+      render :status => :internal_server_error, :text => "Need to supply timeslot and visualisation params."
+      return
     end
-    
+
+    v = Visualisation.find_by_id(params[:programme][:visualisation_id])
+    if v == nil
+      @programme.delete
+      render :status => :internal_server_error, :text => "No such visualisation."
+      return
+    end
+
+    v.programmes << @programme
+ 
+    t = Timeslot.find_by_id(params[:programme][:timeslot_id])
+    if t == nil
+      @programme.delete
+      render :status => :internal_server_error, :text => "No such timeslot."
+      return
+    end
+     
     t.programmes << @programme
 
     respond_to do |format|
@@ -78,6 +92,6 @@ class ProgrammesController < ApplicationController
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def programme_params
-      params[:programme].permit(:priority, :screens, :visualisation_id)
+      params.require(:programme).permit(:priority, :screens, :visualisation_id, :timeslot_id)
     end
 end
