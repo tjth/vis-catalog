@@ -2,6 +2,28 @@ class VisualisationsController < ApplicationController
   require 'date'
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+
+
+  # GET /visualisations/:visid/render
+  def render
+    v = Visualisation.find_by_id(params[:visid])
+    if v == nil
+      render :status => :internal_server_error, :text => "No such vis."
+      return
+      #TODO: could show default vis here
+    end
+
+    if v.content_type == "weblink"
+      redirect_to v.link
+      return
+    end
+
+    #else we have a visualisation
+    #TODO: render a html file that displays the vis
+
+  end
+
+
   # GET /visualisations/current/:screennum
   def current
     now = DateTime.now

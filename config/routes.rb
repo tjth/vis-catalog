@@ -3,6 +3,9 @@ Rails.application.routes.draw do
 
   root to: 'visitors#index'
   devise_for :users, :token_authentication_key => 'authentication_key'
+
+  get '/users/info' => 'users#info' #must be before resources users to avoid route clash
+
   resources :users
 
   post '/visualisations' => 'visualisations#create'
