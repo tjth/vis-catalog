@@ -11,6 +11,8 @@ app.controller('signInController', function($scope, $rootScope, $http, $routePar
                 $scope.signInLabel = "Success!";
                 
                 localStorage.setItem("auth_token", data.token);
+                $rootScope.logIn();
+            
                 $location.path($routeParams["return"]);
                 $location.search("return", null);
             }).
