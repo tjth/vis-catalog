@@ -4,8 +4,8 @@ class VisualisationsController < ApplicationController
 
 
 
-  # GET /visualisations/:visid/render
-  def render
+  # GET /visualisations/:visid/render_vis
+  def render_vis
     v = Visualisation.find_by_id(params[:visid])
     if v == nil
       render :status => :internal_server_error, :text => "No such vis."

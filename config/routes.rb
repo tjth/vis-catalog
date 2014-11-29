@@ -24,6 +24,8 @@ Rails.application.routes.draw do
 
   get '/playout_sessions/info' => 'playout_sessions#get_info'
 
+  get '/visualisations/:visid/render_vis' => 'visualisations#render_vis'
+
   resources :programmes
   resources :visualisations
   resources :timeslots
