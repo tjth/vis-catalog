@@ -1,4 +1,13 @@
-    
+app.factory('User', ['$resource',
+    function($resource){
+        return $resource('users/:id.json', {id : "@id"}, {
+            query: { method:'GET', url:'users.json', isArray:true },
+            approve: { method:'PATCH', url:'users/:id/approve.json'},
+            reject: { method:'PATCH', url:'users/:id/reject.json'},
+            getCurrent : { method:'GET', url:'users/info.json'},
+        });
+}]);
+
 app.factory('Visualisation', ['$resource',
     function($resource){
         return $resource('visualisations/:id.json', {id : "@id"}, {

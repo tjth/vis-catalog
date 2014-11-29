@@ -95,8 +95,22 @@
             });
       }]);
     
-    app.controller('mainController', function($scope, $rootScope, $route) {
-        $scope.user = null;
+    app.controller('mainController', function($scope, $rootScope, $route, User) {
+        $rootScope.user = null;
+        
+        $rootScope.logIn = function() {
+            User.getCurrent({authentication_token:localStorage.getItem("auth_token")}, 
+                // Success
+                function(user) {
+                    $rootScope.user = user;
+                },
+                // Failure
+                function() {
+                    localStorage.removeItem("auth_token");
+                    $rootScope.user = null;
+                }       
+            );
+        }
 
         $scope.clearSearch = function() { jQuery("#search input").val(""); }
             
@@ -110,28 +124,14 @@
             }, 500);
         }
         
+        if (localStorage.getItem("auth_token") != null) {
+            $rootScope.logIn();
+        }
     });
         
-    app.factory('Visualisation', ['$resource',
-        function($resource){
-            return $resource('visualisations/:id.json', {id : "@id"}, {
-                query: { method:'GET', url:'visualisations.json', isArray:true },
-                approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
-                reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
-            });
-    }]);
-    
-    app.factory('Timeslot', ['$resource',
-        function($resource){
-            return $resource('timeslots/:id.json', {}, {
-                query: { method:'GET', url:'timeslots.json', isArray:true },
-                new: { method:'POST', url:'timeslots/new'},
-            });
-    }]);
-    
     app.controller('menuController', function($scope, $rootScope, $route, $location) {
         
-        $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
+        $rootScope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
 
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
                            {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"},
@@ -153,15 +153,25 @@
             return item.url.replace(/(\?.*)/, '') == $location.path() && 
                    arraysEqual(Object.keys($scope.getQueryParameters(item.url)), Object.keys($location.search()));
         }
-         
-        $scope.loggedIn = loggedIn;
         
-        $scope.logOut = function() {
-            localStorage.removeItem("auth_token")
+        $rootScope.logOut = function() {
+            $rootScope.user = null;
+            localStorage.removeItem("auth_token"); 
         }
         
         $scope.getSignInUrl = function() {
             return "#/sign-in?return=" + $location.path();   
+        }
+        
+        $scope.checkLoggedIn = function($event) {
+            if ($rootScope.user == null) {
+                $event.preventDefault();
+                
+                var return_ = $location.path();
+                $location.path("/sign-in")
+                $location.search("return", return_);
+            }
+            
         }
     });
 
@@ -201,14 +211,5 @@
             $location.path("/visualisations/"+ item.id);
         }
     });
-    
-    // TODO: this will expire!
-    function getAuthToken() {
-        return localStorage.getItem("auth_token");   
-    }    
-    
-    function loggedIn() {
-        return localStorage.getItem("auth_token") != null;   
-    }
 </script>
 

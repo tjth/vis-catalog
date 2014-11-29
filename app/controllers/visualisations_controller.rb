@@ -2,6 +2,7 @@ class VisualisationsController < ApplicationController
   require 'date'
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+
   # GET /visualisations/current/:screennum
   def current
     now = DateTime.now
@@ -121,8 +122,10 @@ class VisualisationsController < ApplicationController
     p = visualisation_params
     @visualisation = Visualisation.new(p)
     @visualisation.approved = true
+
     #TODO: uncomment this when we have users
     #current_user.visualisations << @visualisation
+    
     respond_to do |format|
       if @visualisation.save
         format.html { redirect_to @visualisation, notice: 'Visualisation was successfully created.' }
@@ -166,6 +169,6 @@ class VisualisationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def visualisation_params
-      params[:visualisation].permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot, :min_playtime)
+      params.require(:visualisation).permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot, :min_playtime)
     end
 end

@@ -3,6 +3,11 @@ class Visualisation < ActiveRecord::Base
   enum content_type: [ :file, :weblink ]
   enum vis_type: [ :vis, :advert ]
 
+  validates :content_type, presence: true
+  validates :vis_type, presence: true
+  validates :name, presence: true
+  validates :description, presence: true
+
   belongs_to :user
   has_many :programmes
   has_many :playout_sessions
