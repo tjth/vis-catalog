@@ -1,7 +1,11 @@
 class ProgrammesController < ApplicationController
 
 	def index
-		@programmes = Programme.all
+    if params[:timeslot_id] != nil
+		  @programmes = Programme.where(:timeslot_id => :timeslot_id)
+    else
+      @programmes = Programme.all
+    end
 	end
 
 	# GET /programmes/1
