@@ -82,21 +82,15 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     $scope.scrolled = false;
 });
 
-app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, Visualisation, Timeslot) {
+app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, $location, Visualisation, Timeslot, Programme) {
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
 
     Timeslot.get({id:$routeParams.id}, 
         // Success
         function(timeslot) {
-            console.log(timeslot)
-        
             $scope.timeslot = timeslot;
         }                             
     );
-    
-    $scope.setActiveContentItem = function(contentItem) {
-        $scope.activeContentItem = contentItem;  
-    }
     
     $scope.formatDay = function(date) {
         if (date == undefined) return "";
@@ -108,19 +102,59 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
         return start.format("HH:mm") + " - " +  end.format("HH:mm")
     }
     
-    $scope.containsContent = function(list, content) {
-        for (i = 0; i < list.length; i++) {
-            if (list[i].id == content.id) {
+    $scope.formatType = function(type) {
+        if (type == "vis") {
+            return "Visualisation";   
+        }
+        if (type == "advert") {
+            return "Advert"   
+        }
+    }
+    
+    $scope.containsContentItem = function(content_id) {
+        for (i = 0; i < $scope.programmes.length; i++) {
+            if ($scope.programmes[i].content_id == content_id) {
                 return true;
             }
         }
         return false;
     }
     
-    $scope.timeslotContent = []
-    $scope.activeContentItem = null;
+    $scope.addProgramme = function(content) {
+        Programme.new({content_id:content.id, timeslot_id:$scope.timeslot.id, 
+                       authentication_token : localStorage.getItem("auth_token")},
+            // Success
+            function(programme) {
+                $scope.programmes.push(programme);
+            }
+        );
+    }
+    
+    /*$scope.save = function() {
+        
+    }    
+    
+    $scope.cancel = function($event) {
+        if ($location.search("return") != null) {
+            $event.cancel();
+            $location.path($location.search("return"))
+            $location.search("return", null)
+        }
+    }*/
+    
+    $scope.programmes = []
+    $scope.activeProgramme = null;
     
     $scope.content = Visualisation.query();
+    
+    $scope.showAdverts = true;
+    $scope.showVisualisations = true;
+    
+    $scope.$watch("activeProgramme", function() {
+        if ($scope.activeProgramme == null) return;
+        
+        $scope.programmes = Programme.query({timeslot_id:$scope.activeProgramme.id});
+    });
 });
 
     
@@ -161,8 +195,6 @@ app.directive('timeslotEditor', function() {
             }); 
             
             if (!scope.$parent.scrolled) {
-                console.log(scope.editor.timesloteditor("getStartPosition"))
-                
                 $(".scroll").animate({scrollLeft:scope.editor.timesloteditor("getStartPosition")}, 0);
                 scope.$parent.scrolled = true;
             }
@@ -190,13 +222,13 @@ app.directive('contentDropTarget', function() {
 
             element.bind("drop", function(e) {
                 var content = JSON.parse(e.originalEvent.dataTransfer.getData('text/json'));
-                
-                if (!scope.containsContent(scope.timeslotContent, content)) {
-                    scope.timeslotContent.push(content);
+
+                if (!scope.containsContentItem(scope.timeslotContent, content)) {
+                    scope.addProgramme(content);
                 }
+                
                 element.removeClass("dragover");
                 element.parent().removeClass("dragover");
-                scope.$apply();
             });
         }
     }; 
@@ -205,32 +237,32 @@ app.directive('contentDropTarget', function() {
 app.directive('contentItem', function() {
     return {
         scope: {
-            content: '=content'
+            contentItem: '=data'
         },
         link: function(scope, element, attrs) {
             $(element).addClass("content-item").addClass("card");
             
             $("<div></div>").addClass("screenshot")
-                            .css("background-image", "url('" + scope.content.img + "')")
+                            .css("background-image", "url('" + scope.contentItem.screenshot + "')")
                             .appendTo(element);            
             
             var text = $("<div></div>").addClass("text")
                                        .appendTo(element);
             
             $("<div></div>").addClass("name")
-                            .html(scope.content.name)
+                            .html(scope.contentItem.name)
                             .appendTo(text);
             
             $("<div></div>").addClass("author")
-                            .html(scope.content.author.name)
+                            //.html(scope.contentItem.author.name)
                             .appendTo(text);
             
             $(element).bind("dragstart", function(e) {
-                e.originalEvent.dataTransfer.setData('text/json', JSON.stringify(scope.content)); 
                 
+                e.originalEvent.dataTransfer.setData('text/json', JSON.stringify(scope.contentItem)); 
                 
                 if ($(element).parent().hasClass("content-drop-target")) {
-                    var index = scope.$parent.timeslotContent.indexOf(scope.content);
+                    var index = scope.$parent.timeslotContent.indexOf(scope.contentItem);
                     scope.$parent.timeslotContent.splice(index, 1);
                 }
             });
@@ -273,21 +305,27 @@ app.directive('slider', function() {
 }); 
 
 app.filter('visualisations', function() {
-  return function(content, showVisualisations) {
-      var show = true;
-      if (showVisualisations) {
-          show = show && content.type == "visualisation";
-      }
-      return show;
-  };
+    return function(content, showVisualisations) {
+        var filtered = []
+
+        for (var i = 0; i < content.length; i++) {
+            if (content[i].vis_type == "vis" && !showVisualisations) continue;
+            filtered.push(content[i]);
+        }
+
+        return filtered;
+    };
 });
 
 app.filter('adverts', function() {
-  return function(content, showAdverts) {
-      var show = true;
-      if (showAdverts) {
-          show = show && content.type == "adverts";
-      }
-      return show;
+    return function(content, showAdverts) {
+        var filtered = []
+
+        for (var i = 0; i < content.length; i++) {
+            if (content[i].vis_type == "advert" && !showAdverts) continue;
+            filtered.push(content[i]);
+        }
+
+        return filtered;
   };
 });

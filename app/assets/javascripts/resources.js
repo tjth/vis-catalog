@@ -1,3 +1,11 @@
+app.factory('Programme', ['$resource',
+    function($resource){
+        return $resource('programmes/:id.json', {id : "@id"}, {
+            query: { method:'GET', url:'programmes.json', isArray:true },
+            new:   { method:'POST', responseType: 'json'},
+        });
+}]);
+
 app.factory('User', ['$resource',
     function($resource){
         return $resource('users/:id.json', {id : "@id"}, {

@@ -9,57 +9,52 @@
                 </div>
                 <div id="edit">
                     <div id="fields">
-                        <div class="editable" ng-if="activeContentItem != null">
+                        <div class="editable" ng-if="activeProgramme != null">
                             <div class="data-row">
                                 <div class="label_">Number of Screens</div>
                                 <div class="control screens" slider min=1 max=4 step=1 start=1></div>
                             </div>                            
                             <div class="data-row">
                                 <div class="label_">Duration Priority</div>
-                                <div class="control priority" slider min=1 max=10 step=1 start=4></div>
+                                <div class="control priority" slider min=1 max=10 step=1 val=4></div>
                             </div>
                         </div>
-                        <div class="user-provided" ng-if="activeContentItem != null">
+                        <div class="user-provided" ng-if="activeProgramme != null">
                             <div class="data-row">
-                                <div class="title">{[{activeContentItem.type}]}</div>
+                                <div class="title">{[{formatType(activeProgramme.vis_type)}]}</div>
                             </div>
                             <div class="data-row">
                                 <div class="title">Run Time</div>
-                                <div class="data">{[{activeContentItem.runTime / 60}]} mins</div>
+                                <div class="data">{[{activeProgramme.min_playtime / 60}]} mins</div>
                             </div>
                             <div class="data-row">
                                 <div class="title">Preferred number of screens</div>
-                                <div class="data">{[{activeContentItem.screens}]}</div>
+                                <div class="data">{[{activeProgramme.screens}]}</div>
                             </div>
                             <div class="data-row">
                                 <div class="title">Notes</div>
-                                <div class="data">{[{activeContentItem.notes}]}</div>
+                                <div class="data">{[{activeProgramme.notes}]}</div>
                             </div>
                         </div>
                     </div>
                     <div class="scroll">
                         <div class="content" content-drop-target>
                             <div draggable="true" 
-                             ng-repeat="contentItem in timeslotContent"
-                             content-item content="contentItem"
-                             ng-click="setActiveContentItem(contentItem)"
-                             ng-class="{'active': contentItem == activeContentItem}">
+                             ng-repeat="contentItem in programmes"
+                             content-item data="contentItem"
+                             ng-click="activeProgramme = contentItem"
+                             ng-class="{'active': contentItem == activeProgramme}">
                             </div>   
-                            <div ng-if="timeslotContent.length == 0" id="drag-here">
+                            <div ng-if="programmes.length == 0" id="drag-here">
                                 To show content in this timeslot, drag it here
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="actions">
-                    <a href="#/schedule" class="cancel">Cancel</a>
-                    <a class="save">Save</a>
-                    <div style="clear:both"></div>
-                </div>
             </div>
         </div>
         
-        <div class="col-sm-4" style="height:100%">
+        <div class="col-sm-4" style="height:100%; padding-left: 0; padding-right: 0;">
             <div id="content-selector">
                 <div class="controls card">
                     <div class="search">
@@ -83,7 +78,7 @@
                     <div id="content">
                         <div draggable="true" 
                              ng-repeat="contentItem in content | filter:contentQuery | visualisations:showVisualisations | adverts:showAdverts"
-                             content-item content="contentItem">
+                             content-item data="contentItem">
                         </div>
                     </div>
                 </div>
