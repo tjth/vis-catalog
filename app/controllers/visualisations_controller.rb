@@ -1,5 +1,7 @@
 class VisualisationsController < ApplicationController
   require 'date'
+  require 'color-thief'
+
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
   # GET /visualisations/current/:screennum
@@ -121,8 +123,10 @@ class VisualisationsController < ApplicationController
     p = visualisation_params
     @visualisation = Visualisation.new(p)
     @visualisation.approved = true
+
     #TODO: uncomment this when we have users
     #current_user.visualisations << @visualisation
+
     respond_to do |format|
       if @visualisation.save
         format.html { redirect_to @visualisation, notice: 'Visualisation was successfully created.' }
