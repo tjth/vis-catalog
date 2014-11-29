@@ -85,6 +85,10 @@
             when('/schedule/timeslot/:id', {
                 templateUrl: 'partials/edit-timeslot.html',
                 controller: 'editTimeslotController',
+            }).            
+            when('/sign-in', {
+                templateUrl: 'partials/sign-in.html',
+                controller: 'signInController',
             }).
             otherwise({
                 redirectTo: '/'
@@ -92,7 +96,7 @@
       }]);
     
     app.controller('mainController', function($scope, $rootScope, $route) {
-
+        $scope.user = null;
 
         $scope.clearSearch = function() { jQuery("#search input").val(""); }
             
@@ -119,8 +123,9 @@
     
     app.factory('Timeslot', ['$resource',
         function($resource){
-            return $resource('timeslots', {}, {
-                query: { method:'GET', isArray:true },
+            return $resource('timeslots/:id.json', {}, {
+                query: { method:'GET', url:'timeslots.json', isArray:true },
+                new: { method:'POST', url:'timeslots/new'},
             });
     }]);
     
@@ -148,8 +153,16 @@
             return item.url.replace(/(\?.*)/, '') == $location.path() && 
                    arraysEqual(Object.keys($scope.getQueryParameters(item.url)), Object.keys($location.search()));
         }
-
-
+         
+        $scope.loggedIn = loggedIn;
+        
+        $scope.logOut = function() {
+            localStorage.removeItem("auth_token")
+        }
+        
+        $scope.getSignInUrl = function() {
+            return "#/sign-in?return=" + $location.path();   
+        }
     });
 
     app.controller('visualisationController', function ($scope, $rootScope, Visualisation, $routeParams) {
@@ -188,5 +201,14 @@
             $location.path("/visualisations/"+ item.id);
         }
     });
+    
+    // TODO: this will expire!
+    function getAuthToken() {
+        return localStorage.getItem("auth_token");   
+    }    
+    
+    function loggedIn() {
+        return localStorage.getItem("auth_token") != null;   
+    }
 </script>
-;
+

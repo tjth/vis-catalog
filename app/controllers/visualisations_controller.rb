@@ -1,5 +1,7 @@
 class VisualisationsController < ApplicationController
   require 'date'
+  require 'color-thief'
+
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
 
@@ -144,9 +146,17 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new(p)
     @visualisation.approved = true
 
+    #TODO remove this when uploading is working as screenshot is required
+    if params[:screenshot] != nil
+      print "***"
+      puts params[:screenshot]
+      @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
+    end
+
     #TODO: uncomment this when we have users
     #current_user.visualisations << @visualisation
-    
+
+
     respond_to do |format|
       if @visualisation.save
         format.html { redirect_to @visualisation, notice: 'Visualisation was successfully created.' }

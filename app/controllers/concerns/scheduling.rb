@@ -29,6 +29,20 @@ module Scheduling
     end
   end
 
+  class SummaryItem
+    attr_accessor :programme_id,
+                  :visualisation_id, :priority, 
+                  :screens, :vis_playout_time
+    
+    def initialize(prog_id, vis_id, priority, screens, vis_playout_time)
+      @programme_id = prog_id
+      @visualisation_id = vis_id
+      @priority = priority
+      @screens = screens
+      @vis_playout_time = vis_playout_time
+    end
+  end
+
   def get_a_default_programme
     vis = Visualisation.where(isDefault:true).sample
     prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
@@ -39,24 +53,14 @@ module Scheduling
     return prog
   end
 
-  def get_total_screen_load(programmes)
-    scrLoad = 0
-    programmes.each do |programme|
-      scrLoad = scrLoad + programme.screens
-    end
-    return scrLoad
-  end
-
   def clean_old_sessions(start_time, end_time)
     oldSessions = PlayoutSession.where(start_time: start_time...end_time)
     oldSessions.destroy_all
   end
 
   def generate_schedule(timeslot)
-    start_time = timeslot.start_time - 
-                 timeslot.start_time.to_i.modulo(Const.SECONDS_IN_UNIT_TIME)
-    end_time = timeslot.end_time - 
-               timeslot.end_time.to_i.modulo(Const.SECONDS_IN_UNIT_TIME)
+    start_time = timeslot.start_time.beginning_of_minute() 
+    end_time = timeslot.end_time.beginning_of_minute()
     progs = timeslot.programmes
 
     clean_old_sessions(start_time, end_time)
@@ -90,7 +94,8 @@ module Scheduling
           while (!queue.empty? && filled_blocks < block_size)
 
             # If programme in head of queue is too big, block the whole queue
-            if (queue.min.first.prog.screens > block_size - filled_blocks) then
+            if (queue.min.first.prog.screens > block_size - filled_blocks ||
+                selectedProgTimes.include?(queue.min.first)) then
               break
             end
 
@@ -100,6 +105,7 @@ module Scheduling
             if (head.prog.duration <= 2 * (end_time - curr_time))
               selectedProgrammes << head.prog
               filled_blocks += head.prog.screens
+              requeue([head], queue)
               selectedProgTimes << head
               # else programme cannot be selected to play at a later time
               #  - we do not requeue
@@ -149,17 +155,15 @@ module Scheduling
                 nextFreeTimeslot[start_screen + i] = prog_end_time
               end
             end
-          end
-          
-          # Clean up selected programmes/ProgTime queues
-          selectedProgrammes.clear
-          requeue(selectedProgTimes, queue)
-          selectedProgTimes.clear     
+          end    
         end
         
         # Advance to next screen
         curr_screen += 1
       end
+
+      # Clean up selected programmes/ProgTime queues
+      selectedProgTimes.clear   
 
       # Advance to next unit time
       curr_time += Const.SECONDS_IN_UNIT_TIME
@@ -191,6 +195,43 @@ module Scheduling
                                :start_screen => start_screen,
                                :end_screen => start_screen + prog.screens - 1})
     prog.visualisation.playout_sessions << s
+  end
+
+  def getSummary(timeslot)
+    start_time = timeslot.start_time
+    end_time = timeslot.end_time
+
+    playouts = PlayoutSession.where(start_time: start_time...end_time)
+
+    vis_playtimes = {}
+
+    time_elapsed = 0
+    while start_time + time_elapsed < end_time
+      playout_vis =
+        playouts.where("start_time <= :now AND :now < end_time",
+                       {now: (start_time + time_elapsed)}).
+          select(:visualisation_id).distinct
+
+      playout_vis.each do |vis|
+        if (!vis_playtimes.has_key?(vis.visualisation_id)) 
+          vis_playtimes[vis.visualisation_id] = 0
+        end
+        vis_playtimes[vis.visualisation_id] += Const.SECONDS_IN_UNIT_TIME
+      end
+
+      time_elapsed += Const.SECONDS_IN_UNIT_TIME
+    end
+
+    summary = []
+    
+    timeslot.programmes.each do |prog|
+      summary << SummaryItem.new(prog.id, prog.visualisation_id,
+                                 prog.priority, prog.screens,
+                                 vis_playtimes.has_key?(prog.visualisation_id)? 
+                                   vis_playtimes[prog.visualisation_id] : 0)
+    end
+
+    return summary
   end
 
 end

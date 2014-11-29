@@ -12,9 +12,9 @@
                 </div>
                 <div id="timeslots">
                     <div id="week">
-                        <div class="navigate back" ng-click="nextWeek()"></div>
+                        <div class="navigate back" ng-click="previousWeek()"></div>
                         <div id="week-span">{[{formatWeek(startOfWeek)}]}</div>
-                        <div class="navigate forward" ng-click="previousWeek()"></div>
+                        <div class="navigate forward" ng-click="nextWeek()"></div>
                     </div>
                     <div class="scroll" horizontal-scroll>
                         <div id="planner">
@@ -25,14 +25,6 @@
                         </div>
                     </div>
 
-                </div>
-                <div id="timeslot-actions">
-                    <div class="spacer">
-                        <div class="day timeslot-actions" ng-repeat='day in days'>
-                            <div class="add" ng-click="addTimeslot(day)"></div>
-                            <div class="remove" ng-click="removeTimeslot(day)"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

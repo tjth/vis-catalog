@@ -16,9 +16,6 @@ class TokensController < ApplicationController
     end
  
     @user=User.authenticate_with_kerberos(params)
-puts "HLEOERJIO"
-    puts @user
- puts "ROFL"
     if @user == nil
       render :status=>400, :json=>{:message=>"Invalid username or password."}
       return

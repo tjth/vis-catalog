@@ -24,3 +24,4 @@ gem 'rspec-rails', :group => [:development, :test]
 gem 'carrierwave'
 gem 'attribute-defaults'
 gem 'PriorityQueue', '~> 0.1.2'
+gem 'rmagick', '2.13.2'
