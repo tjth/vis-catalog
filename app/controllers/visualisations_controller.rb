@@ -124,6 +124,13 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new(p)
     @visualisation.approved = true
 
+    #TODO remove this when uploading is working as screenshot is required
+    if params[:screenshot] != nil
+      print "***"
+      puts params[:screenshot]
+      @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
+    end
+
     #TODO: uncomment this when we have users
     #current_user.visualisations << @visualisation
 
