@@ -27,7 +27,7 @@ class UsersController < ApplicationController
 
   #GET /users/info
   def info
-    @user = User.find_by_authentication_token(params[:authentication_token])
+    @user = User.find_by_authentication_token(params[:authentication_key])
     if @user == nil
       render :status=>400, :json=>{:message=>"Invalid token."}
       return
