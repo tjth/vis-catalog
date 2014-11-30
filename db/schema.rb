@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141127152516) do
+ActiveRecord::Schema.define(version: 20141129111116) do
 
   create_table "playout_sessions", force: true do |t|
     t.datetime "start_time"
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 20141127152516) do
     t.integer  "vis_type"
     t.string   "screenshot"
     t.integer  "min_playtime"
+    t.string   "bgcolour"
   end
 
 end

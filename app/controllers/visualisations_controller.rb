@@ -1,6 +1,28 @@
 class VisualisationsController < ApplicationController
   require 'date'
+  require 'color-thief'
+
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
+
+
+  # GET /visualisations/:visid/render_vis
+  def render_vis
+    v = Visualisation.find_by_id(params[:visid])
+    if v == nil
+      render :status => :internal_server_error, :text => "No such vis."
+      return
+      #TODO: could show default vis here
+    end
+
+    if v.content_type == "weblink"
+      redirect_to v.link
+      return
+    end
+
+    #else we have a visualisation
+    #TODO: render a html file that displays the vis
+
+  end
 
 
   # GET /visualisations/current/:screennum
@@ -123,9 +145,17 @@ class VisualisationsController < ApplicationController
     @visualisation = Visualisation.new(p)
     @visualisation.approved = true
 
+    #TODO remove this when uploading is working as screenshot is required
+    if params[:screenshot] != nil
+      print "***"
+      puts params[:screenshot]
+      @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
+    end
+
     #TODO: uncomment this when we have users
     #current_user.visualisations << @visualisation
-    
+
+
     respond_to do |format|
       if @visualisation.save
         format.html { redirect_to @visualisation, notice: 'Visualisation was successfully created.' }
