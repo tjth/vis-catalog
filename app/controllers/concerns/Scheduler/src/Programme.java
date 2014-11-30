@@ -23,12 +23,15 @@ public class Programme implements Comparable<Programme> {
     this.priority = priority;
   }
 
+  public Programme(Programme prog, int screens) {
+    assert screens > 0: "Invalid nuumber of screens!";
+    vis = prog.vis;
+    this.screens = screens;
+    priority = prog.priority;
+  }
+  
   public Visualisation getVis() {
     return vis;
-  }
-
-  public void setScreens(int screens) {
-    this.screens = screens;
   }
   
   public int getScreens() {
@@ -45,7 +48,7 @@ public class Programme implements Comparable<Programme> {
 
   @Override
   public String toString() {
-    return vis.toString();
+    return vis.toString() + ": " + screens + " screens";
   }
 
   @Override

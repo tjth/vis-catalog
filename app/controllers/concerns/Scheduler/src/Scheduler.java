@@ -3,14 +3,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class SchedulerMxN {
+public class Scheduler {
 
-  private static final int SCREENROWS = 2;
-  private static final int SCREENCOLS = 4;
+  private int rows;
+  private int cols;
   private int mins;
   private List<Session> sessions = new ArrayList<Session>();
 
-  public SchedulerMxN(int mins) {
+  public Scheduler(int rows, int cols, int mins) {
+    this.rows = rows;
+    this.cols = cols;
     this.mins = mins;
     sessions = new ArrayList<Session>();
   }
@@ -18,23 +20,23 @@ public class SchedulerMxN {
   public void schedule(List<Programme> progs) {
     sessions.clear();
     PriorityQueue<ProgTimer> pq = createQueue(progs);
-    int[][] nextFreeTimeslot = new int[SCREENROWS][SCREENCOLS]; // tracks the next free slot for each screen
-    for (int r = 0; r < SCREENROWS; r++) {
-      for (int c = 0; c < SCREENCOLS; c++) {
+    int[][] nextFreeTimeslot = new int[rows][cols]; // tracks the next free slot for each screen
+    for (int r = 0; r < rows; r++) {
+      for (int c = 0; c < cols; c++) {
         nextFreeTimeslot[r][c] = 0;
       }
     }
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // ProgTimers selected for a certain time
     boolean multi_row = false; // indicates if a multirow programme is found
     for (int current_time = 0; current_time < mins; current_time++) {
-      List<Integer> allRows = permutate(SCREENROWS);
+      List<Integer> allRows = permutate(rows);
       findSpace: for (int curr_row : allRows) { // pick a random row
         if (!multi_row) {
-          for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) { // curr_col for free slots at current_time
+          for (int curr_col = 0; curr_col < cols; curr_col++) { // curr_col for free slots at current_time
             if (nextFreeTimeslot[curr_row][curr_col] <= current_time) { // free slot found
               int start_col = curr_col; // start of free slot
               int block_size;
-              for (block_size = 1; curr_col + block_size < SCREENCOLS; block_size++) { // curr_col for consecutive free slots at current_time
+              for (block_size = 1; curr_col + block_size < cols; block_size++) { // curr_col for consecutive free slots at current_time
                 if (nextFreeTimeslot[curr_row][curr_col + block_size] > current_time) { // end of free block
                   break;
                 }
@@ -45,7 +47,7 @@ public class SchedulerMxN {
               while (!pq.isEmpty() && filled_blocks < block_size) { // select programmes to fill block
                 ProgTimer pt = pq.peek();
                 int prog_screens = pt.prog.getScreens();
-                if (prog_screens > SCREENCOLS) { // selected programme occupies >1 row
+                if (prog_screens > cols) { // selected programme occupies >1 row
                   multi_row = true;
                   break;
                 }
@@ -65,12 +67,12 @@ public class SchedulerMxN {
 
               Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
               boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
-              if (start_col == 0 && block_size < SCREENCOLS ||
-                  start_col > 0 && curr_col < SCREENCOLS &&
+              if (start_col == 0 && block_size < cols ||
+                  start_col > 0 && curr_col < cols &&
                   nextFreeTimeslot[curr_row][start_col - 1] < nextFreeTimeslot[curr_row][curr_col]) { // better to align left ie. longest to shortest
                 ascend = false;
-              } else if (start_col + block_size == SCREENCOLS && block_size < SCREENCOLS ||
-                  start_col > 0 && curr_col < SCREENCOLS &&
+              } else if (start_col + block_size == cols && block_size < cols ||
+                  start_col > 0 && curr_col < cols &&
                   nextFreeTimeslot[curr_row][start_col - 1] > nextFreeTimeslot[curr_row][curr_col]) { // better to align right ie. shortest to longest
                 ascend = true;
               } else { // no alignment preference
@@ -81,7 +83,7 @@ public class SchedulerMxN {
                 while (!selectedProgs.isEmpty()) {
                   Programme prog = selectedProgs.remove(0);
                   int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-                  sessions.add(new Session(prog, SCREENCOLS * curr_row + start_col, current_time, prog_end_time));
+                  sessions.add(new Session(prog, cols * curr_row + start_col, current_time, prog_end_time));
                   for (int i = 0; i < prog.getScreens(); i++) {
                     nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
                   }
@@ -93,7 +95,7 @@ public class SchedulerMxN {
                   Programme prog = selectedProgs.remove(0);
                   start_col -= prog.getScreens(); // shift to starting position of current selected programme
                   int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-                  sessions.add(new Session(prog, SCREENCOLS * curr_row + start_col, current_time, prog_end_time));
+                  sessions.add(new Session(prog, cols * curr_row + start_col, current_time, prog_end_time));
                   for (int i = 0; i < prog.getScreens(); i++) {
                     nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
                   }
@@ -104,10 +106,10 @@ public class SchedulerMxN {
         }
         if (multi_row) { // multi-row mode, treat screens as 1 very long row
           ProgTimer pt = pq.peek();
-          int prog_rows = pt.prog.getScreens() / SCREENCOLS;
-          if (curr_row + prog_rows <= SCREENROWS) { // enough rows for multi-row programme
+          int prog_rows = pt.prog.getScreens() / cols;
+          if (curr_row + prog_rows <= rows) { // enough rows for multi-row programme
             for (int r = 0; r < prog_rows; r++) {
-              for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) {
+              for (int curr_col = 0; curr_col < cols; curr_col++) {
                 if (nextFreeTimeslot[curr_row + r][curr_col] > current_time) { // free slot not found
                   continue findSpace;
                 }
@@ -118,9 +120,9 @@ public class SchedulerMxN {
               selectedPTs.add(pt); // shortlist programme
               requeue(pt, pq); // requeue programme
               int prog_end_time = Math.min(current_time + pt.prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-              sessions.add(new Session(pt.prog, SCREENCOLS * curr_row, current_time, prog_end_time));
+              sessions.add(new Session(pt.prog, cols * curr_row, current_time, prog_end_time));
               for (int r = 0; r < prog_rows; r++) {
-                for (int curr_col = 0; curr_col < SCREENCOLS; curr_col++) {
+                for (int curr_col = 0; curr_col < cols; curr_col++) {
                   nextFreeTimeslot[curr_row + r][curr_col] = prog_end_time; // update next free slot for each screen
                 }
               }
@@ -140,12 +142,13 @@ public class SchedulerMxN {
     PriorityQueue<ProgTimer> pq = new PriorityQueue<ProgTimer>();
     for (Programme prog : progs) {
       int prog_screens = prog.getScreens();
-      if (prog_screens > SCREENROWS * SCREENCOLS) { // force-fit the programme into the screens available
-        prog.setScreens(SCREENROWS * SCREENCOLS); // rounds down number of screens
-      } else if (prog_screens > SCREENCOLS) { // force-fit the programme into the screens available
-        prog.setScreens(prog_screens - prog_screens % SCREENCOLS); // rounds down number of screens
+      if (prog_screens > rows * cols) { // creates new force-fitted programme
+        pq.add(new ProgTimer(new Programme(prog, rows * cols)));
+      } else if (prog_screens > cols) { // creates new force-fitted programme
+        pq.add(new ProgTimer(new Programme(prog, prog_screens - prog_screens % cols))); // rounds down number of screens
+      } else {
+        pq.add(new ProgTimer(prog));
       }
-      pq.add(new ProgTimer(prog));
     }
     return pq;
   }
@@ -167,12 +170,12 @@ public class SchedulerMxN {
   @Override
   public String toString() {
     System.out.println(sessions);
-    String[][] visNames = new String[mins][SCREENROWS * SCREENCOLS];
-    boolean[][] strokes = new boolean[mins][SCREENROWS * SCREENCOLS];
-    boolean[][] dashes = new boolean[mins][SCREENROWS * SCREENCOLS];
-    boolean[][] plusses = new boolean[mins][SCREENROWS * SCREENCOLS];
+    String[][] visNames = new String[mins][rows * cols];
+    boolean[][] strokes = new boolean[mins][rows * cols];
+    boolean[][] dashes = new boolean[mins][rows * cols];
+    boolean[][] plusses = new boolean[mins][rows * cols];
     for (int m = 0; m < mins; m++) {
-      for (int s = 0; s < SCREENROWS * SCREENCOLS; s++) {
+      for (int s = 0; s < rows * cols; s++) {
         visNames[m][s] = "$$$$$$$";
         strokes[m][s] = true;
         dashes[m][s] = true;
@@ -213,27 +216,27 @@ public class SchedulerMxN {
     String spaces = "         ";
     String dash = "---------";
     disp.append("Screen: ");
-    for (int s = 0; s < SCREENROWS * SCREENCOLS; s++) {
+    for (int s = 0; s < rows * cols; s++) {
       disp.append("    " + (s + 1) + "     ");
     }
     disp.append("\n");
 
     disp.append(indent + "+");
-    for (int s = 0; s < SCREENROWS * SCREENCOLS; s++) {
+    for (int s = 0; s < rows * cols; s++) {
       disp.append(dash + "+");
     }
     disp.append(String.format(" %2d\n", 0));
 
     for (int m = 0; m < mins; m++) {
       disp.append(indent + "|");
-      for (int s = 0; s < SCREENROWS * SCREENCOLS; s++) {
+      for (int s = 0; s < rows * cols; s++) {
         disp.append(" " + visNames[m][s] + " ");
         disp.append(strokes[m][s] ? "|" : " ");
       }
       disp.append("\n");
 
       disp.append(indent + "+");
-      for (int s = 0; s < SCREENROWS * SCREENCOLS; s++) {
+      for (int s = 0; s < rows * cols; s++) {
         disp.append(dashes[m][s] ? dash : spaces);
         disp.append(plusses[m][s] ? "+" : " ");
       }
