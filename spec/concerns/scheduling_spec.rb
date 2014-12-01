@@ -7,10 +7,31 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.get_a_default_programme' do
     Visualisation.create([
-      {:name => "Milan"}, 
-      {:name => "Green"},
-      {:name => "Pink"}, 
-      {:name => "Power", :isDefault => true}, 
+    {:name => "Milan", 
+       :link => "/assets/dummy/milan.png", 
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Green",
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/green.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+      {:name => "Pink", 
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/pink.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Power", 
+       :link => "/assets/dummy/power.png",
+       :approved => true,
+       :vis_type => :advert,
+       :content_type => :file,
+       :isDefault => true,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
     ])
 
     prog = get_a_default_programme
@@ -84,8 +105,15 @@ RSpec.describe Scheduling, :type => :concern do
       end
 
       def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
-        return Visualisation.create({:name => visNames.sample,
-                                     :min_playtime => min_playtime})
+        return Visualisation.create(
+         {:name => "Pink", 
+          :approved => true,
+          :vis_type => :vis,
+          :content_type => :file,
+          :link => "/assets/dummy/pink.png",
+          :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", 
+          :min_playtime => min_playtime}
+        )
       end
 
       it 'for one programme (overriding case)' do

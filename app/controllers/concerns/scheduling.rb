@@ -45,6 +45,9 @@ module Scheduling
 
   def get_a_default_programme
     vis = Visualisation.where(isDefault:true).sample
+    if (vis.nil?)
+      return 1
+    end
     prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
                           :priority => Const.MIN_PRIORITY
                          })
