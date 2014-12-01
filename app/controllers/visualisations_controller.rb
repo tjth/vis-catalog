@@ -143,7 +143,6 @@ class VisualisationsController < ApplicationController
   def create
     p = visualisation_params
     @visualisation = Visualisation.new(p)
-    @visualisation.approved = true
 
     #TODO remove this when uploading is working as screenshot is required
     if params[:screenshot] != nil
