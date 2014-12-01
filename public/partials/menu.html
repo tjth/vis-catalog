@@ -6,6 +6,11 @@
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
+        <div class="item" ng-if="$rootScope.user != null"
+             ng-class="{active: isCurrentMenuItem(item)}">
+            <img class="icon" ng-src="/assets/ic_person_black_24dp.png"/> 
+            <a ng-href="#/visualisations?user={[{$rootScope.user.id}]}">{[{item.name }]}</a>
+        </div>
     </section>
     <section>
         <div class="item special {[{item.class}]}" ng-repeat="item in contentLinks"

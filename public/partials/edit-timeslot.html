@@ -12,11 +12,11 @@
                         <div class="editable" ng-if="activeProgramme != null">
                             <div class="data-row">
                                 <div class="label_">Number of Screens</div>
-                                <div class="control screens" slider min=1 max=4 step=1 start=1></div>
+                                <div class="control screens" slider min=1 max=4 step=1 start=1 field="screens"></div>
                             </div>                            
                             <div class="data-row">
                                 <div class="label_">Duration Priority</div>
-                                <div class="control priority" slider min=1 max=10 step=1 val=4></div>
+                                <div class="control priority" slider min=1 max=10 step=1 val=4 field="priority"></div>
                             </div>
                         </div>
                         <div class="user-provided" ng-if="activeProgramme != null">
@@ -41,7 +41,7 @@
                         <div class="content" content-drop-target>
                             <div draggable="true" 
                              ng-repeat="contentItem in programmes"
-                             content-item data="contentItem"
+                             content-item data="contentItem.content"
                              ng-click="activeProgramme = contentItem"
                              ng-class="{'active': contentItem == activeProgramme}">
                             </div>   

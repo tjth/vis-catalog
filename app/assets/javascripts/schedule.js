@@ -1,4 +1,9 @@
 app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
+
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
+        $location.search("return", $location.path()); $location.path("sign-in"); return;
+    }
+    
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
     $scope.activeTimeslot = null;
@@ -122,25 +127,30 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     
     $scope.addProgramme = function(content) {
         Programme.new({content_id:content.id, timeslot_id:$scope.timeslot.id, 
-                       authentication_token : localStorage.getItem("auth_token")},
+                       authentication_key : localStorage.getItem("authentication_key")},
             // Success
             function(programme) {
                 $scope.programmes.push(programme);
             }
         );
     }
-    
-    /*$scope.save = function() {
-        
-    }    
-    
-    $scope.cancel = function($event) {
-        if ($location.search("return") != null) {
-            $event.cancel();
-            $location.path($location.search("return"))
-            $location.search("return", null)
+
+    $scope.onFieldChanged = function(field, val) {
+        var params = {id:activeProgramme.id, authentication_key:$rootScope.user.authentication_key};
+
+        if (field == "priority") {
+            params.priority = val;
+        } else if (field == "screens") {
+            params.screens = val;
         }
-    }*/
+
+        Programme.update(params, 
+            // Success
+            function(programme) {
+            
+            }
+        );
+    }
     
     $scope.programmes = []
     $scope.activeProgramme = null;
@@ -153,7 +163,7 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     $scope.$watch("activeProgramme", function() {
         if ($scope.activeProgramme == null) return;
         
-        $scope.programmes = Programme.query({timeslot_id:$scope.activeProgramme.id});
+        $scope.programmes = Programme.query({timeslot_id:$scope.activeProgramme.id, authentication_key:$rootScope.user.authentication_key});
     });
 });
 
@@ -254,7 +264,7 @@ app.directive('contentItem', function() {
                             .appendTo(text);
             
             $("<div></div>").addClass("author")
-                            //.html(scope.contentItem.author.name)
+                            .html(scope.contentItem.author.name)
                             .appendTo(text);
             
             $(element).bind("dragstart", function(e) {
@@ -262,8 +272,14 @@ app.directive('contentItem', function() {
                 e.originalEvent.dataTransfer.setData('text/json', JSON.stringify(scope.contentItem)); 
                 
                 if ($(element).parent().hasClass("content-drop-target")) {
-                    var index = scope.$parent.timeslotContent.indexOf(scope.contentItem);
-                    scope.$parent.timeslotContent.splice(index, 1);
+
+                    for (var i = 0; i < scope.$parent.programmes; i++) {
+                        if (scope.$parent.programmes[i].content.id == scope.contentItem.id) {
+                            Programme.remove({id : scope.$parent.programmes[i].id, authentication_key:$rootScope.user.authentication_key});
+                            scope.$parent.programmes.splice(index, 1);
+                        }
+                    }
+
                 }
             });
             
@@ -277,6 +293,7 @@ app.directive('contentItem', function() {
 app.directive('slider', function() {
     return {
         scope: {
+            field:"="
         },
         link: function(scope, element, attrs) {
             scope.formatVal = function(value) {
@@ -297,6 +314,8 @@ app.directive('slider', function() {
                 density:1
             }).on('set', function() {
                 $(this).find(".noUi-handle").html(scope.formatVal($(this).val()));
+
+		        scope.$parent.onFieldChanged(scope.field, $(this).val());
             }).on('slide', function() {
                 $(this).find(".noUi-handle").html(scope.formatVal($(this).val()));
             }).val(parseInt(attrs.start));
