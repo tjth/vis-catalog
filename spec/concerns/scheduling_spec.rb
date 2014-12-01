@@ -94,7 +94,7 @@ RSpec.describe Scheduling, :type => :concern do
 
         timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
         timeslot.programmes << prog
-        generate_schedule(timeslot)
+        generate_schedule(timeslot, 1, 4)
 
         summary = getSummary(timeslot)
         checkPlaytime(summary, prog.id)
@@ -114,7 +114,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -134,7 +134,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -155,7 +155,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -174,7 +174,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -192,7 +192,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -212,7 +212,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -233,7 +233,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -272,7 +272,7 @@ RSpec.describe Scheduling, :type => :concern do
       prog3 = Programme.create({:screens => 1, :priority => 4})
       prog3.visualisation = vis3
 
-      queue = initQueue([prog1, prog2, prog3])
+      queue = initQueue([prog1, prog2, prog3], 1, 4)
       expect(queue.min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog2

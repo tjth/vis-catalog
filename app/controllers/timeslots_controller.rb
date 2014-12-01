@@ -158,7 +158,7 @@ class TimeslotsController < ApplicationController
                                 :end_time => end_time})
     timeslot.programmes << [prog1, prog2, prog3]
     
-    generate_schedule(timeslot)
+    generate_schedule(timeslot, 1, 4)
 
     @test = PlayoutSession.where(start_time: start_time...end_time)
     @start_time = start_time
