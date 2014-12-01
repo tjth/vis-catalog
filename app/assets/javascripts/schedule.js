@@ -1,7 +1,6 @@
 app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
-
     if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
-        $location.search("return", $location.path()); $location.path("sign-in"); return;
+        $location.search("return", "schedule"); $location.path("sign-in"); return;
     }
     
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
@@ -88,7 +87,11 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
 });
 
 app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, $location, Visualisation, Timeslot, Programme) {
-    $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
+        $location.search("return", "edit-timeslot/" + $routeParams.id); $location.path("sign-in"); return;
+    }
+    
+    $rootScope.page = {title: "Schedule Content", headerClass:"schedule", class:"schedule"}
 
     Timeslot.get({id:$routeParams.id}, 
         // Success

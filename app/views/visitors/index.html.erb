@@ -106,6 +106,7 @@
                 },
                 // Failure
                 function() {
+                    console.log("ERROR")
                     localStorage.removeItem("authentication_key");
                     $rootScope.user = null;
                 }       
@@ -123,9 +124,7 @@
                 $("#search input").focus()
             }, 500);
         }
-        
-        localStorage.removeItem("authentication_key")
-        
+
         if (localStorage.getItem("authentication_key") != null) {
             $rootScope.logIn();
         }
@@ -175,17 +174,6 @@
         
         $scope.getSignInUrl = function() {
             return "#/sign-in?return=" + $location.path();   
-        }
-        
-        $scope.checkLoggedIn = function($event) {
-            if ($rootScope.user == null) {
-                $event.preventDefault();
-                
-                var return_ = $location.path();
-                $location.path("/sign-in")
-                $location.search("return", return_);
-            }
-            
         }
     });
 

@@ -296,7 +296,7 @@ header {
                 @include animated(0.3s);
                 width:$icon-size; 
                 height:$icon-size;
-                margin:$padding*2/3 $padding/2 $padding*2/3 $padding;
+                margin:$padding*2/3 $padding;
                 opacity:0.5
             }
             

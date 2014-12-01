@@ -14,7 +14,7 @@
     </section>
     <section>
         <div class="item special {[{item.class}]}" ng-repeat="item in contentLinks"
-             ng-class="{active: isCurrentMenuItem(item)}" ng-click="checkLoggedIn($event)">
+             ng-class="{active: isCurrentMenuItem(item)}">
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
@@ -28,16 +28,16 @@
     </section>
 
     <section class="bottom">
-        <div class="user item">
-            <div ng-if="$rootScope.user == null">
+        <div class="user item" style="display:block">
+            <div ng-if="user == null" style="display:flex">
                 <img class="icon avatar" src=""/>
                 <a ng-href="{[{getSignInUrl()}]}" class="name">Sign in...</a>
             </div>
             
-            <div ng-if="$rootScope.user != null">
-                <img class="icon avatar" ng-if="loggedIn()" ng-src="{[{user.image}]}"/>
-                <div class="name" ng-if="loggedIn()">{[{user.name}]}</div>
-                <div class="icon logout" ng-if="loggedIn()" ng-click="logOut()"></div>
+            <div ng-if="user != null" style="display:flex">
+                <img class="icon avatar" ng-src="{[{user.image}]}"/>
+                <div class="name" >{[{user.username}]}</div>
+                <div class="icon logout" ng-click="logOut()"></div>
             </div>
         </div>
 
