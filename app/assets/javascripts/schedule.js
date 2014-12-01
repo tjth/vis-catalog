@@ -1,4 +1,9 @@
 app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
+
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
+        $location.search("return", $location.path()); $location.path("sign-in"); return;
+    }
+    
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
     $scope.activeTimeslot = null;

@@ -124,15 +124,14 @@
             }, 500);
         }
         
+        localStorage.removeItem("authentication_key")
+        
         if (localStorage.getItem("authentication_key") != null) {
             $rootScope.logIn();
         }
     });
         
     app.controller('menuController', function($scope, $rootScope, $route, $location) {
-        
-        $rootScope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
-
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
                            {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"}]
         
