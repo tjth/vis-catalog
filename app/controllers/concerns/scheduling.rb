@@ -118,7 +118,17 @@ module Scheduling
               end
 
               # Fill empty space with default visualisation
-              # TODO: implement java line 55 - 65
+              try_fill = 0
+              while (filled_blocks < block_size && try_fill < Const.MAX_TRY_FILL)
+                defaultProg = get_a_default_programme
+                try_fill += 1
+                if (!defaultProg.visualisation_id.nil? &&
+                    filled_blocks + defaultProg.screens <= block_size)
+                  selectedProgrammes << defaultProg
+                  filled_blocks += defaultProg.screens
+                  try_fill = 0
+                end
+              end
 
               # Sort selected programmes in ascending duration
               selectedProgrammes.sort!

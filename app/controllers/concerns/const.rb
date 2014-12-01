@@ -37,4 +37,8 @@ module Const
     0.20
   end
 
+  def self.MAX_TRY_FILL
+    3
+  end
+
 end
