@@ -16,13 +16,29 @@ class TokensController < ApplicationController
     end
  
     @user=User.authenticate_with_kerberos(params)
-puts "HLEOERJIO"
-    puts @user
- puts "ROFL"
     if @user == nil
       render :status=>400, :json=>{:message=>"Invalid username or password."}
       return
     end
+
+    #@user = User.find_by_username(params[:username])
+    #if nil == @user
+     # @user=User.authenticate_with_kerberos(params)
+      #if @user == nil
+       # render :status=>400, :json=>{:message=>"Invalid username or password."}
+        #return
+      #end
+    #else
+      #check if db user is valid
+     # puts @user.username
+      #if !@user.valid_password?(params[:password])
+       # puts "fail"
+        #render :status=>400, :json=>{:message=>"Invalid username or password."}
+        #return
+      #end
+    #end
+
+
 # http://rdoc.info/github/plataformatec/devise/master/Devise/Models/TokenAuthenticatable
     @user.ensure_authentication_token!
  

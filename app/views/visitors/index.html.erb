@@ -85,14 +85,33 @@
             when('/schedule/timeslot/:id', {
                 templateUrl: 'partials/edit-timeslot.html',
                 controller: 'editTimeslotController',
+            }).            
+            when('/sign-in', {
+                templateUrl: 'partials/sign-in.html',
+                controller: 'signInController',
             }).
             otherwise({
                 redirectTo: '/'
             });
       }]);
     
-    app.controller('mainController', function($scope, $rootScope, $route) {
-
+    app.controller('mainController', function($scope, $rootScope, $route, User) {
+        $rootScope.user = null;
+        
+        $rootScope.logIn = function() {
+            User.getCurrent({authentication_key:localStorage.getItem("authentication_key")}, 
+                // Success
+                function(user) {
+                    $rootScope.user = user;
+                },
+                // Failure
+                function() {
+                    console.log("ERROR")
+                    localStorage.removeItem("authentication_key");
+                    $rootScope.user = null;
+                }       
+            );
+        }
 
         $scope.clearSearch = function() { jQuery("#search input").val(""); }
             
@@ -105,7 +124,10 @@
                 $("#search input").focus()
             }, 500);
         }
-        
+
+        if (localStorage.getItem("authentication_key") != null) {
+            $rootScope.logIn();
+        }
     });
         
     app.factory('Visualisation', ['$resource',
@@ -116,7 +138,7 @@
                 reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
             });
     }]);
-    
+
     app.factory('Timeslot', ['$resource',
         function($resource){
             return $resource('timeslots', {}, {
@@ -125,12 +147,8 @@
     }]);
     
     app.controller('menuController', function($scope, $rootScope, $route, $location) {
-        
-        $scope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
-
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
-                           {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"},
-                           {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
+                           {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"}]
         
         $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
                                {name : "Submit Advert", class : "submit advert", url : "/submit/advert", img:"ic_add_box_black_24dp.png"}]
@@ -148,8 +166,15 @@
             return item.url.replace(/(\?.*)/, '') == $location.path() && 
                    arraysEqual(Object.keys($scope.getQueryParameters(item.url)), Object.keys($location.search()));
         }
-
-
+        
+        $rootScope.logOut = function() {
+            $rootScope.user = null;
+            localStorage.removeItem("authentication_key"); 
+        }
+        
+        $scope.getSignInUrl = function() {
+            return "#/sign-in?return=" + $location.path();   
+        }
     });
 
     app.controller('visualisationController', function ($scope, $rootScope, Visualisation, $routeParams) {
@@ -163,18 +188,6 @@
         
     });
     
-    app.controller('submitAdvertController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
-    });
-
-    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
-        $scope.submit = { img:"assets/camera.png" }
-        $scope.submitVisualistion = function() {
-            var vis = visualisation.flow.files[0];
-        };
-    });
-
     app.controller('moderateController', function($scope, $rootScope, $route) {
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
     });
@@ -182,11 +195,11 @@
     app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams, $location) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
-        $scope.visItems = Visualisation.query($routeParams)
+        $scope.visItems = Visualisation.query($location.search())
         
         $scope.goToVisualisation = function(item) {
             $location.path("/visualisations/"+ item.id);
         }
     });
 </script>
-;
+

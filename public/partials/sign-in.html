@@ -1,0 +1,23 @@
+<div id="sign-in" class="card">
+    
+    <div id="logo"></div>
+    
+    <div class="inputs">
+        <input type="text" ng-model="username" placeholder="Username"/>
+        <input type="password" ng-model="password" placeholder="Password"/>
+    </div>
+    
+    <div class="bottom">
+        <div class="sign-in" href="#" ng-click="authenticate(username, password)">{[{signInLabel}]}</div>
+        <div style="clear:both"></div>
+    </div>
+
+</div>
+
+<div id="external" class="card">
+    
+    <div class="heading">External user?</div>
+    <a class="request" href="#/request-access">Request access...</a>
+    <div style="clear:both"></div>
+
+</div>
