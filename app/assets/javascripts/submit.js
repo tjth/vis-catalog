@@ -3,8 +3,8 @@ app.controller('submitAdvertController', function($scope, $rootScope, $route) {
 });
 
 app.controller('submitVisualisationController', function($scope, $rootScope, $route, $location) {
-    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
-        $location.path("sign-in"); $location.search("return", "submit/visualisation");  return;
+    if ($rootScope.user == null || $rootScope.user == undefined) {
+        $location.path("sign-in"); $location.search("return", "/submit/visualisation");  return;
     }
     
     $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
