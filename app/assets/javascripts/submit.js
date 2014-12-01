@@ -4,6 +4,7 @@ app.controller('submitAdvertController', function($scope, $rootScope, $route) {
 
 app.controller('submitVisualisationController', function($scope, $rootScope, $route, $location) {
     if ($rootScope.user == null || $rootScope.user == undefined) {
+        showToast("Please log in to submit content");
         $location.path("sign-in"); $location.search("return", "/submit/visualisation");  return;
     }
     
@@ -38,6 +39,7 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
                 processData: false,
                 type: 'POST'
             });
+            showToast("Thanks for submitting! A moderator should approve your content shortly");
           $location.path('/');
           $route.reload();
         }
