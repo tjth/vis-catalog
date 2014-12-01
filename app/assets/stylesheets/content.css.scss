@@ -7,42 +7,6 @@
     box-shadow: 0px 1px 7px rgba(0,0,0,0.25);
     border-radius: $card-radius;
     
-    .camera {
-        text-align: right;
-        border-radius: $card-radius;
-        padding: 0;
-        min-height: 100px;
-        max-width: 117px;
-        &.preview{
-            min-height: 100px;
-            max-width: 117px;
-        }
-        border: 0.5px solid #CFD8DC;
-    }
-    
-    .wrapper {
-        clear: both;
-    }
-    .content-type {
-        color: #969696;
-        width: 13%;
-        margin-top: 18px;;
-    }
-    
-    .selection {
-        width:  30%;
-        margin-right: 5%;
-        margin-top: 9px;
-    }
-    
-    .url {
-        width: 50% !important;
-    }
-    
-    .side-by-side {
-        float: left;
-    }
-    
     &.view {
         height: 100%;
         margin-bottom: 20px;

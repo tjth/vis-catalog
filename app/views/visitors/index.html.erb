@@ -131,6 +131,22 @@
         }
     });
         
+    app.factory('Visualisation', ['$resource',
+        function($resource){
+            return $resource('visualisations/:id.json', {id : "@id"}, {
+                query: { method:'GET', url:'visualisations.json', isArray:true },
+                approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
+                reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
+            });
+    }]);
+
+    app.factory('Timeslot', ['$resource',
+        function($resource){
+            return $resource('timeslots', {}, {
+                query: { method:'GET', isArray:true },
+            });
+    }]);
+    
     app.controller('menuController', function($scope, $rootScope, $route, $location) {
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
                            {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"}]
@@ -184,18 +200,6 @@
         
     });
     
-    app.controller('submitAdvertController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
-    });
-
-    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
-        $scope.submit = { img:"assets/camera.png" }
-        $scope.submitVisualistion = function() {
-            var vis = visualisation.flow.files[0];
-        };
-    });
-
     app.controller('moderateController', function($scope, $rootScope, $route) {
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
     });

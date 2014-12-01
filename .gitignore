@@ -83,3 +83,5 @@ pickle-email-*.html
 
 # Java class files
 *.class
+# Uploaded files
+public/uploads
