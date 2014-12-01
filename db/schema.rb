@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141129111116) do
+ActiveRecord::Schema.define(version: 20141201190119) do
+
+  create_table "comments", force: true do |t|
+    t.text     "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.integer  "visualisation_id"
+  end
 
   create_table "playout_sessions", force: true do |t|
     t.datetime "start_time"
@@ -61,6 +69,7 @@ ActiveRecord::Schema.define(version: 20141129111116) do
     t.boolean  "isAdmin"
     t.boolean  "isApproved"
     t.string   "authentication_token"
+    t.string   "avatar"
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true
