@@ -65,6 +65,18 @@ public class Scheduler {
                 }
               }
 
+//              // fill remainder of block with default programmes
+//              int try_fill = 0;
+//              while (filled_blocks < block_size && Programme.defProgs.length > 0 && try_fill < 3) {
+//                Programme defProg = Programme.defProgs[(int)(Math.random() * Programme.defProgs.length)];
+//                try_fill++; // stop if no default programme that can fit is found after a few tries
+//                if (filled_blocks + defProg.getScreens() <= block_size) { // selected programme can fit
+//                  selectedProgs.add(defProg);
+//                  filled_blocks += defProg.getScreens();
+//                  try_fill = 0; // reset and pick another default programme
+//                }
+//              }
+              
               Collections.sort(selectedProgs); // sort selected programmes in ascending duration order
               boolean ascend; // indicates if block should be filled from shortest to longest duration or vice versa
               if (start_col == 0 && block_size < cols ||
