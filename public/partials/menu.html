@@ -36,7 +36,7 @@
             
             <div ng-if="user != null" style="display:flex">
                 <img class="icon avatar" ng-src="{[{user.image}]}"/>
-                <div class="name" >{[{user.username}]}</div>
+                <div class="name logged-in">{[{user.username}]}</div>
                 <div class="icon logout" ng-click="logOut()"></div>
             </div>
         </div>

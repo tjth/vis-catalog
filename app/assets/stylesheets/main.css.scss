@@ -372,6 +372,10 @@ header {
             
             .name {
                 line-height: $head-size;
+                
+                &.logged-in:hover {
+                    cursor:auto;
+                }
             }
             
             .logout {
