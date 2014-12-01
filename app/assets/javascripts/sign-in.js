@@ -10,7 +10,7 @@ app.controller('signInController', function($scope, $rootScope, $http, $routePar
             success(function(data, status, headers, config) {
                 $scope.signInLabel = "Success!";
                 
-                localStorage.setItem("auth_token", data.token);
+                localStorage.setItem("authentication_key", data.token);
                 $rootScope.logIn();
             
                 $location.path($routeParams["return"]);

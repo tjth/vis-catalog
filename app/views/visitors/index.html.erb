@@ -99,14 +99,14 @@
         $rootScope.user = null;
         
         $rootScope.logIn = function() {
-            User.getCurrent({authentication_token:localStorage.getItem("auth_token")}, 
+            User.getCurrent({authentication_key:localStorage.getItem("authentication_key")}, 
                 // Success
                 function(user) {
                     $rootScope.user = user;
                 },
                 // Failure
                 function() {
-                    localStorage.removeItem("auth_token");
+                    localStorage.removeItem("authentication_key");
                     $rootScope.user = null;
                 }       
             );
@@ -124,7 +124,7 @@
             }, 500);
         }
         
-        if (localStorage.getItem("auth_token") != null) {
+        if (localStorage.getItem("authentication_key") != null) {
             $rootScope.logIn();
         }
     });
@@ -134,8 +134,7 @@
         $rootScope.user = { name: "Joe Bloggs", image: "http://api.randomuser.me/portraits/thumb/men/88.jpg", admin:true };
 
         $scope.visLinks = [{name : "Visualisations", url : "/", img:"visualisations.png"},
-                           {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"},
-                           {name : "Mine", url : "", img:"ic_person_black_24dp.png"}]
+                           {name : "New", url : "", url : "/?newest=18", img:"ic_new_releases_black_24dp.png"}]
         
         $scope.contentLinks = [{name : "Submit Visualisation", class:"submit vis", url : "/submit/visualisation", img:"ic_add_box_black_24dp.png"},
                                {name : "Submit Advert", class : "submit advert", url : "/submit/advert", img:"ic_add_box_black_24dp.png"}]
@@ -156,7 +155,7 @@
         
         $rootScope.logOut = function() {
             $rootScope.user = null;
-            localStorage.removeItem("auth_token"); 
+            localStorage.removeItem("authentication_key"); 
         }
         
         $scope.getSignInUrl = function() {
@@ -205,7 +204,7 @@
     app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams, $location) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
-        $scope.visItems = Visualisation.query($routeParams)
+        $scope.visItems = Visualisation.query($location.search())
         
         $scope.goToVisualisation = function(item) {
             $location.path("/visualisations/"+ item.id);
