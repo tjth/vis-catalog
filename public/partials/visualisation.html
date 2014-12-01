@@ -3,13 +3,13 @@
         <div id="details" class="col-sm-6" class="card vis" style="height:100%;">
             <div class="view card">
                 <div class="visualisation">
-                    <div class="top" style="background-image: url({[{ visualisation.link }]});"></div>
+                    <div class="top" style="background-image: url({[{ visualisation.screenshot.screenshot.url }]});"></div>
                     <div class="header">{[{ visualisation.name }]}</div>
                     <div class="description">{[{ visualisation.description }]}</div>
                     <div class="bottom">
                         <div><img class="avatar" align="left" ng-src="{[{commentsimage}]}"/></div>
                         <div class="owner">{[{commentsname}]}</div>
-                        <div><a class="link" href="https://authorssite.com">https://authorssite.com</a></div>
+                        <div><a class="link" href="{[{visualisation.link}]}">{[{visualisation.link}]}</a></div>
                     </div>
                 </div>
             </div>
