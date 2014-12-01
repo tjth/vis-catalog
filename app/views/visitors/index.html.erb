@@ -163,36 +163,6 @@
         
     });
     
-    app.controller('submitAdvertController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
-    });
-
-    app.controller('submitVisualisationController', function($scope, $rootScope, $route) {
-        $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
-        $scope.submit = { img:"assets/camera.png" }
-        $scope.submitVisualistion = function() {
-            var fd = new FormData($("form.upload")[0]);
-			var content_type = document.getElementById("content_type");
-			var value = content_type.options[content_type.selectedIndex].value;
-			fd.append('visualisation.vis_type', 'vis');
-			if (value == 'weblink'){
-				fd.append('content', null);
-			} else {
-				fd.append('link', null);
-			}
-			$.ajax({
-				url: "/visualisations",
-				data: fd,
-				cache: false,
-				contentType: false,
-				processData: false,
-				type: 'POST'
-			});
-
-            
-        }
-    });
-
     app.controller('moderateController', function($scope, $rootScope, $route) {
         $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
     });

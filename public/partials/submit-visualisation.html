@@ -3,16 +3,16 @@
 
         <div id="submit-visualisation-col" class="col-sm-8">
             <!-- this form holds the data -->
-            <form id="form" class="card" ng-init="visualisation={ image: $flow.files[0] }" ng-submit="submitVisualistion()">
+            <form id="submit-visualisation" class="card" ng-init="visualisation={ }" ng-submit="submitVisualistion()">
             <!-- the names of the elements are IMPORTANT, they needs to be modelName[fieldName] for rails to pick them up and insert into the right place  -->
 
                 <div class="content">
                     <div class="wrapper">
                         <div  class="content-type side-by-side">SCREENSHOT</div>
-                        <input class="content-type side-by-side" type="file" name="visualisation[screenshot]"/>
+                        <input class="content-type file side-by-side" type="file" name="visualisation[screenshot]"/>
                         <div  class="content-type side-by-side">CONTENT</div>
 
-                        <input class="content-type side-by-side" type="file" name="visualisation[content]"/>
+                        <input class="content-type file side-by-side" type="file" name="visualisation[content]"/>
                     </div>
                     <input type="text" 
                            placeholder="Visualisation Name" 
