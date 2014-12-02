@@ -41,4 +41,11 @@ module Const
     3
   end
 
+  def self.DEFAULT_ROW
+    1
+  end
+ 
+  def self.DEFAULT_COLUMN
+    4
+  end
 end
