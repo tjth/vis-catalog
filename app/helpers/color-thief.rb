@@ -21,7 +21,10 @@ def getBackgroundColor(filePath)
 	    end
 	end
 
-	return "rgb(" + ctx[:ColorThiefGetColor].call(canvasPixels, img.columns * img.rows) + ")"
+    color = ctx[:ColorThiefGetColor].call(canvasPixels, img.columns * img.rows)
+	return "rgba(#{color[0]}, #{color[1]}, #{color[2]})" 
 end
 
-
+if __FILE__ == $0
+    puts getBackgroundColor("/home/guest/pink.png")
+end
