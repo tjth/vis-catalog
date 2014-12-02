@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141201190119) do
+ActiveRecord::Schema.define(version: 20141202215932) do
 
   create_table "comments", force: true do |t|
     t.text     "content"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20141201190119) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "visualisation_id"
+    t.integer  "timeslot_id"
   end
 
   add_index "playout_sessions", ["visualisation_id"], name: "index_playout_sessions_on_visualisation_id"
