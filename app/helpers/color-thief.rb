@@ -25,7 +25,7 @@ def getBackgroundColor(filePath)
     color = ctx[:ColorThiefGetColor].call(canvasPixels, img.columns * img.rows)
     color_string = "rgb(#{color[0]}, #{color[1]}, #{color[2]})"
     
-    puts color_string
+    #puts color_string
     
 	return color_string
 end
