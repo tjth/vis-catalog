@@ -13,6 +13,7 @@ def getBackgroundColor(filePath)
 	    (0..img.rows).each do |y|
 
 	    pixel = img.pixel_color(x, y)
+
 	    canvasPixels.push(pixel.red/257)
 	    canvasPixels.push(pixel.green/257)
 	    canvasPixels.push(pixel.blue/257)
@@ -21,7 +22,10 @@ def getBackgroundColor(filePath)
 	    end
 	end
 
-	return "rgb(" + ctx[:ColorThiefGetColor].call(canvasPixels, img.columns * img.rows) + ")"
+	puts "************"
+	color = ctx[:ColorThiefGetColor].call(canvasPixels, img.columns * img.rows)[0]
+	puts "rgb(#{color[0]}, #{color[1]}, #{color[2]})"
+	return "rgb(#{color[0]}, #{color[1]}, #{color[2]})"
 end
 
 

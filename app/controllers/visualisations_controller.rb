@@ -151,7 +151,7 @@ class VisualisationsController < ApplicationController
     #TODO: uncomment this when we have users
     puts current_user.username
     current_user.visualisations << @visualisation
-    @visualisation.user << current_user
+    @visualisation.user = current_user
 
 
     respond_to do |format|
