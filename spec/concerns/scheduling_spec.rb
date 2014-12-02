@@ -7,10 +7,31 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.get_a_default_programme' do
     Visualisation.create([
-      {:name => "Milan"}, 
-      {:name => "Green"},
-      {:name => "Pink"}, 
-      {:name => "Power", :isDefault => true}, 
+    {:name => "Milan", 
+       :link => "/assets/dummy/milan.png", 
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Green",
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/green.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+      {:name => "Pink", 
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/pink.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Power", 
+       :link => "/assets/dummy/power.png",
+       :approved => true,
+       :vis_type => :advert,
+       :content_type => :file,
+       :isDefault => true,
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
     ])
 
     prog = get_a_default_programme
@@ -84,8 +105,15 @@ RSpec.describe Scheduling, :type => :concern do
       end
 
       def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
-        return Visualisation.create({:name => visNames.sample,
-                                     :min_playtime => min_playtime})
+        return Visualisation.create(
+         {:name => "Pink", 
+          :approved => true,
+          :vis_type => :vis,
+          :content_type => :file,
+          :link => "/assets/dummy/pink.png",
+          :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", 
+          :min_playtime => min_playtime}
+        )
       end
 
       it 'for one programme (overriding case)' do
@@ -94,7 +122,7 @@ RSpec.describe Scheduling, :type => :concern do
 
         timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
         timeslot.programmes << prog
-        generate_schedule(timeslot)
+        generate_schedule(timeslot, 1, 4)
 
         summary = getSummary(timeslot)
         checkPlaytime(summary, prog.id)
@@ -114,7 +142,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -134,7 +162,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -155,7 +183,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -174,7 +202,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -192,7 +220,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -212,7 +240,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -233,7 +261,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot)
+          generate_schedule(timeslot, 1, 4)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -272,7 +300,7 @@ RSpec.describe Scheduling, :type => :concern do
       prog3 = Programme.create({:screens => 1, :priority => 4})
       prog3.visualisation = vis3
 
-      queue = initQueue([prog1, prog2, prog3])
+      queue = initQueue([prog1, prog2, prog3], 1, 4)
       expect(queue.min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog2

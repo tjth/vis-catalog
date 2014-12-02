@@ -5,6 +5,8 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :token_authenticatable
   has_many :visualisations
 
+  mount_uploader :avatar, AvatarUploader
+
   validates :username, presence: true
   validates :isApproved, presence: true
 
