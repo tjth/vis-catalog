@@ -1,6 +1,6 @@
 
 app.controller('moderateController', function(Visualisation, $scope, $rootScope) {
-    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.isAdmin) {
         showToast("Please log in as an administrator");
         $location.search("return", "/moderate"); $location.path("sign-in"); return;
     }
