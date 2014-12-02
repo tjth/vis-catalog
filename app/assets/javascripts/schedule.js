@@ -1,5 +1,5 @@
 app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
-    if ($rootScope.user == null || $rootScope.user == undefined ){//TODO: || ADD BACK!$rootScope.user.admin) {
+    if ($rootScope.user == null || $rootScope.user == undefined ){//TODO: || ADD BACK!$rootScope.user.isAdmin) {
         showToast("Please log in as an administrator");
         $location.search("return", "/schedule"); $location.path("/sign-in"); return;
     }
@@ -88,7 +88,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
 });
 
 app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, $location, Visualisation, Timeslot, Programme) {
-    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.isAdmin) {
         $location.search("return", "/edit-timeslot/" + $routeParams.id); $location.path("sign-in"); return;
     }
     
