@@ -10,6 +10,7 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
     
     $rootScope.page = {title: "Submit Visualisation",  headerClass:"submit-visualisation", searchEnabled : false, class:"submit"}
     $scope.submit = { img:"assets/camera.png" }
+    $scope.options = ['weblink', 'file'];
     
     $scope.submitVisualistion = function() {
         var fd = new FormData(document.getElementById("submit-visualisation"));
