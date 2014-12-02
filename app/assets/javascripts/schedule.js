@@ -206,6 +206,9 @@ app.directive('timeslotEditor', function() {
                 timeslotRemoveRequested : function(event, id) {
                     scope.$parent.removeTimeslot(id, $(element));
                 },
+                hasConflicts : function() {
+                    showToast("One of your days has <span style='color:red'>conflicts</span>.<br/>Changes to this day won't be saved until you resolve the <span style='color:red'>conflicts</span>.", 7000);
+                },
             }); 
             
             if (!scope.$parent.scrolled) {

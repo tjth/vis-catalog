@@ -22,7 +22,7 @@ a { @include clickable(); text-decoration: none !important; }
     margin: 0 auto;
     z-index: 999;
     padding: 15px 20px;
-    width: 30%;
+    width: 40%;
     background: rgba(50,50,50,1);
     color: #fff;
     border-radius: 3px;
@@ -61,7 +61,7 @@ select {
     *background: #58B14C;
 }
 
-input, textarea {
+input[type="text"], input[type="password"], textarea {
     padding:0.5rem 0;
     background:none;
     border:none;
@@ -71,6 +71,13 @@ input, textarea {
     outline: none;
     
     resize:none;
+}
+
+input[type="submit"] {
+    padding:0.5rem 0;
+    background:none;
+    border:none;
+    outline: none;
 }
 
 

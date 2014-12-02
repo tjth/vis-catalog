@@ -61,13 +61,14 @@ class VisualisationsController < ApplicationController
         v.delete
       end
     end
-
     redirect_to '/visualisations'
   end
   
   # GET /visualisations
   # GET /visualisations.json
   def index
+    puts current_user.username
+
     @expandAuthor = params[:expandAuthor]
     @visualisations = Visualisation.all
     if params[:needsModeration] != nil
@@ -141,18 +142,16 @@ class VisualisationsController < ApplicationController
   # POST /visualisations
   # POST /visualisations.json
   def create
+    puts current_user.username
     p = visualisation_params
     @visualisation = Visualisation.new(p)
 
-    #TODO remove this when uploading is working as screenshot is required
-    if params[:screenshot] != nil
-      print "***"
-      puts params[:screenshot]
-      @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
-    end
+    @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
 
     #TODO: uncomment this when we have users
-    #current_user.visualisations << @visualisation
+    puts current_user.username
+    current_user.visualisations << @visualisation
+    @visualisation.user << current_user
 
 
     respond_to do |format|
