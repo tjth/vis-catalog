@@ -6,10 +6,10 @@
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
-        <div class="item" ng-if="$rootScope.user != null"
+        <div class="item" ng-if="user != null"
              ng-class="{active: isCurrentMenuItem(item)}">
             <img class="icon" ng-src="/assets/ic_person_black_24dp.png"/> 
-            <a ng-href="#/visualisations?user={[{$rootScope.user.id}]}">{[{item.name }]}</a>
+            <a ng-href="#/visualisations?user={[{user.id}]}">{[{item.name }]}</a>
         </div>
     </section>
     <section>
@@ -19,7 +19,7 @@
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
     </section>
-    <section ng-if="$rootScope.user != null && $rootScope.user.isAdmin">
+    <section ng-if="user != null && user.isAdmin">
         <div class="item special {[{item.class}]}" ng-repeat="item in adminLinks"
              ng-class="{active: isCurrentMenuItem(item)}">
             <img class="icon" ng-src="/assets/{[{item.img}]}"/> 

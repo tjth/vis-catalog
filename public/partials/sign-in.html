@@ -1,4 +1,4 @@
-<div id="sign-in" class="card">
+<form id="sign-in" class="card"  ng-submit="authenticate(username, password)">
     
     <div id="logo"></div>
     
@@ -8,11 +8,11 @@
     </div>
     
     <div class="bottom">
-        <div class="sign-in" href="#" ng-click="authenticate(username, password)">{[{signInLabel}]}</div>
+        <input type="submit" ng-disabled="{[{authenticating}]}" class="sign-in" value="{[{signInLabel}]}"></input>
         <div style="clear:both"></div>
     </div>
 
-</div>
+</form>
 
 <div id="external" class="card">
     
