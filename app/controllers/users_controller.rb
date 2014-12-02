@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
 
+  skip_before_filter :after_token_authentication, :only => :register
   def register
     user = User.new(params[:user])
     if user.save
