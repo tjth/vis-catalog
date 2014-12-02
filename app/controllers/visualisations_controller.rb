@@ -4,6 +4,12 @@ class VisualisationsController < ApplicationController
 
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+  def get_all
+    @visualisations = Visualisation.all
+    respond_to do |format|
+      format.json { render :index }
+    end
+  end
 
   # GET /visualisations/:visid/render_vis
   def render_vis
