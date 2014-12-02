@@ -12,18 +12,21 @@ RSpec.describe Scheduling, :type => :concern do
        :approved => true,
        :vis_type => :vis,
        :content_type => :file,
+       :screenshot => "",
        :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
       {:name => "Green",
        :approved => true,
        :vis_type => :vis,
        :content_type => :file,
        :link => "/assets/dummy/green.png",
+       :screenshot => "",
        :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
       {:name => "Pink", 
        :approved => true,
        :vis_type => :vis,
        :content_type => :file,
        :link => "/assets/dummy/pink.png",
+       :screenshot => "",
        :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
       {:name => "Power", 
        :link => "/assets/dummy/power.png",
@@ -31,10 +34,14 @@ RSpec.describe Scheduling, :type => :concern do
        :vis_type => :advert,
        :content_type => :file,
        :isDefault => true,
+       :screenshot => File.open("app/assets/images/dummy/power.png"),
        :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
     ])
 
-    prog = get_a_default_programme
+    timeslot = Timeslot.create({:start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
+                                :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc})
+
+    prog = get_a_default_programme(timeslot)
     vis = Visualisation.find(prog.visualisation_id)
 
     it 'should return a programme containing default visualisation' do
@@ -77,7 +84,9 @@ RSpec.describe Scheduling, :type => :concern do
       def getTotalPlayoutTime(summary)
         total_playout_time = 0
         summary.each do |summary_item|
-          total_playout_time += summary_item.vis_playout_time
+          if (!Visualisation.find(summary_item.visualisation_id).isDefault)
+            total_playout_time += summary_item.vis_playout_time
+          end
         end
         return total_playout_time
       end
@@ -85,7 +94,9 @@ RSpec.describe Scheduling, :type => :concern do
       def getTotalPriority(summary)
         total_priority = 0
         summary.each do |summary_item|
-          total_priority += summary_item.priority
+          if (!Visualisation.find(summary_item.visualisation_id).isDefault)
+            total_priority += summary_item.priority
+          end
         end
         return total_priority
       end
@@ -112,6 +123,7 @@ RSpec.describe Scheduling, :type => :concern do
           :content_type => :file,
           :link => "/assets/dummy/pink.png",
           :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", 
+          :screenshot => File.open("app/assets/images/dummy/power.png"),
           :min_playtime => min_playtime}
         )
       end
@@ -122,7 +134,7 @@ RSpec.describe Scheduling, :type => :concern do
 
         timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
         timeslot.programmes << prog
-        generate_schedule(timeslot, 1, 4)
+        generate_schedule(timeslot)
 
         summary = getSummary(timeslot)
         checkPlaytime(summary, prog.id)
@@ -142,7 +154,8 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -162,7 +175,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -183,7 +196,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -202,7 +215,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -220,7 +233,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -240,7 +253,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)
@@ -261,7 +274,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          generate_schedule(timeslot, 1, 4)
+          generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
           checkPlaytime(summary, prog1.id)

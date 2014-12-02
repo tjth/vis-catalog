@@ -43,16 +43,14 @@ module Scheduling
     end
   end
 
-  def get_a_default_programme
+  def get_a_default_programme(timeslot)
     vis = Visualisation.where(isDefault:true).sample
-    if (vis.nil?)
-      return 1
-    end
     prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
                           :priority => Const.MIN_PRIORITY
                          })
-
     vis.programmes << prog
+    timeslot.programmes << prog
+
     return prog
   end
 
@@ -124,7 +122,7 @@ module Scheduling
               # Fill empty space with default visualisation
               try_fill = 0
               while (filled_blocks < block_size && try_fill < Const.MAX_TRY_FILL)
-                defaultProg = get_a_default_programme
+                defaultProg = get_a_default_programme(timeslot)
                 try_fill += 1
                 if (!defaultProg.visualisation_id.nil? &&
                     filled_blocks + defaultProg.screens <= block_size)
@@ -264,11 +262,11 @@ module Scheduling
   end
 
   def getProgWithModifiedScreens(prog, newScreens)
-    prog = Programme.new({:screens => newScreens,
-                          :priority => prog.priority,
-                          :timeslot_id => prog.timeslot_id,
-                          :visualisation_id => prog.visualisation_id})
-    return prog
+    newProg = Programme.new({:screens => newScreens,
+                             :priority => prog.priority,
+                             :timeslot_id => prog.timeslot_id,
+                             :visualisation_id => prog.visualisation_id})
+    return newProg
   end
 
   def requeue(progTimers, queue)
