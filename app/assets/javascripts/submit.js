@@ -17,17 +17,18 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
         var value = content_type.options[content_type.selectedIndex].value;
         fd.append('visualisation[vis_type]', 'vis');
         fd.append('visualisation[content_type]', value);
+        fd.append('visualisation[authentication_key]', $rootScope.user.authentication_key);
         if (value == 'weblink'){
             fd.append('visualisation[content]', '');
         } else {
             fd.append('visualisation[link]', '');
         }
         if (document.getElementById('screenshot').value == ''){
-          alert("Please submit a screenshot");
+          showToast("Please submit a screenshot");
         } else if (document.getElementById('name').value == ''){
-          alert("Please submit a name");
+          showToast("Please submit a name");
         } else if (document.getElementById('url').value == '' && value == 'weblink'){
-          alert("Please submit a url");
+          showToast("Please submit a url");
         } else if (document.getElementById('content').value == '' && value == 'file'){
           alert("Please submit a file");
         } else {
