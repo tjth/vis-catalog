@@ -33,12 +33,12 @@ app.controller('moderateController', function(Visualisation, $scope, $rootScope)
 
 
     $scope.approve = function(event, item) {
-        Visualisation.approve({id : item.id, authentication_key:$rootScope.user.authentication_key})
+        Visualisation.approve({id : item.id, authentication_key:localStorage.getItem("authentication_key")})
         $scope.fadeOutRow(event.target);
     }
 
     $scope.reject = function(event, item) {
-        Visualisation.reject({id : item.id, authentication_key:$rootScope.user.authentication_key})
+        Visualisation.reject({id : item.id, authentication_key:localStorage.getItem("authentication_key")})
         $scope.fadeOutRow(event.target, item);
     }
 
