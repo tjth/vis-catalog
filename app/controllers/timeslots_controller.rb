@@ -72,7 +72,7 @@ class TimeslotsController < ApplicationController
   # PATCH/PUT /timeslots/1.json
   def update
     @timeslot = Timeslot.find_by_id(params[:id])
-      
+    clean_old_sessions(@timeslot.start_time, @timeslot.end_time)      
     respond_to do |format|
       if @timeslot.update(timeslot_params)
         generate_schedule(@timeslot)

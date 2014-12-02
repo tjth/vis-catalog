@@ -55,7 +55,7 @@ class VisualisationsController < ApplicationController
       end
     end
 
-    return ""
+    render :nothing => true
   end
 
   
@@ -67,8 +67,8 @@ class VisualisationsController < ApplicationController
         v.delete
       end
     end
-    redirect_to '/visualisations'
-  end
+    render :nothing => true 
+ end
   
   # GET /visualisations
   # GET /visualisations.json
