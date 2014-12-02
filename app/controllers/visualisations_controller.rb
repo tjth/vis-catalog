@@ -53,9 +53,9 @@ class VisualisationsController < ApplicationController
         v.approved = true
         v.save!
       end
-    else 
-       redirect_to '/visualisations'
     end
+
+    return ""
   end
 
   
