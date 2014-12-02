@@ -61,7 +61,8 @@ module Scheduling
     oldSessions.destroy_all
   end
 
-  def generate_schedule(timeslot, rows, cols)
+  def generate_schedule(timeslot, rows = Const.DEFAULT_ROW, 
+                        cols = Const.DEFAULT_COLUMN)
     start_time = timeslot.start_time.beginning_of_minute() 
     end_time = timeslot.end_time.beginning_of_minute()
     progs = timeslot.programmes
@@ -283,6 +284,7 @@ module Scheduling
                                :start_screen => start_col,
                                :end_screen => start_col + prog.screens - 1})
     prog.visualisation.playout_sessions << s
+    prog.timeslot.playout_sessions << s
   end
 
   def getSummary(timeslot)
