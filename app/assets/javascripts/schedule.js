@@ -89,7 +89,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
 
 app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, $location, Visualisation, Timeslot, Programme) {
     if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.isAdmin) {
-        $location.search("return", "/edit-timeslot/" + $routeParams.id); $location.path("sign-in"); return;
+        $location.search("return", "/edit-timeslot/" + $routeParams.id); $location.path("/sign-in"); return;
     }
     
     $rootScope.page = {title: "Schedule Content", headerClass:"schedule", class:"schedule"}
