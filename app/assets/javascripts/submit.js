@@ -17,7 +17,7 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
         var value = content_type.options[content_type.selectedIndex].value;
         fd.append('visualisation[vis_type]', 'vis');
         fd.append('visualisation[content_type]', value);
-        fd.append('visualisation[authentication_key]', $rootScope.user.authentication_key);
+        fd.append('authentication_key', $rootScope.user.authentication_key);
         if (value == 'weblink'){
             fd.append('visualisation[content]', '');
         } else {

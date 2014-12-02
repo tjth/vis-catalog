@@ -26,6 +26,8 @@ Rails.application.routes.draw do
 
   get '/visualisations/:visid/render_vis' => 'visualisations#render_vis'
 
+  post '/users/register' => 'users#register'
+
   resources :programmes
   resources :visualisations
   resources :timeslots
