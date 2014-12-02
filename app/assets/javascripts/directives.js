@@ -21,6 +21,9 @@ app.directive('colorThief', function() {
     return {
         controller: ['$scope', function($scope){
             $scope.setBackground = function(element, color) {
+                
+                if (color == "") color = "rgb(242,242,242)"
+                
                 $(element).css("background-color", color);
                 
                 var rgb = color.match(/\d+/g);
