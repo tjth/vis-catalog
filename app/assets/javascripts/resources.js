@@ -22,7 +22,7 @@ app.factory('Visualisation', ['$resource',
         return $resource('visualisations/:id.json', {id : "@id"}, {
             query: { method:'GET', url:'visualisations.json', isArray:true },
             approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
-            reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
+            reject: { method:'DELETE', url:'visualisations/:id/reject.json'}
         });
 }]);
 
