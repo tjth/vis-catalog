@@ -7,6 +7,7 @@ class Visualisation < ActiveRecord::Base
   validates :vis_type, presence: true
   validates :name, presence: true
   validates :description, presence: true
+  validates :screenshot, presence: true
 
   belongs_to :user
   has_many :programmes

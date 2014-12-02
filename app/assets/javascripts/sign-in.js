@@ -1,23 +1,31 @@
 app.controller('signInController', function($scope, $rootScope, $http, $routeParams, $location) {
+    if ($rootScope.user != null) {
+        $location.path("/").search("return", null); return;
+    }
+    
     $rootScope.page = {title: "Sign in",  headerClass:"visualisations", class:"visualisations"}
+    $scope.authenticating = false;
     
     $scope.signInLabel = "Sign In"
 
     $scope.authenticate = function(username, password) {
-        $scope.signInLabel = "Signing in..."
+        $scope.authenticating = true;
+        $scope.signInLabel = "Signing in...";
         
         $http.post('/tokens.json', {username:username, password:password}).
             success(function(data, status, headers, config) {
-                $scope.signInLabel = "Success!";
+                $scope.authenticating = false;
+                $scope.signInLabel = "Sign In"
                 
-                localStorage.setItem("auth_token", data.token);
+                localStorage.setItem("authentication_key", data.token);
+                $rootScope.user = {}; // make user non-null
                 $rootScope.logIn();
             
                 $location.path($routeParams["return"]);
                 $location.search("return", null);
             }).
             error(function(data, status, headers, config) {
-                console.log("something bad happened");
+                $scope.authenticating = false;
                 $scope.signInLabel = "Sign In"
             });
     }

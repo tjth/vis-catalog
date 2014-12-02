@@ -363,9 +363,12 @@ $.widget("widgets.timesloteditor", {
     },
     
     _onTimeslotChanged: function(id, start, end) {
-        if (!this.hasConflicts()) {
+        if (this.hasConflicts()) {
+            this._trigger("hasConflicts", null, null);
+        } else {
             this._trigger("timeslotChanged", null, {id:id, start:start, end:end});
         }
+        
     },
     
     removeTimeslot: function(id) {

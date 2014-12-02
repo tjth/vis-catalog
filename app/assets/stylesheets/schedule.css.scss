@@ -3,11 +3,16 @@
 
 $week-height:45px;
 $axis-height:50px;
-$top-height:$week-height + $axis-height;
+$days-width:70px;
+$top-height:$axis-height;
 
 #schedule {
     height:100%;
-    display:flex;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+    
+    .wrapper {
+        height:calc(100% - #{$week-height});   
+    }
 }
 
 #days, #timeslot-actions {
@@ -25,9 +30,11 @@ $top-height:$week-height + $axis-height;
 
 #days {
     height:100%;
-    width:70px;
+    width:$days-width;
     font-size: 0.9rem;
-    flex-shrink: 0;
+    display:inline-block;
+    float:left;
+    background:#f5f5f5;
     
     .spacer {
         
@@ -57,45 +64,46 @@ $top-height:$week-height + $axis-height;
     }
 }
 
+#week { 
+    display:flex;
+    height:$week-height;
+    background-color:#616161;
+    color:#fff;
+    flex-shrink: 0;
+
+    #week-span {
+        flex-grow:1;
+        height:100%;
+        text-transform: uppercase;
+        line-height:$week-height;
+        text-align: center;
+    }
+
+    .navigate {
+        @include clickable();
+
+        flex-grow:0; 
+        width:16px;
+        height:100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        margin: 0px 15px;
+
+        &.back {
+            background-image: image-url("back-white.png");
+        }
+
+        &.forward {
+            background-image: image-url("forward-white.png");
+        }
+    }
+} 
+
 #timeslots {
-    flex-grow:1;
+    width:calc(100% - #{$days-width});
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
-    
-    #week { 
-        display:flex;
-        height:$week-height;
-        background-color:#616161;
-        color:#fff;
-        
-        #week-span {
-            flex-grow:1;
-            height:100%;
-            text-transform: uppercase;
-            line-height:$week-height;
-            text-align: center;
-        }
-
-        .navigate {
-            @include clickable();
-            
-            flex-grow:0; 
-            width:16px;
-            height:100%;
-            background-repeat: no-repeat;
-            background-position: center;
-            margin: 0px 15px;
-
-            &.back {
-                background-image: image-url("back-white.png");
-            }
-
-            &.forward {
-                background-image: image-url("forward-white.png");
-            }
-        }
-    }  
+    height:100%;
     
     .scroll {
         flex-grow:1;

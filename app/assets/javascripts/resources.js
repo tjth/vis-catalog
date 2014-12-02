@@ -3,6 +3,7 @@ app.factory('Programme', ['$resource',
         return $resource('programmes/:id.json', {id : "@id"}, {
             query: { method:'GET', url:'programmes.json', isArray:true },
             new:   { method:'POST', responseType: 'json'},
+            update:{ method:'PATCH', responseType: 'json'}
         });
 }]);
 
