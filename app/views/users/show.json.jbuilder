@@ -1,4 +1,4 @@
-  json.username = @user.username
+  json.username @user.username
   json.isAdmin @user.isAdmin
   json.isApproved @user.isApproved
   json.id @user.id
