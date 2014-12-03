@@ -48,7 +48,9 @@ module Scheduling
     prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
                           :priority => Const.MIN_PRIORITY
                          })
-    vis.programmes << prog
+    if (!vis.nil?)
+      vis.programmes << prog
+    end
     timeslot.programmes << prog
 
     return prog
@@ -289,7 +291,7 @@ module Scheduling
     start_time = timeslot.start_time
     end_time = timeslot.end_time
 
-    playouts = PlayoutSession.where(start_time: start_time...end_time)
+    playouts = PlayoutSession.where(timeslot_id = timeslot.id)
 
     vis_playtimes = {}
 

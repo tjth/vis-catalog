@@ -30,6 +30,8 @@ Rails.application.routes.draw do
 
   post '/users/register' => 'users#register'
 
+  get '/timeslots/:id/get_summary' => 'timeslots#get_summary'
+
   resources :programmes
   resources :visualisations
   resources :timeslots

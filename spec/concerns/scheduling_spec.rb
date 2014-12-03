@@ -122,7 +122,7 @@ RSpec.describe Scheduling, :type => :concern do
           :vis_type => :vis,
           :content_type => :file,
           :link => "/assets/dummy/pink.png",
-          :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", 
+          :description => "Lorem ipsum dolor sit amet, consectetur adipiscing",
           :screenshot => File.open("app/assets/images/dummy/power.png"),
           :min_playtime => min_playtime}
         )
