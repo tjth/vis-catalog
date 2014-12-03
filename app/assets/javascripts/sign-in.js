@@ -3,7 +3,7 @@ app.controller('signInController', function($scope, $rootScope, $http, $routePar
         $location.path("/").search("return", null); return;
     }
     
-    $rootScope.page = {title: "Sign in",  headerClass:"visualisations", class:"visualisations"}
+    $rootScope.page = {title: "Sign in", headerClass:"sign-in", class:"sign-in"}
     $scope.authenticating = false;
     
     $scope.signInLabel = "Sign In"
