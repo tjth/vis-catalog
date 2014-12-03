@@ -529,6 +529,11 @@ section.viewport {
 
 .page {
     &.view-visualisation {
-        padding:20px;
+        padding:0px !important;
+        
+        section.container-fluid {
+            padding:20px;   
+        }
+        
     }
 }
