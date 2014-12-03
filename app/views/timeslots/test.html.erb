@@ -1,11 +1,15 @@
-<h1>Timeslots#test</h1>
+<h3> Playout Scheduling Result </h3>
+
+Timeslot ID: <%= @timeslotid %> </p>
+Start Time: <%= @start_time %> </br>
+End Time: <%= @end_time %> </p>
 
 <% @test.each do |testElem| %>
    Start time: <%= testElem.start_time %> &nbsp;
    End time: <%= testElem.end_time %> &nbsp;
    Start screen: <%= testElem.start_screen %> &nbsp;
    End screen: <%= testElem.end_screen %> &nbsp;
-   Visualisation: <%= testElem.visualisation_id %> </br>
+   Visualisation ID: <%= testElem.visualisation_id %> </br>
 <% end %>
 
 Count: <%= @count %>

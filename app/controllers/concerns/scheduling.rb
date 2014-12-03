@@ -43,16 +43,16 @@ module Scheduling
     end
   end
 
-  def get_a_default_programme
+  def get_a_default_programme(timeslot)
     vis = Visualisation.where(isDefault:true).sample
-    if (vis.nil?)
-      return 1
-    end
     prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
                           :priority => Const.MIN_PRIORITY
                          })
+    if (!vis.nil?)
+      vis.programmes << prog
+    end
+    timeslot.programmes << prog
 
-    vis.programmes << prog
     return prog
   end
 
@@ -61,7 +61,8 @@ module Scheduling
     oldSessions.destroy_all
   end
 
-  def generate_schedule(timeslot, rows, cols)
+  def generate_schedule(timeslot, rows = Const.DEFAULT_ROW, 
+                        cols = Const.DEFAULT_COLUMN)
     start_time = timeslot.start_time.beginning_of_minute() 
     end_time = timeslot.end_time.beginning_of_minute()
     progs = timeslot.programmes
@@ -123,7 +124,7 @@ module Scheduling
               # Fill empty space with default visualisation
               try_fill = 0
               while (filled_blocks < block_size && try_fill < Const.MAX_TRY_FILL)
-                defaultProg = get_a_default_programme
+                defaultProg = get_a_default_programme(timeslot)
                 try_fill += 1
                 if (!defaultProg.visualisation_id.nil? &&
                     filled_blocks + defaultProg.screens <= block_size)
@@ -263,11 +264,11 @@ module Scheduling
   end
 
   def getProgWithModifiedScreens(prog, newScreens)
-    prog = Programme.new({:screens => newScreens,
-                          :priority => prog.priority,
-                          :timeslot_id => prog.timeslot_id,
-                          :visualisation_id => prog.visualisation_id})
-    return prog
+    newProg = Programme.new({:screens => newScreens,
+                             :priority => prog.priority,
+                             :timeslot_id => prog.timeslot_id,
+                             :visualisation_id => prog.visualisation_id})
+    return newProg
   end
 
   def requeue(progTimers, queue)
@@ -283,13 +284,14 @@ module Scheduling
                                :start_screen => start_col,
                                :end_screen => start_col + prog.screens - 1})
     prog.visualisation.playout_sessions << s
+    prog.timeslot.playout_sessions << s
   end
 
   def getSummary(timeslot)
     start_time = timeslot.start_time
     end_time = timeslot.end_time
 
-    playouts = PlayoutSession.where(start_time: start_time...end_time)
+    playouts = PlayoutSession.where(timeslot_id = timeslot.id)
 
     vis_playtimes = {}
 
