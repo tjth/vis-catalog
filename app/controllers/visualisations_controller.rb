@@ -73,11 +73,20 @@ class VisualisationsController < ApplicationController
   # GET /visualisations
   # GET /visualisations.json
   def index
-    puts current_user.username
 
     @expandAuthor = params[:expandAuthor]
     @visualisations = Visualisation.all
     if params[:needsModeration] != nil
+      if current_user == nil
+        render status: :unauthorized
+        return
+      end
+
+      if !current_user.isAdmin
+        render status: :unauthorized
+	return
+      end
+
       @needsModeration = true   
     else
       @needsModeration = false
