@@ -23,7 +23,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
   #
   #   "/images/fallback/" + [version_name, "default.png"].compact.join('_')
 
-    "/app/assets/images/default-user.png"
+    "/assets/default-user.png"
   end
 
   # Process files as they are uploaded:
