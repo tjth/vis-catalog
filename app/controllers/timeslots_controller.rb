@@ -114,11 +114,11 @@ class TimeslotsController < ApplicationController
     start_time = DateTime.new(2014, 11, 19, 12, 0, 0).utc
     end_time = DateTime.new(2014, 11, 19, 13, 0, 0).utc
 
-    prog1 = Programme.create({:screens => 1, :priority => 1})
+    prog1 = Programme.create({:screens => rand(4) + 1, :priority => rand(10) + 1})
     prog1.visualisation = getVis
-    prog2 = Programme.create({:screens => 1, :priority => 5})
+    prog2 = Programme.create({:screens => rand(4) + 1, :priority => rand(10) + 1})
     prog2.visualisation = getVis
-    prog3 = Programme.create({:screens => 1, :priority => 8})
+    prog3 = Programme.create({:screens => rand(4) + 1, :priority => rand(10) + 1})
     prog3.visualisation = getVis
 
     timeslot = Timeslot.create({:start_time => start_time,
