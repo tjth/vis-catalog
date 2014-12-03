@@ -9,7 +9,7 @@
         <div class="item" ng-if="user != null"
              ng-class="{active: isCurrentMenuItem({url:'/visualisations?user='+ user.id})}">
             <img class="icon" ng-src="/assets/ic_person_black_24dp.png"/> 
-            <a ng-href="#/visualisations?user={[{user.id}]}">Mine</a>
+            <a ng-href="#/visualisations?user_id={[{user.id}]}">Mine</a>
         </div>
     </section>
     <section>
@@ -30,12 +30,12 @@
     <section class="bottom">
         <div class="user item" style="display:block">
             <div ng-if="user == null" style="display:flex">
-                <img class="icon avatar" src=""/>
+                <img class="icon avatar" src="/assets/default-user.png"/>
                 <a ng-href="{[{getSignInUrl()}]}" class="name">Sign in...</a>
             </div>
             
             <div ng-if="user != null" style="display:flex">
-                <img class="icon avatar" src="{[{user.image}]}"/>
+                <img class="icon avatar" ng-src="{[{user.image}]}"/>
                 <div class="name logged-in">{[{user.username}]}</div>
                 <div class="icon logout" ng-click="logOut()"></div>
             </div>
