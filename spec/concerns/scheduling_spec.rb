@@ -271,6 +271,24 @@ RSpec.describe Scheduling, :type => :concern do
           prog_ids = Array.new
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
 
+          for i in 0..rand(10) + 11
+            prog = Programme.create({:screens => screens, :priority => priority})
+            prog.visualisation = getVis
+            timeslot.programmes << prog
+            prog_ids << prog.id
+          end
+          
+          generate_schedule(timeslot)
+          summary = getSummary(timeslot)
+          checkPlaytime(summary, prog_ids)
+        end
+
+        it 'Example 1 (eq (low) priority, same screen utilisation)' do
+          priority = rand(10) + 1
+          screens = rand(2) + 1
+          prog_ids = Array.new
+          timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
+
           for i in 0..rand(10) + 21
             prog = Programme.create({:screens => screens, :priority => priority})
             prog.visualisation = getVis
@@ -289,11 +307,11 @@ RSpec.describe Scheduling, :type => :concern do
     context 'should work for 2x2 screen configuration:' do
       it 'no 1x2 vis should be on screens in two seperate rows' do
         timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
-        
+
         exampleProg = Programme.create({:screens => 2, :priority => rand(10) + 1})
         exampleProg.visualisation = getVis
         timeslot.programmes << exampleProg
-            
+
         for i in 0..3
           prog = Programme.create({:screens => rand(2) + 1, :priority => rand(10) + 1})
           prog.visualisation = getVis
