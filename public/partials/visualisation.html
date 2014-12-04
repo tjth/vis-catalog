@@ -1,14 +1,14 @@
-<section class="container-fluid" ng-controller="visualisationController" color-thief color="{[{visualisation.bgcolour}]}"> 
+<section class="container-fluid" ng-controller="visualisationController"> 
     <div class="row">
         <div id="details" class="col-sm-6" class="card vis" style="height:100%;">
             <div class="view card">
                 <div class="visualisation">
-                    <div class="top" style="background-image: url({[{ visualisation.screenshot.screenshot.url }]});"></div>
+                    <div class="top" style="background-image: url({[{ visualisation.screenshot }]});"></div>
                     <div class="header" color-thief color="{[{visualisation.bgcolour}]}">{[{ visualisation.name }]}</div>
                     <div class="description">{[{ visualisation.description }]}</div>
                     <div class="bottom">
-                        <div><img class="avatar" align="left" ng-src="{[{commentsimage}]}"/></div>
-                        <div class="owner">{[{commentsname}]}</div>
+                        <div><img class="avatar" align="left" ng-src="{[{visualisation.author.avatar}]}"/></div>
+                        <div class="owner">{[{visualisation.author.username}]}</div>
                         <div><a class="link" href="{[{visualisation.link}]}">{[{visualisation.link}]}</a></div>
                     </div>
                 </div>

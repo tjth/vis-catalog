@@ -7,7 +7,7 @@ json.array!(@visualisations) do |visualisation|
   json.approved visualisation.approved
   json.vis_type visualisation.vis_type
   json.content visualisation.content
-  json.screenshot visualisation.screenshot
+  json.screenshot visualisation.screenshot.url
   json.min_playtime visualisation.min_playtime
   json.content_type visualisation.content_type
   json.bgcolour visualisation.bgcolour

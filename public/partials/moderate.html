@@ -40,7 +40,7 @@
                 </td>
                 <td>{[{item.type}]}</td>
                 <td class="author"><img ng-src="{[{item.author.avatar}]}"/><div class="name">{[{item.author.username}]}</div></td>
-                <td><a ng-href="{[{item.contentUrl}]}">{[{item.contentType}]}</a></td>
+                <td><a ng-href="{[{item.contentUrl}]}">{[{formatContentType(item.vis_type)}]}</a></td>
                 <td class="action">
                     <a class="approve" ng-click="approve($event, item)">APPROVE</a>
                     <a class="reject" ng-click="reject($event, item)">REJECT</a>

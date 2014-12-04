@@ -132,8 +132,7 @@
         font-size: 2em;
         font-weight:500;
         height: 2.5em;
-        // Temp
-        background-color:#ececec;
+        color:#fff
     }
     
     .description {
@@ -172,7 +171,7 @@
     .avatar {
         padding: 5px;
         vertical-align: top;
-        margin: 5px;
+        margin: 10px;
         border-radius:50%;
         width:$head-size;
         height:$head-size;
@@ -189,6 +188,8 @@
         text-align: left;
         vertical-align: middle;
         color: #9E9E9E;
+        border-bottom-left-radius:3px;
+        border-bottom-right-radius:3px;
     }
     
     .posted{
