@@ -132,7 +132,11 @@
         font-size: 2em;
         font-weight:500;
         height: 2.5em;
-        color:#fff
+        color:#fff;
+        
+        &.bright-background {
+            color:#333;
+        }
     }
     
     .description {

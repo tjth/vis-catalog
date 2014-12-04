@@ -7,10 +7,6 @@
             <!-- the names of the elements are IMPORTANT, they needs to be modelName[fieldName] for rails to pick them up and insert into the right place  -->
 
                 <div class="content">
-                    <div class="wrapper">
-                        <div  class="content-type side-by-side">SCREENSHOT</div>
-                        <input class="content-type file side-by-side" type="file" name="visualisation[screenshot]" id="screenshot"/>
-                    </div>
                     <input type="text" 
                            placeholder="Visualisation Name" 
                            ng-model="visualisation.name"
@@ -21,9 +17,13 @@
                            placeholder="Author's website/more info (optional)" 
                            ng-model="visualisation.author_info"
                            name="visualisation[author_info]"/>
-                    <div class="wrapper">
-                        <div  class="content-type side-by-side">CONTENT TYPE</div>
-                        <select class="selection side-by-side" 
+                    <div class="flex-wrapper">
+                        <div class="content-type">SCREENSHOT</div>
+                        <input class="file" type="file" name="visualisation[screenshot]" id="screenshot"/>
+                    </div>
+                    <div class="flex-wrapper">
+                        <div  class="content-type">CONTENT TYPE</div>
+                        <select class="selection" 
                                 ng-model="visualisation.content_type" 
                                 id="content_type"
                                 ng-init="visualisation.content_type = 'weblink'">
