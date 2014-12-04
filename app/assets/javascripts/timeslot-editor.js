@@ -238,8 +238,8 @@ $.widget("widgets.timesloteditor", {
         
         if (this.selected != null) {
             this._onTimeslotChanged(this.timeslots[this.selected].id, 
-                            this.timeslots[this.selected].start, 
-                            this.timeslots[this.selected].end)   
+                                    this.timeslots[this.selected].start, 
+                                    this.timeslots[this.selected].end)   
         }
         
         this.mousedown = false;

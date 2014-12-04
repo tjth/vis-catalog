@@ -53,7 +53,7 @@
             .header {
                 font-size: 2rem;
                 font-weight: 500;
-                padding: 1rem;
+                padding: 1rem 1.5rem;
                 flex-grow:0;
                 flex-shrink:0;
                 color:#fff;
@@ -73,7 +73,7 @@
                 
                 .desc {
                     font-size: 1rem;
-                    padding: 1rem;
+                    padding: 1rem 0 1rem 1.5rem;
                     overflow: hidden;
                 }
             }
@@ -99,7 +99,6 @@
                 
                 .desc {
                     display:table-cell;
-                    padding: 1rem 0rem 1rem 1rem;
                 }
         
                 .go {

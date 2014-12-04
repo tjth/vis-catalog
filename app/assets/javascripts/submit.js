@@ -83,10 +83,11 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
             });
             showToast("Thanks for submitting! A moderator should approve your content shortly");
           $location.path('/');
-          $route.reload();
         }
 
       
     }
 });
+
+function submit(vis_type) {}
 

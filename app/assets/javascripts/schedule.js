@@ -8,6 +8,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     $scope.days = [1, 2, 3, 4, 5, 6, 0]; // The make Monday start of week
     $scope.activeTimeslot = null;
     $scope.timeslots = [];
+    $scope.timeslotCache = {};
     
     $scope.getShortWeekdayName = function(day) {
         return moment().day(day).format("ddd")   
@@ -29,7 +30,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
         return Timeslot.new({start_time:start.format(), end_time:end.format(), authentication_key:localStorage.getItem("authentication_key")}, 
             // Success
             function(timeslot) {
-            
+                $scope.timeslotCache[timeslot.id] = timeslot;
                 $(element).timesloteditor("addTimeslot", timeslot.id, start, end);
             }); 
     }
@@ -39,21 +40,36 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
             // Success
             function(timeslot) {
                 $(element).timesloteditor("removeTimeslot", id);
+                delete $scope.timeslotCache[id];
             }
         ); 
     }
     
     $scope.updateTimeslot = function(id, start, end) {
-        Timeslot.update({id: id, start_time : start, end_time: end}); 
+        // Only call if something has updated
+        if ($scope.timeslotHasChanged(id, start, end)) {
+            Timeslot.update({id: id, start_time : start, end_time: end, authentication_key:localStorage.getItem("authentication_key")},
+                // Success
+                function() {
+                    $scope.timeslotCache[id].start_time = start;
+                    $scope.timeslotCache[id].end_time = end;
+                }
+            );
+        }
     }
     
     $scope.editTimeslot = function(id) {
-        $location.path('/schedule/timeslot/' + id);  
+        $location.path('/schedule/timeslot/' + id); 
+        $scope.$apply()
     }
     
     $scope.getDateForDay = function(day) {
         return $scope.startOfWeek.clone().add(day, "days");   
-    }    
+    }
+    
+    $scope.timeslotHasChanged = function(id, start, end) {
+        return $scope.timeslotCache[id].start != start || $scope.timeslotCache[id].end != end;
+    }
 
     
     // Watchers
@@ -62,22 +78,27 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
         
         var done = 7;
         
-        for (var i = 0; i < 7; i++) {
-            var date = $scope.startOfWeek.clone().add(i, "days");
+        for (var day = 0; day < 7; day++) {
+            var date = $scope.startOfWeek.clone().add(day, "days");
             
-            Timeslot.query({startOfDay: date.format()},   
+            Timeslot.query({startOfDay: date.format(), authentication_key:localStorage.getItem("authentication_key")},   
                 // Success      
-                (function(i) {
+                (function(day) {
                     return function(dayTimeslots) {
-                        
-                        timeslots[i] = dayTimeslots;
+                        timeslots[day] = dayTimeslots;
                         done--;
 
                         if (done == 0) {
-                            $scope.timeslots = timeslots;  
+                            $scope.timeslots = timeslots; 
+                            
+                            for (var i = 0; i < timeslots.length; i++) {
+                                for (var j = 0; j < timeslots[i].length; j++) {
+                                    $scope.timeslotCache[timeslots[i][j].id] = timeslots[i][j];
+                                }
+                            }
                         }
                     }
-                })(i)
+                })(day)
             );
         } 
     }, true);
