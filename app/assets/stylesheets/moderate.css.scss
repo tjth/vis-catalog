@@ -67,6 +67,16 @@
             
             td.title {
                 width:calc(100% / 3);
+                
+                .screenshot {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                    float: left;
+                    margin-right: 15px;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center center;
+                }
                     
                 .description {
                     font-size: 0.9em;   
