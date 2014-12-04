@@ -44,19 +44,17 @@ module Scheduling
   end
 
   def init_default_programmes(timeslot)
-    defaultVis = Visualisation.where(isDefault:true)
+    defaultVis = Visualisation.where(isDefault:true).
+                 sample(rand(2) + Const.NO_OF_SCREENS)
     progs = []
 
-    if !defaultVis.empty?
-      # 4+ default programmes
-      for i in 0..(rand(2) + Const.NO_OF_SCREENS)
-        prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
-                              :priority => Const.MIN_PRIORITY
-                             })
-        defaultVis.sample.programmes << prog
-        timeslot.programmes << prog
-        progs << prog
-      end
+    defaultVis.each do |vis|
+      prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
+                            :priority => Const.MIN_PRIORITY
+                           })
+      vis.programmes << prog
+      timeslot.programmes << prog
+      progs << prog
     end
 
     return progs
@@ -294,6 +292,7 @@ module Scheduling
                                :end_screen => start_col + prog.screens - 1})
     prog.visualisation.playout_sessions << s
     prog.timeslot.playout_sessions << s
+    prog.playout_sessions << s
   end
 
   def getSummary(timeslot)
@@ -302,20 +301,20 @@ module Scheduling
 
     playouts = PlayoutSession.where(timeslot_id: timeslot.id)
 
-    vis_playtimes = {}
+    prog_playtimes = {}
 
     time_elapsed = 0
     while start_time + time_elapsed < end_time
-      playout_vis =
+      playout_prog =
         playouts.where("start_time <= :now AND :now < end_time",
                        {now: (start_time + time_elapsed)}).
-          select(:visualisation_id).distinct
+          select(:programme_id).distinct
 
-      playout_vis.each do |vis|
-        if (!vis_playtimes.has_key?(vis.visualisation_id)) 
-          vis_playtimes[vis.visualisation_id] = 0
+      playout_prog.each do |prog|
+        if (!prog_playtimes.has_key?(prog.programme_id)) 
+          prog_playtimes[prog.programme_id] = 0
         end
-        vis_playtimes[vis.visualisation_id] += Const.SECONDS_IN_UNIT_TIME
+        prog_playtimes[prog.programme_id] += Const.SECONDS_IN_UNIT_TIME
       end
 
       time_elapsed += Const.SECONDS_IN_UNIT_TIME
@@ -327,8 +326,8 @@ module Scheduling
       #if !prog.visualisation.isDefault
         summary << SummaryItem.new(prog.id, prog.visualisation_id,
                                    prog.priority, prog.screens,
-                                   vis_playtimes.has_key?(prog.visualisation_id)?
-                                     vis_playtimes[prog.visualisation_id] : 0)
+                                   prog_playtimes.has_key?(prog.id)?
+                                     prog_playtimes[prog.id] : 0)
       #end
     end
 
