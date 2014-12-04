@@ -144,7 +144,7 @@ class VisualisationsController < ApplicationController
   def show
     @visualisation = Visualisation.find(params[:id])
 
-    if !@visualisation.isApproved
+    if !@visualisation.approved
       if params[:authentication_key] == nil
         render status: :unauthorized
       else
