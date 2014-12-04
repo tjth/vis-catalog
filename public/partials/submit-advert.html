@@ -1,18 +1,14 @@
-<section class="container-fluid" ng-controller="submitVisualisationController">
+<section class="container-fluid" ng-controller="submitAdvertController">
     <div class="row">
 
         <div id="submit-visualisation-col" class="col-sm-8">
             <!-- this form holds the data -->
-            <form id="submit-visualisation" class="card" ng-init="visualisation={ }" ng-submit="submitVisualistion()" name="submit-vis-form">
+            <form id="submit-visualisation" class="card" ng-init="visualisation={ }" ng-submit="submitAdvert()" name="submit-vis-form">
             <!-- the names of the elements are IMPORTANT, they needs to be modelName[fieldName] for rails to pick them up and insert into the right place  -->
 
                 <div class="content">
-                    <div class="wrapper">
-                        <div  class="content-type side-by-side">SCREENSHOT</div>
-                        <input class="content-type file side-by-side" type="file" name="visualisation[screenshot]" id="screenshot"/>
-                    </div>
                     <input type="text" 
-                           placeholder="Visualisation Name" 
+                           placeholder="Advert Name" 
                            ng-model="visualisation.name"
                            id="name"
                            name="visualisation[name]"/>
@@ -21,24 +17,9 @@
                            placeholder="Author's website/more info (optional)" 
                            ng-model="visualisation.author_info"
                            name="visualisation[author_info]"/>
-                    <div class="wrapper">
-                        <div  class="content-type side-by-side">CONTENT TYPE</div>
-                        <select class="selection side-by-side" 
-                                ng-model="visualisation.content_type" 
-                                id="content_type">
-                                <option value="weblink" ng-selected="true">Weblink</option>
-                                <option value="file">File</option>
-                        </select>
-                        <input type="text" 
-                           placeholder="URL" 
-                           name="visualisation[link]"
-                           ng-model="visualisation.link"
-                           class="url side-by-side"
-                           id="url" ng-show="visualisation.content_type == 'weblink'"/>
-
-                        <input class="content-type file side-by-side" type="file" ng-show="visualisation.content_type == 'file'" name="visualisation[content]" id="content"/>
-                    </div>
+                    <input class="content-type file" type="file" name="visualisation[content]" id="content"/>
                     <textarea class="grow" 
+                           id="description" 
                            placeholder="Description" 
                            name="visualisation[description]"
                            ng-model="visualisation.description" />
