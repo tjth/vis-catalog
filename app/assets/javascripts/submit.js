@@ -1,5 +1,29 @@
-app.controller('submitAdvertController', function($scope, $rootScope, $route) {
+app.controller('submitAdvertController', function($scope, $rootScope, $route, $location) {
     $rootScope.page = {title: "Submit Advert", headerClass:"submit-advert", searchEnabled : false, class:"submit"}
+    $scope.submitAdvert = function() {
+        var fd = new FormData(document.getElementById("submit-visualisation"));
+        fd.append('visualisation[vis_type]', 'advert');
+        fd.append('visualisation[authentication_key]', localStorage.getItem("authentication_key"));
+        if (document.getElementById('name').value == ''){
+          showToast("Please submit a name");
+        } else if (document.getElementById('description').value == ''){
+          showToast("Please submit a description");
+        } else if (document.getElementById('content').value == ''){
+          showToast("Please submit a file");
+        } else {
+          $.ajax({
+                url: "/visualisations",
+                data: fd,
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'POST'
+            });
+            showToast("Thanks for submitting! A moderator should approve your content shortly");
+          $location.path('/');
+          $route.reload();
+        }
+    }
 });
 
 app.controller('submitVisualisationController', function($scope, $rootScope, $route, $location) {
@@ -18,8 +42,7 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
         var value = content_type.options[content_type.selectedIndex].value;
         fd.append('visualisation[vis_type]', 'vis');
         fd.append('visualisation[content_type]', value);
-        console.log("key is " + localStorage.getItem("authentication_key"));
-        fd.append('visualisation[authentication_key]', localStorage.getItem("authentication_key"));
+        fd.append('authentication_key', localStorage.getItem("authentication_key"));
         if (value == 'weblink'){
             fd.append('visualisation[content]', '');
         } else {
@@ -29,10 +52,12 @@ app.controller('submitVisualisationController', function($scope, $rootScope, $ro
           showToast("Please submit a screenshot");
         } else if (document.getElementById('name').value == ''){
           showToast("Please submit a name");
+        } else if (document.getElementById('description').value == ''){
+          showToast("Please submit a description");
         } else if (document.getElementById('url').value == '' && value == 'weblink'){
           showToast("Please submit a url");
         } else if (document.getElementById('content').value == '' && value == 'file'){
-          alert("Please submit a file");
+          showToast("Please submit a file");
         } else {
           $.ajax({
                 url: "/visualisations",
