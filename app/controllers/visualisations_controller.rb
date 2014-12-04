@@ -143,6 +143,16 @@ class VisualisationsController < ApplicationController
   # GET /visualisations/1.json
   def show
     @visualisation = Visualisation.find(params[:id])
+
+    if !@visualisation.approved
+      if params[:authentication_key] == nil
+        render status: :unauthorized
+      else
+        if !current_user.isAdmin
+          render status: :unauthorized
+        end
+      end
+    end
   end
 
   # GET /visualisations/new
