@@ -34,9 +34,8 @@ app.controller('submitAdvertController', function($scope, $rootScope, $route, $l
                 processData: false,
                 type: 'POST'
             });
-            showToast("Thanks for submitting! A moderator should approve your content shortly");
+            showToast("Thanks for submitting! A moderator will approve your content shortly");
           $location.path('/');
-          $route.reload();
         }
     }
 });
