@@ -39,7 +39,11 @@ app.directive('colorThief', function() {
         }],
 
         link: function(scope, element, attrs) {
-            scope.setBackground(element, attrs["color"]);
+			attrs.$observe('color', function(value) {
+				if (value) {
+					scope.setBackground(element, attrs["color"]);
+				}
+			});
         }
     }; 
 }); 

@@ -26,7 +26,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     }
     
     $scope.addTimeslot = function(start, end, element) {
-        return Timeslot.new({start_time:start.format(), end_time:end.format()}, 
+        return Timeslot.new({start_time:start.format(), end_time:end.format(), authentication_key:localStorage.getItem("authentication_key")}, 
             // Success
             function(timeslot) {
             
@@ -35,7 +35,7 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
     }
     
     $scope.removeTimeslot = function(id, element) {
-        Timeslot.remove({id: id}, 
+        Timeslot.remove({id: id, authentication_key:localStorage.getItem("authentication_key")}, 
             // Success
             function(timeslot) {
                 $(element).timesloteditor("removeTimeslot", id);
@@ -130,7 +130,7 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     }
     
     $scope.addProgramme = function(content) {
-        Programme.new({content_id:content.id, timeslot_id:$scope.timeslot.id, 
+        Programme.new({visualisation_id:content.id, timeslot_id:$scope.timeslot.id, 
                        authentication_key : localStorage.getItem("authentication_key")},
             // Success
             function(programme) {

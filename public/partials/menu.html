@@ -7,9 +7,9 @@
             <a ng-href="#{[{item.url }]}">{[{item.name }]}</a>
         </div>
         <div class="item" ng-if="user != null"
-             ng-class="{active: isCurrentMenuItem({url:'/visualisations?user='+ user.id})}">
+             ng-class="{active: isCurrentMenuItem({url:'/?userid='+ user.id})}">
             <img class="icon" ng-src="/assets/ic_person_black_24dp.png"/> 
-            <a ng-href="#/visualisations?user_id={[{user.id}]}">Mine</a>
+            <a ng-href="#/?userid={[{user.id}]}">Mine</a>
         </div>
     </section>
     <section>

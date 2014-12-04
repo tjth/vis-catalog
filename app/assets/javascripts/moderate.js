@@ -1,5 +1,5 @@
 
-app.controller('moderateController', function(Visualisation, $scope, $rootScope) {
+app.controller('moderateController', function(Visualisation, $scope, $rootScope, $location) {
     if ($rootScope.user == null || $rootScope.user == undefined) { //TODO ADD BACK IN|| !$rootScope.user.isAdmin) {
         showToast("Please log in as an administrator");
         $location.search("return", "/moderate"); $location.path("sign-in"); return;
@@ -42,5 +42,11 @@ app.controller('moderateController', function(Visualisation, $scope, $rootScope)
         Visualisation.reject({id : item.id, authentication_key:localStorage.getItem("authentication_key")})
         $scope.fadeOutRow(event.target, item);
     }
+    
+    $scope.formatContentType = function(content_type) {
+		if (content_type == "vis")    return "Visualisation";
+		if (content_type == "advert") return "Advert";
+		return ""
+	}
 
 });
