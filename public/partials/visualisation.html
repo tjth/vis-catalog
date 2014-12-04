@@ -1,10 +1,10 @@
-<section class="container-fluid" ng-controller="visualisationController" color-thief color="visualisation.bgcolour"> 
+<section class="container-fluid" ng-controller="visualisationController" color-thief color="{[{visualisation.bgcolour}]}"> 
     <div class="row">
         <div id="details" class="col-sm-6" class="card vis" style="height:100%;">
             <div class="view card">
                 <div class="visualisation">
                     <div class="top" style="background-image: url({[{ visualisation.screenshot.screenshot.url }]});"></div>
-                    <div class="header" color-thief color="visualisation.bgcolour">{[{ visualisation.name }]}</div>
+                    <div class="header" color-thief color="{[{visualisation.bgcolour}]}">{[{ visualisation.name }]}</div>
                     <div class="description">{[{ visualisation.description }]}</div>
                     <div class="bottom">
                         <div><img class="avatar" align="left" ng-src="{[{commentsimage}]}"/></div>

@@ -106,6 +106,9 @@ header {
     &.schedule {
         background-color: #00e676;
     }
+    &.sign-in {
+         background-color:#3f51b5;
+    }
     
 
     width:100%;
@@ -319,7 +322,7 @@ header {
                 @include animated(0.3s);
                 width:$icon-size; 
                 height:$icon-size;
-                margin:$padding*2/3 $padding;
+                margin:$padding*2/3 $padding*2/3 $padding*2/3 $padding;
                 opacity:0.5
             }
             
@@ -529,6 +532,11 @@ section.viewport {
 
 .page {
     &.view-visualisation {
-        padding:20px;
+        padding:0px !important;
+        
+        section.container-fluid {
+            padding:20px;   
+        }
+        
     }
 }

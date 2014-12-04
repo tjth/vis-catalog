@@ -7,7 +7,8 @@ app.controller('moderateController', function(Visualisation, $scope, $rootScope)
     
     $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
 
-    $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true'})
+    $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true', 
+                                          authentication_key:localStorage.getItem("authentication_key")});
     $scope.externalUsers = [];
     
     $scope.fadeOutRow = function(childElement, item) {

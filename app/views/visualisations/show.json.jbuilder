@@ -9,9 +9,10 @@
   json.screenshot @visualisation.screenshot
   json.min_playtime @visualisation.min_playtime
   json.content_type @visualisation.content_type
+  json.bgcolour @visualisation.bgcolour
 
   json.author do
-    json.username = @visualisation.user.username
-    json.avatar = @visualisation.user.avatar
+    json.username @visualisation.user.username
+    json.avatar @visualisation.user.avatar.url
   end
 
