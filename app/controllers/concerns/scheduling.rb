@@ -43,39 +43,20 @@ module Scheduling
     end
   end
 
-  def get_default_visualisations
-    defaultVis = Visualisation.where(isDefault:true)
-
-    if defaultVis.empty?
-      vis = Visualisation.new([
-        {:name => "Logo",
-           :approved => true,
-           :vis_type => :vis,
-           :content_type => :file,
-           :link => "/sample_visualisations/DSI.PNG",
-           :description => "Logo of Data Science Institute",
-           :screenshot => File.open("sample_visualisations/DSI.PNG"),
-           :isDefault => true,
-           :min_playtime => Const.SECONDS_IN_UNIT_TIME}
-      ])
-      return vis
-    end
-
-    return defaultVis
-  end
-
   def init_default_programmes(timeslot)
-    defaultVis = get_default_visualisations
+    defaultVis = Visualisation.where(isDefault:true)
     progs = []
 
-    # 2-3 default programmes
-    for i in 0..(rand(2)+2)
-      prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
-                            :priority => Const.MIN_PRIORITY
-                           })
-      defaultVis.sample.programmes << prog
-      timeslot.programmes << prog
-      progs << prog
+    if !defaultVis.empty?
+      # 4+ default programmes
+      for i in 0..(rand(2) + Const.NO_OF_SCREENS)
+        prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
+                              :priority => Const.MIN_PRIORITY
+                             })
+        defaultVis.sample.programmes << prog
+        timeslot.programmes << prog
+        progs << prog
+      end
     end
 
     return progs
@@ -150,7 +131,8 @@ module Scheduling
 
               # Fill empty space with default visualisation
               try_fill = 0
-              while (filled_blocks < block_size && try_fill < Const.MAX_TRY_FILL)
+              while (!defaultProgs.empty? && filled_blocks < block_size && 
+                     try_fill < Const.MAX_TRY_FILL)
                 defaultProg = defaultProgs.sample
                 try_fill += 1
                 if (!defaultProg.visualisation_id.nil? &&
@@ -342,12 +324,12 @@ module Scheduling
     summary = []
     
     timeslot.programmes.each do |prog|
-      if !prog.visualisation.isDefault
+      #if !prog.visualisation.isDefault
         summary << SummaryItem.new(prog.id, prog.visualisation_id,
                                    prog.priority, prog.screens,
                                    vis_playtimes.has_key?(prog.visualisation_id)?
                                      vis_playtimes[prog.visualisation_id] : 0)
-      end
+      #end
     end
 
     return summary

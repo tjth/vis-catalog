@@ -24,15 +24,6 @@ RSpec.describe Scheduling, :type => :concern do
      :description => "Lorem ipsum dolor sit amet, consectetur adipiscing"}, 
   ])
 
-#  describe '.init_default_visualisation' do
-#    it 'should return default visualisations' do
-#      defaultVis = init_default_visualisations
-#      defaultVis.each do |defaultVis|
-#        expect(defaultVis.isDefault).to be true
-#      end
-#    end
-#  end
-
   describe '.init_default_programmes' do
 
     start_t = DateTime.new(2014, 9, 1, 12, 0, 0).utc
