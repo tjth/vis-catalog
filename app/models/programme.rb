@@ -1,6 +1,7 @@
 class Programme < ActiveRecord::Base
   belongs_to :visualisation
   belongs_to :timeslot
+  has_many :playout_sessions
 
   validates :screens, presence: true
   validates :visualisation_id, presence: true
