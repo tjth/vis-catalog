@@ -4,7 +4,7 @@
                     'small' : ($index % 6 < 3 && $index % 3 != 0) || ($index % 6 >= 3 && $index % 3 != 2)}" >
             <div class="content" ng-click="goToVisualisation(item)">
                 <div class="img" style="background-image: url({[{ item.screenshot.screenshot.url }]})"></div>
-                <div class="header" color-thief item="item">{[{ item.name }]}</div>
+                <div class="header" color-thief color="{[{item.bgcolour}]}">{[{ item.name }]}</div>
                 <div class="bottom">
                     <div class="desc">{[{ item.description | words:15  }]}</div>
                     <div class="go"></div>

@@ -14,6 +14,22 @@ body {
 
 a { @include clickable(); text-decoration: none !important; }
 
+.toast {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 999;
+    padding: 15px 20px;
+    width: 40%;
+    background: rgba(50,50,50,1);
+    color: #fff;
+    border-radius: 3px;
+    box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.5);   
+    display:none
+}
+
 #menu-shadow {
     @include animated();
     position:fixed;
@@ -45,7 +61,7 @@ select {
     *background: #58B14C;
 }
 
-input, textarea {
+input[type="text"], input[type="password"], textarea {
     padding:0.5rem 0;
     background:none;
     border:none;
@@ -55,6 +71,13 @@ input, textarea {
     outline: none;
     
     resize:none;
+}
+
+input[type="submit"] {
+    padding:0.5rem 0;
+    background:none;
+    border:none;
+    outline: none;
 }
 
 
@@ -82,6 +105,9 @@ header {
     }
     &.schedule {
         background-color: #00e676;
+    }
+    &.sign-in {
+         background-color:#3f51b5;
     }
     
 
@@ -296,7 +322,7 @@ header {
                 @include animated(0.3s);
                 width:$icon-size; 
                 height:$icon-size;
-                margin:$padding*2/3 $padding;
+                margin:$padding*2/3 $padding*2/3 $padding*2/3 $padding;
                 opacity:0.5
             }
             
@@ -372,6 +398,10 @@ header {
             
             .name {
                 line-height: $head-size;
+                
+                &.logged-in:hover {
+                    cursor:auto;
+                }
             }
             
             .logout {
@@ -502,6 +532,11 @@ section.viewport {
 
 .page {
     &.view-visualisation {
-        padding:20px;
+        padding:0px !important;
+        
+        section.container-fluid {
+            padding:20px;   
+        }
+        
     }
 }

@@ -72,7 +72,7 @@ class TimeslotsController < ApplicationController
   # PATCH/PUT /timeslots/1.json
   def update
     @timeslot = Timeslot.find_by_id(params[:id])
-      
+    clean_old_sessions(@timeslot.start_time, @timeslot.end_time)      
     respond_to do |format|
       if @timeslot.update(timeslot_params)
         generate_schedule(@timeslot)
@@ -97,25 +97,29 @@ class TimeslotsController < ApplicationController
     end
   end
 
-  def visNames
-        ['Milan', 'Green', 'Pink', 'Power', 'Test', 'BomWowWow']
-      end
+  # GET /timeslots/1/get_summary
+  def get_summary
+    t = Timeslot.find_by_id(params[:id])
+    if !t.nil?
+      @timeslot = t
+      @summary = getSummary(t)
+    end
+  end
 
-      def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
-        return Visualisation.create({:name => visNames.sample,
-                                     :min_playtime => min_playtime})
-      end
+  def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
+     return Visualisation.all.sample
+  end
 
   def test
     start_time = DateTime.new(2014, 11, 19, 12, 0, 0).utc
-    end_time = DateTime.new(2014, 11, 19, 12, 10, 0).utc
+    end_time = DateTime.new(2014, 11, 19, 13, 0, 0).utc
 
-     prog1 = Programme.create({:screens => 2, :priority => 1})
-          prog1.visualisation = getVis
-          prog2 = Programme.create({:screens => 2, :priority => 1})
-          prog2.visualisation = getVis
-          prog3 = Programme.create({:screens => 2, :priority => 10})
-          prog3.visualisation = getVis
+    prog1 = Programme.create({:screens => 1, :priority => 1})
+    prog1.visualisation = getVis
+    prog2 = Programme.create({:screens => 1, :priority => 5})
+    prog2.visualisation = getVis
+    prog3 = Programme.create({:screens => 1, :priority => 8})
+    prog3.visualisation = getVis
 
     timeslot = Timeslot.create({:start_time => start_time,
                                 :end_time => end_time})
@@ -123,9 +127,10 @@ class TimeslotsController < ApplicationController
     
     generate_schedule(timeslot)
 
+    @timeslotid = timeslot.id
+    @start_time = timeslot.start_time
+    @end_time = timeslot.end_time
     @test = PlayoutSession.where(start_time: start_time...end_time)
-    @start_time = start_time
-    @end_time = end_time
     @count = PlayoutSession.count
 
   end

@@ -3,15 +3,15 @@ public class Visualisation {
   private String name;
   private int duration;
   
-  public static final Visualisation[] defVis = {
-    new Visualisation(" D01 "),
-    new Visualisation(" D02 "),
-    new Visualisation(" D03 ")};
+//  public static final Visualisation[] defVis = {
+//    new Visualisation(" D01 "),
+//    new Visualisation(" D02 "),
+//    new Visualisation(" D03 ")};
   
-  private Visualisation(String name) { // for default visualisations only
-    this.name = name;
-    duration = 1;
-  }
+//  private Visualisation(String name) { // for default visualisations only
+//    this.name = name;
+//    duration = 1;
+//  }
   
   public Visualisation(String name, int duration) {
     this.name = name;

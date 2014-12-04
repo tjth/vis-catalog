@@ -4,6 +4,12 @@ class VisualisationsController < ApplicationController
 
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
 
+  def get_all
+    @visualisations = Visualisation.all
+    respond_to do |format|
+      format.json { render :index }
+    end
+  end
 
   # GET /visualisations/:visid/render_vis
   def render_vis
@@ -47,9 +53,9 @@ class VisualisationsController < ApplicationController
         v.approved = true
         v.save!
       end
-    else 
-       redirect_to '/visualisations'
     end
+
+    render :nothing => true
   end
 
   
@@ -61,16 +67,26 @@ class VisualisationsController < ApplicationController
         v.delete
       end
     end
-
-    redirect_to '/visualisations'
-  end
+    render :nothing => true 
+ end
   
   # GET /visualisations
   # GET /visualisations.json
   def index
+
     @expandAuthor = params[:expandAuthor]
     @visualisations = Visualisation.all
     if params[:needsModeration] != nil
+      if current_user == nil
+        render status: :unauthorized
+        return
+      end
+
+      if !current_user.isAdmin
+        render status: :unauthorized
+	return
+      end
+
       @needsModeration = true   
     else
       @needsModeration = false
@@ -141,18 +157,16 @@ class VisualisationsController < ApplicationController
   # POST /visualisations
   # POST /visualisations.json
   def create
+    puts current_user.username
     p = visualisation_params
     @visualisation = Visualisation.new(p)
 
-    #TODO remove this when uploading is working as screenshot is required
-    if params[:screenshot] != nil
-      print "***"
-      puts params[:screenshot]
-      @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
-    end
+    @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
 
     #TODO: uncomment this when we have users
-    #current_user.visualisations << @visualisation
+    puts current_user.username
+    current_user.visualisations << @visualisation
+    @visualisation.user = current_user
 
 
     respond_to do |format|

@@ -3,28 +3,29 @@
 
         <div class="col-sm-12" style="height:100%">
             <div id="schedule">
-                <div id="days">
-                    <div class="spacer">
-                        <div class="day" ng-repeat='day in days'>
-                            <div class="day-label">{[{getShortWeekdayName(day)}]}</div>
-                        </div>
-                    </div>
+                <div id="week">
+                    <div class="navigate back" ng-click="previousWeek()"></div>
+                    <div id="week-span">{[{formatWeek(startOfWeek)}]}</div>
+                    <div class="navigate forward" ng-click="nextWeek()"></div>
                 </div>
-                <div id="timeslots">
-                    <div id="week">
-                        <div class="navigate back" ng-click="previousWeek()"></div>
-                        <div id="week-span">{[{formatWeek(startOfWeek)}]}</div>
-                        <div class="navigate forward" ng-click="nextWeek()"></div>
-                    </div>
-                    <div class="scroll" horizontal-scroll>
-                        <div id="planner">
-                            <div id="axis"><canvas style="font-family: Roboto; width:100%; height:100%"></canvas></div>
-                            <div id="fg">
-                                <div class="day" ng-repeat='day in days' timeslot-editor start-of-week="{[{startOfWeek.format()}]}" day="{[{day}]}"></div>
+                <div class="wrapper">
+                    <div id="days">
+                        <div class="spacer">
+                            <div class="day" ng-repeat='day in days'>
+                                <div class="day-label">{[{getShortWeekdayName(day)}]}</div>
                             </div>
                         </div>
                     </div>
-
+                    <div id="timeslots">
+                        <div class="scroll" horizontal-scroll>
+                            <div id="planner">
+                                <div id="axis"><canvas style="font-family: Roboto; width:100%; height:100%"></canvas></div>
+                                <div id="fg">
+                                    <div class="day" ng-repeat='day in days' timeslot-editor start-of-week="{[{startOfWeek.format()}]}" day="{[{day}]}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

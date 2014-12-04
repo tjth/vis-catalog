@@ -7,13 +7,41 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.get_a_default_programme' do
     Visualisation.create([
-      {:name => "Milan"}, 
-      {:name => "Green"},
-      {:name => "Pink"}, 
-      {:name => "Power", :isDefault => true}, 
+    {:name => "Milan", 
+       :link => "/assets/dummy/milan.png", 
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :screenshot => "",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Green",
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/green.png",
+       :screenshot => "",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
+      {:name => "Pink", 
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/pink.png",
+       :screenshot => "",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
+      {:name => "Power", 
+       :link => "/assets/dummy/power.png",
+       :approved => true,
+       :vis_type => :advert,
+       :content_type => :file,
+       :isDefault => true,
+       :screenshot => File.open("app/assets/images/dummy/power.png"),
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
     ])
 
-    prog = get_a_default_programme
+    timeslot = Timeslot.create({:start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
+                                :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc})
+
+    prog = get_a_default_programme(timeslot)
     vis = Visualisation.find(prog.visualisation_id)
 
     it 'should return a programme containing default visualisation' do
@@ -56,7 +84,9 @@ RSpec.describe Scheduling, :type => :concern do
       def getTotalPlayoutTime(summary)
         total_playout_time = 0
         summary.each do |summary_item|
-          total_playout_time += summary_item.vis_playout_time
+          if (!Visualisation.find(summary_item.visualisation_id).isDefault)
+            total_playout_time += summary_item.vis_playout_time
+          end
         end
         return total_playout_time
       end
@@ -64,7 +94,9 @@ RSpec.describe Scheduling, :type => :concern do
       def getTotalPriority(summary)
         total_priority = 0
         summary.each do |summary_item|
-          total_priority += summary_item.priority
+          if (!Visualisation.find(summary_item.visualisation_id).isDefault)
+            total_priority += summary_item.priority
+          end
         end
         return total_priority
       end
@@ -84,8 +116,16 @@ RSpec.describe Scheduling, :type => :concern do
       end
 
       def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
-        return Visualisation.create({:name => visNames.sample,
-                                     :min_playtime => min_playtime})
+        return Visualisation.create(
+         {:name => "Pink", 
+          :approved => true,
+          :vis_type => :vis,
+          :content_type => :file,
+          :link => "/assets/dummy/pink.png",
+          :description => "Lorem ipsum dolor sit amet, consectetur adipiscing",
+          :screenshot => File.open("app/assets/images/dummy/power.png"),
+          :min_playtime => min_playtime}
+        )
       end
 
       it 'for one programme (overriding case)' do
@@ -114,6 +154,7 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
+          
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
@@ -272,7 +313,7 @@ RSpec.describe Scheduling, :type => :concern do
       prog3 = Programme.create({:screens => 1, :priority => 4})
       prog3.visualisation = vis3
 
-      queue = initQueue([prog1, prog2, prog3])
+      queue = initQueue([prog1, prog2, prog3], 1, 4)
       expect(queue.min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog2

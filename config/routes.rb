@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get 'timeslots/test'
 
+  get '/visualisations/get_all' => 'visualisations#get_all'
+
   root to: 'visitors#index'
   devise_for :users, :token_authentication_key => 'authentication_key'
 
@@ -25,6 +27,10 @@ Rails.application.routes.draw do
   get '/playout_sessions/info' => 'playout_sessions#get_info'
 
   get '/visualisations/:visid/render_vis' => 'visualisations#render_vis'
+
+  post '/users/register' => 'users#register'
+
+  get '/timeslots/:id/get_summary' => 'timeslots#get_summary'
 
   resources :programmes
   resources :visualisations

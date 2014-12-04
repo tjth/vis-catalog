@@ -1,8 +1,14 @@
 
 app.controller('moderateController', function(Visualisation, $scope, $rootScope) {
+    if ($rootScope.user == null || $rootScope.user == undefined) { //TODO ADD BACK IN|| !$rootScope.user.isAdmin) {
+        showToast("Please log in as an administrator");
+        $location.search("return", "/moderate"); $location.path("sign-in"); return;
+    }
+    
     $rootScope.page = {title: "Moderate Content",  headerClass:"moderate", searchEnabled : true, class:"moderate"}
 
-    $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true'})
+    $scope.content = Visualisation.query({needsModeration : 'true', expandUser: 'true', 
+                                          authentication_key:localStorage.getItem("authentication_key")});
     $scope.externalUsers = [];
     
     $scope.fadeOutRow = function(childElement, item) {
@@ -28,12 +34,12 @@ app.controller('moderateController', function(Visualisation, $scope, $rootScope)
 
 
     $scope.approve = function(event, item) {
-        Visualisation.approve({id : item.id})
+        Visualisation.approve({id : item.id, authentication_key:localStorage.getItem("authentication_key")})
         $scope.fadeOutRow(event.target);
     }
 
     $scope.reject = function(event, item) {
-        Visualisation.reject({id : item.id})
+        Visualisation.reject({id : item.id, authentication_key:localStorage.getItem("authentication_key")})
         $scope.fadeOutRow(event.target, item);
     }
 

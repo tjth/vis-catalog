@@ -1,6 +1,7 @@
 app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
-    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
-        $location.search("return", "/schedule"); $location.path("sign-in"); return;
+    if ($rootScope.user == null || $rootScope.user == undefined ){//TODO: || ADD BACK!$rootScope.user.isAdmin) {
+        showToast("Please log in as an administrator");
+        $location.search("return", "/schedule"); $location.path("/sign-in"); return;
     }
     
     $rootScope.page = {title: "Schedule Content",  headerClass:"schedule", class:"schedule"}
@@ -87,8 +88,8 @@ app.controller('scheduleController', function($scope, $rootScope, $location, Tim
 });
 
 app.controller('editTimeslotController', function($scope, $rootScope, $routeParams, $location, Visualisation, Timeslot, Programme) {
-    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.admin) {
-        $location.search("return", "/edit-timeslot/" + $routeParams.id); $location.path("sign-in"); return;
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.isAdmin) {
+        $location.search("return", "/edit-timeslot/" + $routeParams.id); $location.path("/sign-in"); return;
     }
     
     $rootScope.page = {title: "Schedule Content", headerClass:"schedule", class:"schedule"}
@@ -204,6 +205,9 @@ app.directive('timeslotEditor', function() {
                 },
                 timeslotRemoveRequested : function(event, id) {
                     scope.$parent.removeTimeslot(id, $(element));
+                },
+                hasConflicts : function() {
+                    showToast("One of your days has <span style='color:red'>conflicts</span>.<br/>Changes to this day won't be saved until you resolve the <span style='color:red'>conflicts</span>.", 7000);
                 },
             }); 
             
