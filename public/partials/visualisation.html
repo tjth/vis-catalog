@@ -10,6 +10,7 @@
                         <div><img class="avatar" align="left" ng-src="{[{visualisation.author.avatar}]}"/></div>
                         <div class="owner">{[{visualisation.author.username}]}</div>
                         <div><a class="link" href="{[{visualisation.link}]}">{[{visualisation.link}]}</a></div>
+                        <div style="clear:both"></div>
                     </div>
                 </div>
             </div>
@@ -18,7 +19,9 @@
             <div class="card view">
                     <div class="comment">
                         <div class="top">
-                            <img class="avatar" align="left" ng-src="{[{commentsimage}]}"/>
+                            <div class="left">
+                                <img align="left" class="avatar" ng-src="{[{commentsimage}]}"/>
+                            </div>
                             <textarea placeholder="Comment" class="inputtext" rows="4" wrap="hard"></textarea>
                         </div>
                         <div class="bottom" style="text-align: right;">
@@ -29,10 +32,10 @@
             <div class="card view">
                 <div class="comment">
                     <div class="top">
-                        <span>
+                        <div class="left">
                             <img align="left" class="avatar" ng-src="{[{commentsimage}]}"/>
-                            <div class="commenttext">{[{commentstext}]}</div>
-                        </span>
+                        </div>
+                        <div class="commenttext">{[{commentstext}]}</div>
                     </div>
                     <div class="bottom posted">
                         Posted on {[{commentsdate}]}

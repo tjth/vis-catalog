@@ -98,23 +98,15 @@
 }
 
 .visualisation {
-    $head-size: 44px;
+    $head-size: 32px;
     height: 100%;
     position: relative;
-    
-    .avatar {
-        padding: 0.3em;
-        vertical-align: top;
-        margin: 5px;
-        border-radius:50%;
-        width:$head-size;
-        height:$head-size;
-        opacity:1 !important;
-    }
+    display: flex;
+    flex-direction: column;
+
     .top {
         padding-top: 1em;
         padding-bottom: 1em;
-        height: 50%; 
         width:100%;
         background-size: cover;
         background-repeat: no-repeat;
@@ -133,6 +125,7 @@
         font-weight:500;
         height: 2.5em;
         color:#fff;
+        box-shadow: 0px -7px 5px -3px rgba(0,0,0,0.1);
         
         &.bright-background {
             color:#333;
@@ -141,94 +134,110 @@
     
     .description {
         padding:2em;
-        height: calc(50% - 6em - #{$head-size});
+        flex-grow:1;
         overflow-y: auto;
         overflow-x: hidden;
         background-color: #ffffff;
     }
+
     .bottom {
-        padding-right: 1.5em;
-        padding-left: 1.5em;
+        padding:0rem 2rem 2rem 2rem;
         text-align: left;
         vertical-align: middle;
+        
+            
+        .avatar {
+            vertical-align: top;
+            border-radius:50%;
+            width:$head-size;
+            height:$head-size;
+        }
+        
+        .owner {
+            line-height: $head-size;
+            padding:0 1rem;
+            color: #424242;
+            float: left;
+        }
+        
+        .link{
+            line-height: $head-size;
+            padding:0 1rem;
+            float: right;
+            @include link(#00E676);
+        }
     }
-    .owner{
-        line-height: $head-size;
-        padding-left: 0.7em;
-        padding-right: 0.7em;
-        padding-top: 0.3em;
-        color: #424242;
-        float: left;
-    }
-    .link{
-        line-height: $head-size;
-        padding-left: 0.7em;
-        padding-right: 0.8em;
-        padding-top: 0.3em;
-        float: right;
-        @include link(#00E676);
-    }
+
 }
 
 .comment {
     $head-size: 44px;
-    .avatar {
-        padding: 5px;
-        vertical-align: top;
-        margin: 10px;
-        border-radius:50%;
-        width:$head-size;
-        height:$head-size;
-        opacity:1 !important;
-            }
+    
+    @media (max-width: $mobile-width) {
+        &:first-child {
+            margin-top:20px;   
+        }
+    }
 
     .top {
+        display:flex;
+        
+        .left {
+            flex-grow: 0;
+            flex-shrink: 0;
+            
+            .avatar {
+                padding: 5px;
+                vertical-align: top;
+                margin: 10px;
+                border-radius:50%;
+                width:$head-size;
+                height:$head-size;
+            }
+        }
+    
+        .inputtext{
+            padding-top: 1em;
+            padding-bottom: 1em;
+            padding-left: 0em;
+            padding-right: 0em;
+            margin-left: 0.4em;
+            text-align: left;
+            width: calc(100% - #{$head-size} - 3em);
+        }
+
+        .commenttext {
+            padding-top: 1em;
+            padding-bottom: 1em;
+            padding-left: 0em;
+            padding-right: 1em;
+            text-align: left;
+            font-size:0.9rem;
+            flex-grow:1;
+        } 
     }
     
     .bottom {
-        padding-right: 1.5em;
-        padding-left: 1.3em;
-        height: 3em;
         text-align: left;
         vertical-align: middle;
         color: #9E9E9E;
         border-bottom-left-radius:3px;
         border-bottom-right-radius:3px;
-    }
-    
-    .posted{
-        line-height: 3em;
-        background-color: #E0E0E0;
-    }
-    
-    .inputtext{
-        padding-top: 1em;
-        padding-bottom: 1em;
-        padding-left: 0em;
-        padding-right: 0em;
-        margin-left: 0.4em;
-        text-align: left;
-        width: calc(100% - #{$head-size} - 3em);
-    }
-    
-    .commenttext {
-        padding-top: 1em;
-        padding-bottom: 1em;
-        padding-left: 0em;
-        padding-right: 1em;
-        margin-left: calc(#{$head-size} + 1em);
-        text-align: left;
-        width: calc(100% - #{$head-size} - 2em);
-        font-size:0.9rem;
-    }
-    
-    .post {
-        line-height: 2em;
-        padding-right: 0.7em;
-        text-align: right;
-        background: transparent;
-        border: transparent;
-        text-transform:uppercase;
-        @include link(#039BE5);
+        
+        &.posted {
+            line-height: 3em;
+            background-color: #E0E0E0;
+            padding: 0.2rem 1rem;
+        }
+
+        .post {
+            padding: 1rem 1.5rem;
+            line-height: 2em;
+            text-align: right;
+            background: transparent;
+            border: transparent;
+            text-transform:uppercase;
+            @include link(#039BE5);
+        }
     }
 }
