@@ -38,9 +38,12 @@
                         <div class="description">{[{item.description | words:15 }]}</div>
                     </a>
                 </td>
-                <td>{[{item.type}]}</td>
+                <td>{[{formatContentType(item.vis_type)}]}</td>
                 <td class="author"><img ng-src="{[{item.author.avatar}]}"/><div class="name">{[{item.author.username}]}</div></td>
-                <td><a ng-href="{[{item.contentUrl}]}">{[{formatContentType(item.vis_type)}]}</a></td>
+                <td>
+                    <a ng-if="item.link != null" ng-href="{[{item.link}]}">{[{item.link}]}</a>
+                    <a ng-if="item.content != null" ng-href="{[{item.content}]}">Uploaded file</a>
+                </td>
                 <td class="action">
                     <a class="approve" ng-click="approve($event, item)">APPROVE</a>
                     <a class="reject" ng-click="reject($event, item)">REJECT</a>
