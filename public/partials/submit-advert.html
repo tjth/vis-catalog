@@ -7,8 +7,12 @@
             <!-- the names of the elements are IMPORTANT, they needs to be modelName[fieldName] for rails to pick them up and insert into the right place  -->
 
                 <div class="content">
+                    <div class="wrapper">
+                        <div  class="content-type side-by-side">SCREENSHOT</div>
+                        <input class="content-type file side-by-side" type="file" name="visualisation[screenshot]" id="screenshot"/>
+                    </div>
                     <input type="text" 
-                           placeholder="Advert Name" 
+                           placeholder="Visualisation Name" 
                            ng-model="visualisation.name"
                            id="name"
                            name="visualisation[name]"/>
@@ -18,7 +22,21 @@
                            ng-model="visualisation.author_info"
                            name="visualisation[author_info]"/>
                     <div class="wrapper">
-                        <input class="content-type file side-by-side" type="file" name="visualisation[content]" id="content"/>
+                        <div  class="content-type side-by-side">CONTENT TYPE</div>
+                        <select class="selection side-by-side" 
+                                ng-model="visualisation.content_type" 
+                                id="content_type">
+                                <option value="weblink" ng-selected="true">Weblink</option>
+                                <option value="file">File</option>
+                        </select>
+                        <input type="text" 
+                           placeholder="URL" 
+                           name="visualisation[link]"
+                           ng-model="visualisation.link"
+                           class="url side-by-side"
+                           id="url" ng-show="visualisation.content_type == 'weblink'"/>
+
+                        <input class="content-type file side-by-side" type="file" ng-show="visualisation.content_type == 'file'" name="visualisation[content]" id="content"/>
                     </div>
                     <textarea class="grow" 
                            placeholder="Description" 
