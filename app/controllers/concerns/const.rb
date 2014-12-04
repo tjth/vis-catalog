@@ -10,7 +10,7 @@ module Const
   end
 
   def self.MIN_PRIORITY
-    1
+    0
   end
 
   def self.SECONDS_IN_UNIT_TIME
@@ -47,5 +47,10 @@ module Const
  
   def self.DEFAULT_COLUMN
     4
+  end
+
+  # Seven days
+  def self.LARGE_PERIOD
+    86400 * 7
   end
 end

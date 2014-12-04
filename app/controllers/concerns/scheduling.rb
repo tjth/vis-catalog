@@ -43,28 +43,47 @@ module Scheduling
     end
   end
 
-  def init_default_visualisations
+  def get_default_visualisations
     defaultVis = Visualisation.where(isDefault:true)
+
+    if defaultVis.empty?
+      vis = Visualisation.new([
+        {:name => "Logo",
+           :approved => true,
+           :vis_type => :vis,
+           :content_type => :file,
+           :link => "/sample_visualisations/DSI.PNG",
+           :description => "Logo of Data Science Institute",
+           :screenshot => File.open("sample_visualisations/DSI.PNG"),
+           :isDefault => true,
+           :min_playtime => Const.SECONDS_IN_UNIT_TIME}
+      ])
+      return vis
+    end
+
     return defaultVis
   end
 
-  def get_a_default_programme(timeslot, defaultVis)
-    if !defaultVis.nil?
-      vis = defaultVis.sample
-    end
-    prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
-                          :priority => Const.MIN_PRIORITY
-                         })
-    if (!vis.nil?)
-      vis.programmes << prog
-    end
-    timeslot.programmes << prog
+  def init_default_programmes(timeslot)
+    defaultVis = get_default_visualisations
+    progs = []
 
-    return prog
+    # 2-3 default programmes
+    for i in 0..(rand(2)+2)
+      prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
+                            :priority => Const.MIN_PRIORITY
+                           })
+      defaultVis.sample.programmes << prog
+      timeslot.programmes << prog
+      progs << prog
+    end
+
+    return progs
   end
 
-  def clean_old_sessions(start_time, end_time)
-    oldSessions = PlayoutSession.where(start_time: start_time...end_time)
+  def clean_old_sessions(timeslot)
+    oldSessions = PlayoutSession.where(start_time: timeslot.start_time ...
+                                                   timeslot.end_time)
     oldSessions.destroy_all
   end
 
@@ -74,8 +93,8 @@ module Scheduling
     end_time = timeslot.end_time.beginning_of_minute()
     progs = timeslot.programmes
 
-    defaultVis = init_default_visualisations
-    clean_old_sessions(start_time, end_time)
+    defaultProgs = init_default_programmes(timeslot)
+    clean_old_sessions(timeslot)
 
     queue = initQueue(progs, rows, cols)
     nextFreeTimeslot = Array.new(rows){Array.new(cols, start_time)}
@@ -132,7 +151,7 @@ module Scheduling
               # Fill empty space with default visualisation
               try_fill = 0
               while (filled_blocks < block_size && try_fill < Const.MAX_TRY_FILL)
-                defaultProg = get_a_default_programme(timeslot, defaultVis)
+                defaultProg = defaultProgs.sample
                 try_fill += 1
                 if (!defaultProg.visualisation_id.nil? &&
                     filled_blocks + defaultProg.screens <= block_size)
@@ -323,10 +342,12 @@ module Scheduling
     summary = []
     
     timeslot.programmes.each do |prog|
-      summary << SummaryItem.new(prog.id, prog.visualisation_id,
-                                 prog.priority, prog.screens,
-                                 vis_playtimes.has_key?(prog.visualisation_id)? 
-                                   vis_playtimes[prog.visualisation_id] : 0)
+      if !prog.visualisation.isDefault
+        summary << SummaryItem.new(prog.id, prog.visualisation_id,
+                                   prog.priority, prog.screens,
+                                   vis_playtimes.has_key?(prog.visualisation_id)?
+                                     vis_playtimes[prog.visualisation_id] : 0)
+      end
     end
 
     return summary

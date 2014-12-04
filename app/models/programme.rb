@@ -14,8 +14,11 @@ class Programme < ActiveRecord::Base
   end
 
   def period
-    return (self.visualisation.min_playtime / 
-            self.priority.to_f)
+    if (priority > 0)
+      return (self.visualisation.min_playtime / self.priority.to_f)
+    else
+      return Const.LARGE_PERIOD
+    end
   end
 
   def <=>(otherProg)

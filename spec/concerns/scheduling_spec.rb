@@ -24,35 +24,40 @@ RSpec.describe Scheduling, :type => :concern do
      :description => "Lorem ipsum dolor sit amet, consectetur adipiscing"}, 
   ])
 
-  describe '.init_default_visualisation' do
-    it 'should return default visualisations' do
-      defaultVis = init_default_visualisations
-      defaultVis.each do |defaultVis|
-        expect(defaultVis.isDefault).to be true
-      end
-    end
-  end
+#  describe '.init_default_visualisation' do
+#    it 'should return default visualisations' do
+#      defaultVis = init_default_visualisations
+#      defaultVis.each do |defaultVis|
+#        expect(defaultVis.isDefault).to be true
+#      end
+#    end
+#  end
 
-  describe '.get_a_default_programme' do
+  describe '.init_default_programmes' do
 
     start_t = DateTime.new(2014, 9, 1, 12, 0, 0).utc
     end_t = DateTime.new(2014, 9, 1, 13, 0, 0).utc
-    defaultVis = init_default_visualisations
 
-    it 'should return a programme containing default visualisation' do
+    it 'should return programmes, each containing default visualisation' do
       timeslot = Timeslot.create({:start_time => start_t,
                                   :end_time => end_t})
-      prog = get_a_default_programme(timeslot, defaultVis)
-      vis = Visualisation.find(prog.visualisation_id)
-      expect(vis.isDefault).to be true
+      progs = init_default_programmes(timeslot)
+
+      progs.each do |prog|
+        vis = Visualisation.find(prog.visualisation_id)
+        expect(vis.isDefault).to be true
+      end
     end
 
-    it 'should return a programme with lowest priority & no. of screens(s)' do
+    it 'should return programmes with lowest priority & no. of screens(s)' do
       timeslot = Timeslot.create({:start_time => start_t,
                                   :end_time => end_t})
-      prog = get_a_default_programme(timeslot, defaultVis)
-      expect(prog.priority).to eq(Const.MIN_PRIORITY)
-      expect(prog.screens).to eq(Const.MIN_NO_SCREENS)
+      progs = init_default_programmes(timeslot)
+
+      progs.each do |prog|
+        expect(prog.priority).to eq(Const.MIN_PRIORITY)
+        expect(prog.screens).to eq(Const.MIN_NO_SCREENS)
+      end
     end
   end
 
@@ -66,8 +71,10 @@ RSpec.describe Scheduling, :type => :concern do
 
       start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
       end_time = DateTime.new(2014, 9, 1, 13, 0, 0).utc
+      timeslot = Timeslot.create({:start_time => start_time,
+                                  :end_time => end_time})
 
-      clean_old_sessions(start_time, end_time)
+      clean_old_sessions(timeslot)
 
       sessions = PlayoutSession.where(start_time: start_time...end_time)
       expect(sessions.length).to be 0

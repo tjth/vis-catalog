@@ -72,7 +72,7 @@ class TimeslotsController < ApplicationController
   # PATCH/PUT /timeslots/1.json
   def update
     @timeslot = Timeslot.find_by_id(params[:id])
-    clean_old_sessions(@timeslot.start_time, @timeslot.end_time)      
+    clean_old_sessions(@timeslot)
     respond_to do |format|
       if @timeslot.update(timeslot_params)
         generate_schedule(@timeslot)
@@ -107,7 +107,7 @@ class TimeslotsController < ApplicationController
   end
 
   def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
-     return Visualisation.all.sample
+     return Visualisation.where(:isDefault => false).sample
   end
 
   def test
@@ -131,7 +131,7 @@ class TimeslotsController < ApplicationController
     @start_time = timeslot.start_time
     @end_time = timeslot.end_time
     @test = PlayoutSession.where(start_time: start_time...end_time)
-    @count = PlayoutSession.count
+    @count = @test.count
 
   end
 
