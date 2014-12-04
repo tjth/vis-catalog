@@ -299,7 +299,7 @@ module Scheduling
     start_time = timeslot.start_time
     end_time = timeslot.end_time
 
-    playouts = PlayoutSession.where(timeslot_id = timeslot.id)
+    playouts = PlayoutSession.where(timeslot_id: timeslot.id)
 
     vis_playtimes = {}
 

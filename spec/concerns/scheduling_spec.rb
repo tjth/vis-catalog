@@ -24,6 +24,15 @@ RSpec.describe Scheduling, :type => :concern do
      :description => "Lorem ipsum dolor sit amet, consectetur adipiscing"}, 
   ])
 
+  describe '.init_default_visualisation' do
+    it 'should return default visualisations' do
+      defaultVis = init_default_visualisations
+      defaultVis.each do |defaultVis|
+        expect(defaultVis.isDefault).to be true
+      end
+    end
+  end
+
   describe '.get_a_default_programme' do
 
     start_t = DateTime.new(2014, 9, 1, 12, 0, 0).utc
@@ -49,7 +58,7 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.clean_old_sessions' do
     it 'should clean all the existing session within the timeslot' do
-      for i in 0..rand(60)
+      for i in 0..rand(59)
         PlayoutSession.create(
           {:start_time => DateTime.new(2014, 9, 1, 12, i, 0).utc,
            :end_time => DateTime.new(2014, 9, 1, 12, i+1, 0).utc})
@@ -68,6 +77,19 @@ RSpec.describe Scheduling, :type => :concern do
   describe '.generate_schedule' do
     start_t = DateTime.new(2014, 9, 2, 12, 0, 0).utc
     end_t = DateTime.new(2014, 9, 2, 13, 0, 0).utc
+
+    def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
+      return Visualisation.create(
+       {:name => "pink" + rand(10).to_s,
+        :approved => true,
+        :vis_type => :vis,
+        :content_type => :file,
+        :link => "/assets/dummy/pink.png",
+        :description => "Lorem ipsum dolor sit amet, consectetur adipiscing",
+        :screenshot => File.open("app/assets/images/dummy/pink.png"),
+        :min_playtime => min_playtime}
+      )
+    end
 
     context 'schedule playout with time directly proportional to priority' do
       
@@ -101,20 +123,6 @@ RSpec.describe Scheduling, :type => :concern do
             to be_within(Const.MAX_PLAYOUT_TIME_ERROR * expected_playtime).
             of (expected_playtime)
         end
-      end
-
-
-      def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
-        return Visualisation.create(
-         {:name => "pink" + rand(10).to_s, 
-          :approved => true,
-          :vis_type => :vis,
-          :content_type => :file,
-          :link => "/assets/dummy/pink.png",
-          :description => "Lorem ipsum dolor sit amet, consectetur adipiscing",
-          :screenshot => File.open("app/assets/images/dummy/pink.png"),
-          :min_playtime => min_playtime}
-        )
       end
 
       it 'for one programme (overriding case)' do
@@ -263,7 +271,7 @@ RSpec.describe Scheduling, :type => :concern do
           prog_ids = Array.new
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
 
-          for i in 0...rand(10) + 20
+          for i in 0..rand(10) + 21
             prog = Programme.create({:screens => screens, :priority => priority})
             prog.visualisation = getVis
             timeslot.programmes << prog
@@ -280,7 +288,26 @@ RSpec.describe Scheduling, :type => :concern do
     
     context 'should work for 2x2 screen configuration:' do
       it 'no 1x2 vis should be on screens in two seperate rows' do
-        expect(1).to be 1
+        timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
+        
+        exampleProg = Programme.create({:screens => 2, :priority => rand(10) + 1})
+        exampleProg.visualisation = getVis
+        timeslot.programmes << exampleProg
+            
+        for i in 0..3
+          prog = Programme.create({:screens => rand(2) + 1, :priority => rand(10) + 1})
+          prog.visualisation = getVis
+          timeslot.programmes << prog
+        end
+
+        generate_schedule(timeslot, 2, 2)
+        playouts = PlayoutSession.where(timeslot_id: timeslot.id).
+                   where(visualisation_id: exampleProg.visualisation.id)
+
+        playouts.each do |playout|
+          expect(playout.start_screen.div(2)).to be playout.end_screen.div(2)
+
+        end
       end
     end 
   end
