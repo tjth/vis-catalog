@@ -43,8 +43,15 @@ module Scheduling
     end
   end
 
-  def get_a_default_programme(timeslot)
-    vis = Visualisation.where(isDefault:true).sample
+  def init_default_visualisations
+    defaultVis = Visualisation.where(isDefault:true)
+    return defaultVis
+  end
+
+  def get_a_default_programme(timeslot, defaultVis)
+    if !defaultVis.nil?
+      vis = defaultVis.sample
+    end
     prog = Programme.new({:screens => Const.MIN_NO_SCREENS,
                           :priority => Const.MIN_PRIORITY
                          })
@@ -67,6 +74,7 @@ module Scheduling
     end_time = timeslot.end_time.beginning_of_minute()
     progs = timeslot.programmes
 
+    defaultVis = init_default_visualisations
     clean_old_sessions(start_time, end_time)
 
     queue = initQueue(progs, rows, cols)
@@ -124,7 +132,7 @@ module Scheduling
               # Fill empty space with default visualisation
               try_fill = 0
               while (filled_blocks < block_size && try_fill < Const.MAX_TRY_FILL)
-                defaultProg = get_a_default_programme(timeslot)
+                defaultProg = get_a_default_programme(timeslot, defaultVis)
                 try_fill += 1
                 if (!defaultProg.visualisation_id.nil? &&
                     filled_blocks + defaultProg.screens <= block_size)

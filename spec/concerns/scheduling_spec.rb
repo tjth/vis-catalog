@@ -28,11 +28,12 @@ RSpec.describe Scheduling, :type => :concern do
 
     start_t = DateTime.new(2014, 9, 1, 12, 0, 0).utc
     end_t = DateTime.new(2014, 9, 1, 13, 0, 0).utc
+    defaultVis = init_default_visualisations
 
     it 'should return a programme containing default visualisation' do
       timeslot = Timeslot.create({:start_time => start_t,
                                   :end_time => end_t})
-      prog = get_a_default_programme(timeslot)
+      prog = get_a_default_programme(timeslot, defaultVis)
       vis = Visualisation.find(prog.visualisation_id)
       expect(vis.isDefault).to be true
     end
@@ -40,7 +41,7 @@ RSpec.describe Scheduling, :type => :concern do
     it 'should return a programme with lowest priority & no. of screens(s)' do
       timeslot = Timeslot.create({:start_time => start_t,
                                   :end_time => end_t})
-      prog = get_a_default_programme(timeslot)
+      prog = get_a_default_programme(timeslot, defaultVis)
       expect(prog.priority).to eq(Const.MIN_PRIORITY)
       expect(prog.screens).to eq(Const.MIN_NO_SCREENS)
     end
