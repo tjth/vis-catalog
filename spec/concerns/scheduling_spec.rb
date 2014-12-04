@@ -5,64 +5,53 @@ include Const
 
 RSpec.describe Scheduling, :type => :concern do
 
+  # "Seed" DB with 2 visualisations, one being default
+  Visualisation.create([
+    {:name => "Pink", 
+     :approved => true,
+     :vis_type => :vis,
+     :content_type => :file,
+     :link => "/assets/images/dummy/pink.png",
+     :screenshot => File.open("app/assets/images/dummy/pink.png"),
+     :description => "Lorem ipsum dolor sit amet, consectetur adipiscing"}, 
+    {:name => "Power", 
+     :approved => true,
+     :vis_type => :advert,
+     :content_type => :file,
+     :isDefault => true,
+     :link => "/assets/images/dummy/power.png",
+     :screenshot => File.open("app/assets/images/dummy/power.png"),
+     :description => "Lorem ipsum dolor sit amet, consectetur adipiscing"}, 
+  ])
+
   describe '.get_a_default_programme' do
-    Visualisation.create([
-    {:name => "Milan", 
-       :link => "/assets/dummy/milan.png", 
-       :approved => true,
-       :vis_type => :vis,
-       :content_type => :file,
-       :screenshot => "",
-       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
-      {:name => "Green",
-       :approved => true,
-       :vis_type => :vis,
-       :content_type => :file,
-       :link => "/assets/dummy/green.png",
-       :screenshot => "",
-       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."},
-      {:name => "Pink", 
-       :approved => true,
-       :vis_type => :vis,
-       :content_type => :file,
-       :link => "/assets/dummy/pink.png",
-       :screenshot => "",
-       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
-      {:name => "Power", 
-       :link => "/assets/dummy/power.png",
-       :approved => true,
-       :vis_type => :advert,
-       :content_type => :file,
-       :isDefault => true,
-       :screenshot => File.open("app/assets/images/dummy/power.png"),
-       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}, 
-    ])
 
-    timeslot = Timeslot.create({:start_time => DateTime.new(2014, 9, 1, 12, 0, 0).utc,
-                                :end_time => DateTime.new(2014, 9, 1, 13, 0, 0).utc})
-
-    prog = get_a_default_programme(timeslot)
-    vis = Visualisation.find(prog.visualisation_id)
+    start_t = DateTime.new(2014, 9, 1, 12, 0, 0).utc
+    end_t = DateTime.new(2014, 9, 1, 13, 0, 0).utc
 
     it 'should return a programme containing default visualisation' do
+      timeslot = Timeslot.create({:start_time => start_t,
+                                  :end_time => end_t})
+      prog = get_a_default_programme(timeslot)
+      vis = Visualisation.find(prog.visualisation_id)
       expect(vis.isDefault).to be true
     end
 
-    it 'should return a programme with lowest priority' do
+    it 'should return a programme with lowest priority & no. of screens(s)' do
+      timeslot = Timeslot.create({:start_time => start_t,
+                                  :end_time => end_t})
+      prog = get_a_default_programme(timeslot)
       expect(prog.priority).to eq(Const.MIN_PRIORITY)
-    end
-
-    it 'should return a programme with lowest no. of screen(s)' do
       expect(prog.screens).to eq(Const.MIN_NO_SCREENS)
     end
   end
 
   describe '.clean_old_sessions' do
     it 'should clean all the existing session within the timeslot' do
-      for i in 0..2
-      PlayoutSession.create(
-        {:start_time => DateTime.new(2014, 9, 1, 12, i, 0).utc,
-         :end_time => DateTime.new(2014, 9, 1, 12, i+1, 0).utc})
+      for i in 0..rand(60)
+        PlayoutSession.create(
+          {:start_time => DateTime.new(2014, 9, 1, 12, i, 0).utc,
+           :end_time => DateTime.new(2014, 9, 1, 12, i+1, 0).utc})
       end
 
       start_time = DateTime.new(2014, 9, 1, 12, 0, 0).utc
@@ -101,29 +90,28 @@ RSpec.describe Scheduling, :type => :concern do
         return total_priority
       end
 
-      def checkPlaytime(summary, prog_id)
-        target = summary.find{|item| item.programme_id == prog_id}
-        expected_playtime = target.priority/getTotalPriority(summary).to_f *
-                            getTotalPlayoutTime(summary)
+      def checkPlaytime(summary, prog_ids)
+        prog_ids.each do |prog_id|
+          target = summary.find{|item| item.programme_id == prog_id}
+          expected_playtime = target.priority/getTotalPriority(summary).to_f *
+                              getTotalPlayoutTime(summary)
 
-        expect(target.vis_playout_time).
-          to be_within(Const.MAX_PLAYOUT_TIME_ERROR * expected_playtime).
-          of (expected_playtime)
+          expect(target.vis_playout_time).
+            to be_within(Const.MAX_PLAYOUT_TIME_ERROR * expected_playtime).
+            of (expected_playtime)
+        end
       end
 
-      def visNames
-        ['Milan', 'Green', 'Pink', 'Power', 'Test', 'BomWowWow']
-      end
 
       def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
         return Visualisation.create(
-         {:name => "Pink", 
+         {:name => "pink" + rand(10).to_s, 
           :approved => true,
           :vis_type => :vis,
           :content_type => :file,
           :link => "/assets/dummy/pink.png",
           :description => "Lorem ipsum dolor sit amet, consectetur adipiscing",
-          :screenshot => File.open("app/assets/images/dummy/power.png"),
+          :screenshot => File.open("app/assets/images/dummy/pink.png"),
           :min_playtime => min_playtime}
         )
       end
@@ -137,7 +125,7 @@ RSpec.describe Scheduling, :type => :concern do
         generate_schedule(timeslot)
 
         summary = getSummary(timeslot)
-        checkPlaytime(summary, prog.id)
+        checkPlaytime(summary, [prog.id])
       end
 
       context 'for more than one programme under low load:' do
@@ -154,13 +142,10 @@ RSpec.describe Scheduling, :type => :concern do
 
           timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
           timeslot.programmes << [prog1, prog2, prog3]
-          
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
 
         it 'Example 2 (eq priority, differing screen utilisation)' do
@@ -178,9 +163,7 @@ RSpec.describe Scheduling, :type => :concern do
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
 
         it 'Example 3 (eq priority, differing screen utilisation, differing
@@ -199,9 +182,7 @@ RSpec.describe Scheduling, :type => :concern do
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
 
         it 'Example 4 (skewed priority, same screen utilisation)' do
@@ -218,9 +199,7 @@ RSpec.describe Scheduling, :type => :concern do
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
 
         it 'Example 5 (skewed priority, differing screen utilisation)' do
@@ -236,14 +215,11 @@ RSpec.describe Scheduling, :type => :concern do
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
 
         it 'Example 6 (skewed priority, differing screen utilisation,
             reasonably high min_playtime in low priority vis)' do
-          # Expect prog1 to get ~360sec playtime
           prog1 = Programme.create({:screens => (rand(4) + 1), :priority => 1})
           prog1.visualisation = getVis(300)
           prog2 = Programme.create({:screens => (rand(4) + 1), :priority => 1})
@@ -256,9 +232,7 @@ RSpec.describe Scheduling, :type => :concern do
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
 
         it 'Example 7 (differing priority, differing screen utilisation)' do
@@ -277,19 +251,30 @@ RSpec.describe Scheduling, :type => :concern do
           generate_schedule(timeslot)
 
           summary = getSummary(timeslot)
-          checkPlaytime(summary, prog1.id)
-          checkPlaytime(summary, prog2.id)
-          checkPlaytime(summary, prog3.id)
+          checkPlaytime(summary, [prog1.id, prog2.id, prog3.id])
         end
-
-
-
-
       end
 
-      
+      context 'for more than one programme under high load:' do
+        it 'Example 1 (eq (low) priority, same screen utilisation)' do
+          priority = rand(10) + 1
+          screens = rand(2) + 1
+          prog_ids = Array.new
+          timeslot = Timeslot.create({:start_time => start_t, :end_time => end_t})
 
-      
+          for i in 0...rand(10) + 20
+            prog = Programme.create({:screens => screens, :priority => priority})
+            prog.visualisation = getVis
+            timeslot.programmes << prog
+            prog_ids << prog.id
+          end
+          
+          generate_schedule(timeslot)
+          summary = getSummary(timeslot)
+          checkPlaytime(summary, prog_ids)
+        end
+      end
+
     end  
     
     context 'should work for 2x2 screen configuration:' do
