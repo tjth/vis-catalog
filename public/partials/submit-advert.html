@@ -17,7 +17,23 @@
                            placeholder="Author's website/more info (optional)" 
                            ng-model="visualisation.author_info"
                            name="visualisation[author_info]"/>
-                    <input class="content-type file" type="file" name="visualisation[content]" id="content"/>
+                    <div class="wrapper">
+                        <div  class="content-type side-by-side">CONTENT TYPE</div>
+                        <select class="selection side-by-side" 
+                                ng-model="visualisation.content_type" 
+                                id="content_type"
+                                ng-init="visualisation.content_type = 'weblink'">
+                            <option ng-repeat="o in options" ng-selected="{[{o == visualisation.content_type}]}" value="{[{o}]}">{[{o}]}</option>
+                        </select>
+                        <input type="text" 
+                           placeholder="URL" 
+                           name="visualisation[link]"
+                           ng-model="visualisation.link"
+                           class="url side-by-side"
+                           id="url" ng-show="visualisation.content_type == 'weblink'"/>
+
+                        <input class="content-type file side-by-side" type="file" ng-show="visualisation.content_type == 'file'" name="visualisation[content]" id="content"/>
+                    </div>
                     <textarea class="grow" 
                            id="description" 
                            placeholder="Description" 
@@ -37,9 +53,6 @@
         <div id="guidelines" class="col-sm-4">
             <div class="card guideline blue">
                 <div class="title">Content Types</div>
-                <div class="item">
-                    <div class="heading">Web Link</div>
-                </div>
                 <div class="item">
                     <div class="heading">Image (PNG, JPG)</div>
                     <div class="description">Dimensions must be 1920 x 1080</div>
