@@ -11,7 +11,7 @@
   json.content_type @visualisation.content_type
 
   json.author do
-    json.username = @visualisation.user.username
-    json.avatar = @visualisation.user.avatar
+    json.username @visualisation.user.username
+    json.avatar @visualisation.user.avatar
   end
 
