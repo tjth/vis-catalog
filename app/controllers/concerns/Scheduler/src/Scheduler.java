@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 public class Scheduler {
 
@@ -21,23 +23,18 @@ public class Scheduler {
     sessions.clear();
     PriorityQueue<ProgTimer> pq = createQueue(progs);
     int[][] nextFreeTimeslot = new int[rows][cols]; // tracks the next free slot for each screen
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < cols; c++) {
-        nextFreeTimeslot[r][c] = 0;
-      }
-    }
     List<ProgTimer> selectedPTs = new ArrayList<ProgTimer>(); // ProgTimers selected for a certain time
     boolean multi_row = false; // indicates if a multirow programme is found
-    for (int current_time = 0; current_time < mins; current_time++) {
+    for (int curr_time = 0; curr_time < mins; curr_time++) {
       List<Integer> allRows = permutate(rows);
       findSpace: for (int curr_row : allRows) { // pick a random row
         if (!multi_row) {
           for (int curr_col = 0; curr_col < cols; curr_col++) { // curr_col for free slots at current_time
-            if (nextFreeTimeslot[curr_row][curr_col] <= current_time) { // free slot found
+            if (nextFreeTimeslot[curr_row][curr_col] <= curr_time) { // free slot found
               int start_col = curr_col; // start of free slot
               int block_size;
               for (block_size = 1; curr_col + block_size < cols; block_size++) { // curr_col for consecutive free slots at current_time
-                if (nextFreeTimeslot[curr_row][curr_col + block_size] > current_time) { // end of free block
+                if (nextFreeTimeslot[curr_row][curr_col + block_size] > curr_time) { // end of free block
                   break;
                 }
               }
@@ -51,14 +48,16 @@ public class Scheduler {
                   multi_row = true;
                   break;
                 }
-                if (pt.prog.getScreens() > block_size - filled_blocks || selectedPTs.contains(pt)) { // selected programme is too big or has already been selected
+                if (pt.prog.getScreens() > block_size - filled_blocks ||
+                    selectedPTs.contains(pt) || pt.stillPlaying(curr_time)) { // selected programme is too big, has already been selected, or is still playing
                   break;
                 }
                 pq.remove(); // remove selected programme from queue
-                if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
+                if (pt.prog.getDuration() <= 2 * (mins - curr_time)) { // select programme if >= half can be played
                   selectedProgs.add(pt.prog); // schedule programme
                   selectedPTs.add(pt); // shortlist programme
-                  requeue(pt, pq); // requeue programme
+                  int prog_end_time = Math.min(curr_time + pt.prog.getDuration(), mins);
+                  requeue(pt, pq, prog_end_time); // requeue programme
                   filled_blocks += pt.prog.getScreens();
                 } else {
                   // programme cannot be selected to play at a later time anyway, don't bother requeueing
@@ -94,8 +93,8 @@ public class Scheduler {
                 start_col += block_size - filled_blocks; // starting position of 1st selected programme
                 while (!selectedProgs.isEmpty()) {
                   Programme prog = selectedProgs.remove(0);
-                  int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-                  sessions.add(new Session(prog, cols * curr_row + start_col, current_time, prog_end_time));
+                  int prog_end_time = Math.min(curr_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+                  sessions.add(new Session(prog, cols * curr_row + start_col, curr_time, prog_end_time));
                   for (int i = 0; i < prog.getScreens(); i++) {
                     nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
                   }
@@ -106,8 +105,8 @@ public class Scheduler {
                 while (!selectedProgs.isEmpty()) {
                   Programme prog = selectedProgs.remove(0);
                   start_col -= prog.getScreens(); // shift to starting position of current selected programme
-                  int prog_end_time = Math.min(current_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-                  sessions.add(new Session(prog, cols * curr_row + start_col, current_time, prog_end_time));
+                  int prog_end_time = Math.min(curr_time + prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+                  sessions.add(new Session(prog, cols * curr_row + start_col, curr_time, prog_end_time));
                   for (int i = 0; i < prog.getScreens(); i++) {
                     nextFreeTimeslot[curr_row][start_col + i] = prog_end_time; // update next free slot for each screen
                   }
@@ -118,30 +117,31 @@ public class Scheduler {
         }
         if (multi_row) { // multi-row mode, treat screens as 1 very long row
           ProgTimer pt = pq.peek();
+          System.out.println(pt);
           int prog_rows = pt.prog.getScreens() / cols;
           if (curr_row + prog_rows <= rows) { // enough rows for multi-row programme
             for (int r = 0; r < prog_rows; r++) {
               for (int curr_col = 0; curr_col < cols; curr_col++) {
-                if (nextFreeTimeslot[curr_row + r][curr_col] > current_time) { // free slot not found
+                if (nextFreeTimeslot[curr_row + r][curr_col] > curr_time) { // free slot not found
                   continue findSpace;
                 }
               }
             }
             pq.remove();
-            if (pt.prog.getDuration() <= 2 * (mins - current_time)) { // select programme if >= half can be played
+            if (pt.prog.getDuration() <= 2 * (mins - curr_time)) { // select programme if >= half can be played
               selectedPTs.add(pt); // shortlist programme
-              requeue(pt, pq); // requeue programme
-              int prog_end_time = Math.min(current_time + pt.prog.getDuration(), mins); // in case programme exceeds allocated timeslot
-              sessions.add(new Session(pt.prog, cols * curr_row, current_time, prog_end_time));
+              int prog_end_time = Math.min(curr_time + pt.prog.getDuration(), mins); // in case programme exceeds allocated timeslot
+              requeue(pt, pq, prog_end_time); // requeue programme
+              sessions.add(new Session(pt.prog, cols * curr_row, curr_time, prog_end_time));
               for (int r = 0; r < prog_rows; r++) {
                 for (int curr_col = 0; curr_col < cols; curr_col++) {
                   nextFreeTimeslot[curr_row + r][curr_col] = prog_end_time; // update next free slot for each screen
                 }
               }
-              multi_row = false;
             } else {
               // programme cannot be selected to play at a later time anyway, don't bother requeueing
             }
+            multi_row = false;
           }
         }
       }
@@ -174,14 +174,13 @@ public class Scheduler {
     return list;
   }
   
-  private void requeue(ProgTimer pt, PriorityQueue<ProgTimer> pq) {
-    pt.setNextPlay();
+  private void requeue(ProgTimer pt, PriorityQueue<ProgTimer> pq, int endTime) {
+    pt.setNextPlay(endTime);
     pq.add(pt);
   }
   
   @Override
   public String toString() {
-    System.out.println(sessions);
     String[][] visNames = new String[mins][rows * cols];
     boolean[][] strokes = new boolean[mins][rows * cols];
     boolean[][] dashes = new boolean[mins][rows * cols];
@@ -260,19 +259,26 @@ public class Scheduler {
   private class ProgTimer implements Comparable<ProgTimer> {
     Programme prog;
     float whenToPlay;
+    int endTime;
     
     ProgTimer(Programme prog) {
       this.prog = prog;
       whenToPlay = prog.getPeriod();
+      endTime = 0;
     }
 
-    void setNextPlay() {
+    void setNextPlay(int endTime) {
       whenToPlay += prog.getPeriod();
+      this.endTime = endTime;
+    }
+    
+    boolean stillPlaying(int min) {
+      return min < endTime;
     }
     
     @Override
     public String toString() {
-      return prog.toString() + ": " + whenToPlay;
+      return prog.toString() + ", whenToPlay = " + whenToPlay + ", endTime = " + endTime;
     }
     
     @Override
