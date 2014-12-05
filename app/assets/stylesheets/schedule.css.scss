@@ -297,6 +297,18 @@ $top-height:$axis-height;
             font-size:0.8rem;
         }
     }
+    
+    .right {
+        padding:5px;
+        
+        .priority {
+            padding: 0.3em 0.75em;
+            background-color: #e8e8e8;
+            border-radius: 50%;
+            color: #949494;
+            margin-top: 32px;   
+        }
+    }
 }
 
 #edit-timeslot {

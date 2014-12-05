@@ -166,9 +166,9 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
         val = parseInt(val);
 
         if (field == "priority") {
-            params.priority = val;
+            $scope.activeProgramme.priority = params.priority = val;
         } else if (field == "screens") {
-            params.screens = val;
+            $scope.activeProgramme.screens= params.screens = val;
         }
         
         Programme.update(params, 
@@ -177,6 +177,8 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
             
             }
         );
+        
+        
     }
     
     $scope.removeProgramme = function(contentId) {
@@ -310,7 +312,8 @@ app.directive('contentDropTarget', function() {
 app.directive('contentItem', function() {
     return {
         scope: {
-            contentItem: '=data'
+            contentItem: '=data',
+            priority:'=priority'
         },
         link: function(scope, element, attrs) {
             $(element).addClass("content-item").addClass("card");
@@ -329,6 +332,17 @@ app.directive('contentItem', function() {
             $("<div></div>").addClass("author")
                             .html(scope.contentItem.author.username)
                             .appendTo(text);
+            
+            if (scope.priority != undefined) {
+                $("<div></div>").addClass("right").append(
+                    $("<div></div>").addClass("priority")
+                                .html(scope.priority))
+                                .appendTo(element);
+            }
+            
+            scope.$watch("priority", function() {
+                $(element).find(".priority").html(scope.priority);
+            });
             
             $(element).bind("dragstart", function(e) {
                 

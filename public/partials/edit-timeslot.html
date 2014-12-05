@@ -40,10 +40,11 @@
                     <div class="scroll">
                         <div class="content" content-drop-target>
                             <div draggable="true" 
-                             ng-repeat="contentItem in programmes"
-                             content-item data="contentItem.visualisation"
-                             ng-click="setActiveProgramme(contentItem)"
-                             ng-class="{'active': contentItem == activeProgramme}">
+                             ng-repeat="programme in programmes"
+                             content-item data="programme.visualisation"
+                             ng-click="setActiveProgramme(programme)"
+                             ng-class="{'active': programme == activeProgramme}"
+                             priority="programme.priority">
                             </div>   
                             <div ng-if="programmes.length == 0" id="drag-here">
                                 To show content in this timeslot, drag it here
