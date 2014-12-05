@@ -179,14 +179,27 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
         );
     }
     
-    $scope.removeProgramme = function(id) {
+    $scope.removeProgramme = function(contentId) {
       for (var i = 0; i < $scope.programmes.length; i++) {
-          if ($scope.programmes[i].visualisation.id == id) {
-              Programme.remove({id : $scope.programmes[i].id, authentication_key:localStorage.getItem("authentication_key")});
+          if ($scope.programmes[i].visualisation.id == contentId) {
+              var programmeId = $scope.programmes[i].id;
+              
+              Programme.remove({id : programmeId, authentication_key:localStorage.getItem("authentication_key")});
               $scope.programmes.splice(i, 1);
+              
+              if ($scope.activeProgramme != null && $scope.activeProgramme.id == programmeId) {
+                  $scope.activeProgramme = $scope.programmes.length > 0 ? $scope.programmes[0] : null;
+              }
           }
-      } 
+      }
     }
+    
+    $scope.$watch("programmes", function() {
+        // Make sure a programme is always selected in a non-empty list
+        if ($scope.activeProgramme == null && $scope.programmes.length > 0) {
+            $scope.activeProgramme = $scope.programmes[0];
+        }
+    }, true);
     
     $scope.formatContentType = function(content_type) {
 		return formatContentType(content_type);
@@ -204,7 +217,12 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     $scope.showAdverts = true;
     $scope.showVisualisations = true;
 
-    $scope.programmes = Programme.query({timeslot_id:$routeParams.id, authentication_key:localStorage.getItem("authentication_key")});
+    $scope.programmes = Programme.query({timeslot_id:$routeParams.id, authentication_key:localStorage.getItem("authentication_key")},
+        // Success
+        function(programmes) {
+            if (programmes.length > 0) $scope.activeProgramme = programmes[0];
+        }
+    );
     
     
 });
