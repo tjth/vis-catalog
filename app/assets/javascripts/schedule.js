@@ -320,6 +320,7 @@ app.directive('contentItem', function() {
     return {
         scope: {
             contentItem: '=data',
+            draggable: '=draggable',
             priority:'=priority'
         },
         link: function(scope, element, attrs) {
@@ -350,6 +351,8 @@ app.directive('contentItem', function() {
             scope.$watch("priority", function() {
                 $(element).find(".priority").html(scope.priority);
             });
+            
+            if (!scope.draggable) return;
             
             $(element).bind("dragstart", function(e) {
                 
