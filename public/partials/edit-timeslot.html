@@ -17,7 +17,8 @@
                             <div class="data-row">
                                 <div class="label_">Duration Priority</div>
                                 <div class="control priority" slider min=1 max=10 step=1 val={[{activeProgramme.priority}]} field="priority"></div>
-                            </div>
+                            </div>                            
+                            <div class="remove" ng-click="removeProgramme(activeProgramme.id)">Remove from timeslot</div>
                         </div>
                         <div class="user-provided" ng-if="activeProgramme != null">
                             <div class="data-row">

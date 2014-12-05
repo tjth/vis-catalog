@@ -150,8 +150,6 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
             }
         } 
         
-        
-        
         Programme.new({visualisation_id:content.id, timeslot_id:$scope.timeslot.id, 
                        authentication_key : localStorage.getItem("authentication_key")},
             // Success
@@ -181,19 +179,28 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
         
     }
     
-    $scope.removeProgramme = function(contentId) {
+    $scope.removeProgrammeByContentId = function(contentId) {
       for (var i = 0; i < $scope.programmes.length; i++) {
           if ($scope.programmes[i].visualisation.id == contentId) {
               var programmeId = $scope.programmes[i].id;
-              
-              Programme.remove({id : programmeId, authentication_key:localStorage.getItem("authentication_key")});
-              $scope.programmes.splice(i, 1);
-              
-              if ($scope.activeProgramme != null && $scope.activeProgramme.id == programmeId) {
-                  $scope.activeProgramme = $scope.programmes.length > 0 ? $scope.programmes[0] : null;
-              }
+              $scope.removeProgramme($scope.programmes[i].id);
+              return;
           }
       }
+    }    
+    
+    $scope.removeProgramme = function(programmeId) {
+        for (var i = 0; i < $scope.programmes.length; i++) {
+            if ($scope.programmes[i].id == programmeId) {
+                Programme.remove({id : programmeId, authentication_key:localStorage.getItem("authentication_key")});
+                $scope.programmes.splice(i, 1);
+
+                if ($scope.activeProgramme != null && $scope.activeProgramme.id == programmeId) {
+                    $scope.activeProgramme = $scope.programmes.length > 0 ? $scope.programmes[0] : null;
+                }
+                return;
+            }
+        }
     }
     
     $scope.$watch("programmes", function() {
@@ -349,7 +356,7 @@ app.directive('contentItem', function() {
                 e.originalEvent.dataTransfer.setData('text/json', JSON.stringify(scope.contentItem)); 
                 
                 if ($(element).parent().hasClass("content-drop-target")) {
-                    scope.$parent.removeProgramme(scope.contentItem.id)
+                    scope.$parent.removeProgrammeByContentId(scope.contentItem.id)
                 }
             });
             
@@ -400,6 +407,7 @@ app.directive('slider', function() {
 
 app.filter('filterVisualisations', function() {
     return function(content, showVisualisations) {
+        if (content == undefined) return undefined;
         var filtered = []
 
         for (var i = 0; i < content.length; i++) {
@@ -413,6 +421,8 @@ app.filter('filterVisualisations', function() {
 
 app.filter('filterAdverts', function() {
     return function(content, showAdverts) {
+        if (content == undefined) return undefined;
+        
         var filtered = []
 
         for (var i = 0; i < content.length; i++) {
