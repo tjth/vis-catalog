@@ -34,7 +34,7 @@ public class Main {
 //    sc2x4.schedule(Arrays.asList(ps[1][1][2], ps[2][8][4]));
 //    sc2x4.schedule(new ArrayList<Programme>());
     
-    Scheduler sc4x3 = new Scheduler(4, 3, 4);
+    Scheduler sc4x3 = new Scheduler(4, 3, 10);
     sc4x3.schedule(Arrays.asList(ps[3][6][8]));
   }
 
