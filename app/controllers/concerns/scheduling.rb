@@ -35,7 +35,7 @@ module Scheduling
         return nextPlayDiff <=> 0
       end
       
-      endTimeDiff = @endTime - otherTime.endTime
+      endTimeDiff = @endTime - otherTimer.endTime
       if (endTimeDiff != 0) then
         return endTimeDiff <=> 0
       end
