@@ -6,14 +6,14 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-user = User.find_by_username("chl312")
+user = User.find_by_username("jgc11")
 if user != nil
   user.isAdmin = true
   user.save!
 end
 
 if Visualisation.all.empty?
-  user = User.find_by_username("chl312")
+  user = User.find_by_username("jgc11")
   if user != nil
     vis = Visualisation.create([
           {:name => "Logo",
