@@ -132,18 +132,9 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
         return start.format("HH:mm") + " - " +  end.format("HH:mm")
     }
     
-    $scope.formatType = function(type) {
-        if (type == "vis") {
-            return "Visualisation";   
-        }
-        if (type == "advert") {
-            return "Advert"   
-        }
-    }
-    
     $scope.containsContentItem = function(content_id) {
         for (i = 0; i < $scope.programmes.length; i++) {
-            if ($scope.programmes[i].content_id == content_id) {
+            if ($scope.programmes[i].visualisation.id == content_id) {
                 return true;
             }
         }
@@ -151,6 +142,14 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     }
     
     $scope.addProgramme = function(content) {
+        
+        // Don't allow multiple programmes for the same content item
+        for (var i = 0; i < $scope.programmes.length; i++) {
+            if ($scope.programmes[i].visualisation.id == content.id) {
+                return;
+            }
+        } 
+        
         Programme.new({visualisation_id:content.id, timeslot_id:$scope.timeslot.id, 
                        authentication_key : localStorage.getItem("authentication_key")},
             // Success
@@ -161,20 +160,62 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     }
 
     $scope.onFieldChanged = function(field, val) {
-        var params = {id:activeProgramme.id, authentication_key:$rootScope.user.authentication_key};
+        var params = {id:$scope.activeProgramme.id, authentication_key:localStorage.getItem("authentication_key")};
+        val = parseInt(val);
 
         if (field == "priority") {
-            params.priority = val;
+            $scope.activeProgramme.priority = params.priority = val;
         } else if (field == "screens") {
-            params.screens = val;
+            $scope.activeProgramme.screens= params.screens = val;
         }
-
+        
         Programme.update(params, 
             // Success
             function(programme) {
             
             }
         );
+        
+        
+    }
+    
+    $scope.removeProgrammeByContentId = function(contentId) {
+      for (var i = 0; i < $scope.programmes.length; i++) {
+          if ($scope.programmes[i].visualisation.id == contentId) {
+              var programmeId = $scope.programmes[i].id;
+              $scope.removeProgramme($scope.programmes[i].id);
+              return;
+          }
+      }
+    }    
+    
+    $scope.removeProgramme = function(programmeId) {
+        for (var i = 0; i < $scope.programmes.length; i++) {
+            if ($scope.programmes[i].id == programmeId) {
+                Programme.remove({id : programmeId, authentication_key:localStorage.getItem("authentication_key")});
+                $scope.programmes.splice(i, 1);
+
+                if ($scope.activeProgramme != null && $scope.activeProgramme.id == programmeId) {
+                    $scope.activeProgramme = $scope.programmes.length > 0 ? $scope.programmes[0] : null;
+                }
+                return;
+            }
+        }
+    }
+    
+    $scope.$watch("programmes", function() {
+        // Make sure a programme is always selected in a non-empty list
+        if ($scope.activeProgramme == null && $scope.programmes.length > 0) {
+            $scope.activeProgramme = $scope.programmes[0];
+        }
+    }, true);
+    
+    $scope.formatContentType = function(content_type) {
+		return formatContentType(content_type);
+	}
+    
+    $scope.setActiveProgramme = function(contentItem) {
+        $scope.activeProgramme = contentItem;
     }
     
     $scope.programmes = []
@@ -184,12 +225,15 @@ app.controller('editTimeslotController', function($scope, $rootScope, $routePara
     
     $scope.showAdverts = true;
     $scope.showVisualisations = true;
+
+    $scope.programmes = Programme.query({timeslot_id:$routeParams.id, authentication_key:localStorage.getItem("authentication_key")},
+        // Success
+        function(programmes) {
+            if (programmes.length > 0) $scope.activeProgramme = programmes[0];
+        }
+    );
     
-    $scope.$watch("activeProgramme", function() {
-        if ($scope.activeProgramme == null) return;
-        
-        $scope.programmes = Programme.query({timeslot_id:$scope.activeProgramme.id, authentication_key:$rootScope.user.authentication_key});
-    });
+    
 });
 
     
@@ -275,7 +319,9 @@ app.directive('contentDropTarget', function() {
 app.directive('contentItem', function() {
     return {
         scope: {
-            contentItem: '=data'
+            contentItem: '=data',
+            draggable: '=draggable',
+            priority:'=priority'
         },
         link: function(scope, element, attrs) {
             $(element).addClass("content-item").addClass("card");
@@ -292,22 +338,28 @@ app.directive('contentItem', function() {
                             .appendTo(text);
             
             $("<div></div>").addClass("author")
-                            .html(scope.contentItem.author.name)
+                            .html(scope.contentItem.author.username)
                             .appendTo(text);
+            
+            if (scope.priority != undefined) {
+                $("<div></div>").addClass("right").append(
+                    $("<div></div>").addClass("priority")
+                                .html(scope.priority))
+                                .appendTo(element);
+            }
+            
+            scope.$watch("priority", function() {
+                $(element).find(".priority").html(scope.priority);
+            });
+            
+            if (!scope.draggable) return;
             
             $(element).bind("dragstart", function(e) {
                 
                 e.originalEvent.dataTransfer.setData('text/json', JSON.stringify(scope.contentItem)); 
                 
                 if ($(element).parent().hasClass("content-drop-target")) {
-
-                    for (var i = 0; i < scope.$parent.programmes; i++) {
-                        if (scope.$parent.programmes[i].content.id == scope.contentItem.id) {
-                            Programme.remove({id : scope.$parent.programmes[i].id, authentication_key:$rootScope.user.authentication_key});
-                            scope.$parent.programmes.splice(index, 1);
-                        }
-                    }
-
+                    scope.$parent.removeProgrammeByContentId(scope.contentItem.id)
                 }
             });
             
@@ -329,8 +381,12 @@ app.directive('slider', function() {
                 return val.toFixed(0);
             };
             
+            scope.setValueHandle = function(val) {
+                $(element).find(".noUi-handle").html(scope.formatVal(val));
+            }
+            
             $(element).noUiSlider({
-                start: [ parseInt(attrs.start) ],
+                start: [ parseInt(attrs.val) ],
                 step: parseInt(attrs.step),
                 range: {
                     'min':  parseInt(attrs.min),
@@ -341,18 +397,20 @@ app.directive('slider', function() {
                 mode: 'steps',
                 density:1
             }).on('set', function() {
-                $(this).find(".noUi-handle").html(scope.formatVal($(this).val()));
-
-		        scope.$parent.onFieldChanged(scope.field, $(this).val());
+                scope.setValueHandle($(this).val());
+		        scope.$parent.onFieldChanged(attrs.field, $(element).val());
             }).on('slide', function() {
-                $(this).find(".noUi-handle").html(scope.formatVal($(this).val()));
-            }).val(parseInt(attrs.start));
+                $(this).find(".noUi-handle").html(scope.formatVal($(element).val()));
+            });
+            
+            scope.setValueHandle(attrs.val);
         }
     }; 
 }); 
 
-app.filter('visualisations', function() {
+app.filter('filterVisualisations', function() {
     return function(content, showVisualisations) {
+        if (content == undefined) return undefined;
         var filtered = []
 
         for (var i = 0; i < content.length; i++) {
@@ -364,8 +422,10 @@ app.filter('visualisations', function() {
     };
 });
 
-app.filter('adverts', function() {
+app.filter('filterAdverts', function() {
     return function(content, showAdverts) {
+        if (content == undefined) return undefined;
+        
         var filtered = []
 
         for (var i = 0; i < content.length; i++) {

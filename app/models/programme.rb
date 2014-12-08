@@ -3,12 +3,11 @@ class Programme < ActiveRecord::Base
   belongs_to :timeslot
   has_many :playout_sessions
 
-  validates :screens, presence: true
   validates :visualisation_id, presence: true
   validates :timeslot_id, presence: true
 
   attr_default :priority, 5
-
+  attr_default :screens, 1
 
   def duration
     return self.visualisation.min_playtime

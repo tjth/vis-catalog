@@ -44,9 +44,13 @@ app.controller('moderateController', function(Visualisation, $scope, $rootScope,
     }
     
     $scope.formatContentType = function(content_type) {
-		if (content_type == "vis")    return "Visualisation";
-		if (content_type == "advert") return "Advert";
-		return ""
+		return formatContentType(content_type);
 	}
 
 });
+
+function formatContentType(content_type) {
+    if (content_type == "vis")    return "Visualisation";
+    if (content_type == "advert") return "Advert";
+    return ""   
+}

@@ -12,20 +12,21 @@
                         <div class="editable" ng-if="activeProgramme != null">
                             <div class="data-row">
                                 <div class="label_">Number of Screens</div>
-                                <div class="control screens" slider min=1 max=4 step=1 start=1 field="screens"></div>
+                                <div class="control screens" slider min=1 max=4 step=1 val={[{activeProgramme.screens}]} field="screens"></div>
                             </div>                            
                             <div class="data-row">
                                 <div class="label_">Duration Priority</div>
-                                <div class="control priority" slider min=1 max=10 step=1 val=4 field="priority"></div>
-                            </div>
+                                <div class="control priority" slider min=1 max=10 step=1 val={[{activeProgramme.priority}]} field="priority"></div>
+                            </div>                            
+                            <div class="remove" ng-click="removeProgramme(activeProgramme.id)">Remove from timeslot</div>
                         </div>
                         <div class="user-provided" ng-if="activeProgramme != null">
                             <div class="data-row">
-                                <div class="title">{[{formatType(activeProgramme.vis_type)}]}</div>
+                                <div class="title">{[{formatContentType(activeProgramme.visualisation.vis_type)}]}</div>
                             </div>
                             <div class="data-row">
                                 <div class="title">Run Time</div>
-                                <div class="data">{[{activeProgramme.min_playtime / 60}]} mins</div>
+                                <div class="data">{[{activeProgramme.visualisation.min_playtime / 60}]} mins</div>
                             </div>
                             <div class="data-row">
                                 <div class="title">Preferred number of screens</div>
@@ -39,11 +40,12 @@
                     </div>
                     <div class="scroll">
                         <div class="content" content-drop-target>
-                            <div draggable="true" 
-                             ng-repeat="contentItem in programmes"
-                             content-item data="contentItem.content"
-                             ng-click="activeProgramme = contentItem"
-                             ng-class="{'active': contentItem == activeProgramme}">
+                            <div
+                             ng-repeat="programme in programmes"
+                             content-item data="programme.visualisation"
+                             ng-click="setActiveProgramme(programme)"
+                             ng-class="{'active': programme == activeProgramme}"
+                             priority="programme.priority">
                             </div>   
                             <div ng-if="programmes.length == 0" id="drag-here">
                                 To show content in this timeslot, drag it here
@@ -77,7 +79,7 @@
                 <div class="scroll">
                     <div id="content">
                         <div draggable="true" 
-                             ng-repeat="contentItem in content | filter:contentQuery | visualisations:showVisualisations | adverts:showAdverts"
+                             ng-repeat="contentItem in content | filter:contentQuery | filterVisualisations:showVisualisations | filterAdverts:showAdverts"
                              content-item data="contentItem">
                         </div>
                     </div>
