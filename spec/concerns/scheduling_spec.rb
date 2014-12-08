@@ -24,6 +24,19 @@ RSpec.describe Scheduling, :type => :concern do
      :description => "Lorem ipsum dolor sit amet, consectetur adipiscing"}, 
   ])
 
+  def getVis(min_playtime = Const.SECONDS_IN_UNIT_TIME)
+    return Visualisation.create(
+      {:name => "pink" + rand(10).to_s,
+       :approved => true,
+       :vis_type => :vis,
+       :content_type => :file,
+       :link => "/assets/dummy/pink.png",
+       :description => "Lorem ipsum dolor sit amet, consectetur adipiscing",
+       :screenshot => File.open("app/assets/images/dummy/pink.png"),
+       :min_playtime => min_playtime}
+    )
+  end
+
   describe '.init_default_programmes' do
 
     start_t = DateTime.new(2014, 9, 1, 12, 0, 0).utc
@@ -330,19 +343,16 @@ RSpec.describe Scheduling, :type => :concern do
 
   describe '.initQueue' do
     it 'initialise queue with increasing time for next playout' do
-      vis1 = Visualisation.create({:name => "Milan"})
-      vis2 = Visualisation.create({:name => "Green", 
-                                   :min_playtime => 2 * Const.SECONDS_IN_UNIT_TIME})
-      vis3 = Visualisation.create({:name => "Pink"})
-
-      prog1 = Programme.create({:screens => 2, :priority => 1})
-      prog1.visualisation = vis1
+      start_t = DateTime.new(2014, 9, 3, 12, 0, 0).utc
+      
+      prog1 = Programme.create({:screens => 1, :priority => 1})
+      prog1.visualisation = getVis
       prog2 = Programme.create({:screens => 1, :priority => 5})
-      prog2.visualisation = vis2
+      prog2.visualisation = getVis(2 * Const.SECONDS_IN_UNIT_TIME)
       prog3 = Programme.create({:screens => 1, :priority => 4})
-      prog3.visualisation = vis3
+      prog3.visualisation = getVis
 
-      queue = initQueue([prog1, prog2, prog3], 1, 4)
+      queue = initQueue([prog1, prog2, prog3], 1, 4, start_t)
       expect(queue.min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog3
       expect(queue.delete_min.first.prog).to be prog2
