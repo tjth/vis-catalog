@@ -11,21 +11,36 @@ module Scheduling
   end
 
   class ProgTimer
-    attr_accessor :whenToPlay, :prog
+    attr_accessor :prog, :nextPlay, :endTime
 
-    def initialize(prog)
-      @prog = prog;
-      @whenToPlay = prog.period;
+    def initialize(prog, timeslot_start_time)
+      @prog = prog
+      @nextPlay = prog.period
+      @endTime = timeslot_start_time
     end
 
-    def setNextPlay
-      @whenToPlay = @whenToPlay + @prog.period
+    def update(end_time)
+      @nextPlay += @prog.period
+      @endTime = end_time
+    end
+
+    def stillPlaying?(time)
+      return time < @endTime
     end
 
     def <=>(otherTimer)
-      timeDiff = @whenToPlay - otherTimer.whenToPlay
+      nextPlayDiff = @nextPlay - otherTimer.nextPlay
       eps = 0.00001
-      return (timeDiff.abs < eps) ? (rand(2) * 2 - 1) : (timeDiff <=> 0)
+      if (nextPlayDiff.abs > eps) then
+        return nextPlayDiff <=> 0
+      end
+      
+      endTimeDiff = @endTime - otherTime.endTime
+      if (endTimeDiff != 0) then
+        return endTimeDiff <=> 0
+      end
+      
+      return rand(2) * 2 - 1
     end
   end
 
@@ -75,10 +90,10 @@ module Scheduling
     defaultProgs = init_default_programmes(timeslot)
     clean_old_sessions(timeslot)
 
-    queue = initQueue(progs, rows, cols)
+    queue = initQueue(progs, rows, cols, start_time)
     nextFreeTimeslot = Array.new(rows){Array.new(cols, start_time)}
 
-    selectedProgTimes = Array.new
+    selectedProgTimers = Array.new
     multi_row = false
 
     curr_time = start_time
@@ -110,7 +125,8 @@ module Scheduling
 
                 # If programme in head of queue is too big, block the whole queue
                 if (queue.min.first.prog.screens > block_size - filled_blocks ||
-                    selectedProgTimes.include?(queue.min.first)) then
+                    selectedProgTimers.include?(queue.min.first) ||
+                    queue.min.first.stillPlaying?(curr_time)) then
                   break
                 end
 
@@ -119,9 +135,10 @@ module Scheduling
                 head = queue.delete_min.first
                 if (head.prog.duration <= 2 * (end_time - curr_time))
                   selectedProgrammes << head.prog
+                  selectedProgTimers << head
+                  prog_end_time = [(curr_time + head.prog.duration), end_time].min
+                  requeue(head, queue, prog_end_time)
                   filled_blocks += head.prog.screens
-                  requeue([head], queue)
-                  selectedProgTimes << head
                 end
                 # else programme cannot be selected to play at a later time
                 #  - we do not requeue
@@ -192,12 +209,10 @@ module Scheduling
             # Advance to next screen
             curr_col += 1
           end
-
-
         end
         
-        if (multi_row)
-          prog_rows = queue.min.first.prog.screens/cols
+        if (multi_row && !queue.min.first.stillPlaying?(curr_time))
+          prog_rows = queue.min.first.prog.screens / cols
 
           if (curr_row + prog_rows <= rows)
             if (toggleMultiRowMode(prog_rows, cols, curr_row, curr_time,
@@ -206,14 +221,10 @@ module Scheduling
             end
             head = queue.delete_min.first
             if (head.prog.duration <= 2 * (end_time - curr_time))
-              #selectedProgrammes << head.prog
-              selectedProgTimes << head
-              requeue([head], queue)
-              #  -- required?
-              
-
-              prog_end_time = [(curr_time + prog.duration), end_time].min
-              createSession(prog, cols * curr_row, curr_time, prog_end_time)
+              selectedProgTimers << head
+              prog_end_time = [(curr_time + head.prog.duration), end_time].min
+              requeue(head, queue, prog_end_time)
+              createSession(head.prog, cols * curr_row, curr_time, prog_end_time)
               
               (0...prog_rows).each do |r|
                 (0...cols).each do |curr_col|
@@ -221,17 +232,18 @@ module Scheduling
                 end
               end
 
-              multi_row = false;
             end
             # else programme cannot be selected to play at a later time
             #  - we do not requeue
+            
+            multi_row = false;
           end
-
+          
         end
       end
 
       # Clean up selected programmes/ProgTime queues
-      selectedProgTimes.clear   
+      selectedProgTimers.clear   
 
       # Advance to next unit time
       curr_time += Const.SECONDS_IN_UNIT_TIME
@@ -253,16 +265,18 @@ module Scheduling
     return false
   end
 
-  def initQueue(progs, rows, cols)
+  def initQueue(progs, rows, cols, start_time)
     queue = PriorityQueue.new
     progs.each do |prog|
       if (prog.screens <= cols)
-        progTimer = ProgTimer.new(prog)
+        progTimer = ProgTimer.new(prog, start_time)
       elsif (prog.screens <= rows * cols)
         progTimer = ProgTimer.new(
-          getProgWithModifiedScreens(prog, prog.screens - prog.screens.modulo(cols)))
+          getProgWithModifiedScreens(prog, prog.screens - prog.screens.modulo(cols)),
+          start_time)
       else
-        progTimer = getProgWithModifiedScreens(prog, rows * cols)
+        progTimer = ProgTimer.new(getProgWithModifiedScreens(prog, rows * cols),
+          start_time)
       end    
       queue.push progTimer, progTimer
     end
@@ -278,11 +292,9 @@ module Scheduling
     return newProg
   end
 
-  def requeue(progTimers, queue)
-    progTimers.each do |progTimer|
-      progTimer.setNextPlay
-      queue.push progTimer, progTimer
-    end
+  def requeue(progTimer, queue, prog_end_time)
+    progTimer.update(prog_end_time)
+    queue.push progTimer, progTimer
   end
 
   def createSession(prog, start_col, start_time, end_time)
@@ -326,7 +338,7 @@ module Scheduling
       #if !prog.visualisation.isDefault
         summary << SummaryItem.new(prog.id, prog.visualisation_id,
                                    prog.priority, prog.screens,
-                                   prog_playtimes.has_key?(prog.id)?
+                                   prog_playtimes.has_key?(prog.id) ?
                                      prog_playtimes[prog.id] : 0)
       #end
     end
