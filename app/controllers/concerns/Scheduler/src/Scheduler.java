@@ -255,17 +255,17 @@ public class Scheduler {
 
   private class ProgTimer implements Comparable<ProgTimer> {
     Programme prog;
-    float whenToPlay;
+    float nextPlay;
     int endTime;
     
     ProgTimer(Programme prog) {
       this.prog = prog;
-      whenToPlay = prog.getPeriod();
+      nextPlay = prog.getPeriod();
       endTime = 0;
     }
 
     void update(int endTime) {
-      whenToPlay += prog.getPeriod();
+      nextPlay += prog.getPeriod();
       this.endTime = endTime;
     }
     
@@ -275,13 +275,20 @@ public class Scheduler {
     
     @Override
     public String toString() {
-      return prog.toString() + ", whenToPlay = " + whenToPlay + ", endTime = " + endTime;
+      return prog.toString() + ", nextPlay = " + nextPlay + ", endTime = " + endTime;
     }
     
     @Override
     public int compareTo(ProgTimer p) {
-      float timeDiff = whenToPlay - p.whenToPlay;
-      return (int)Math.signum(Math.abs(timeDiff) < 0.00001 ? Math.random() * 2 - 1 : timeDiff);
+      float nextPlayDiff = nextPlay - p.nextPlay;
+      if (Math.abs(nextPlayDiff) > 0.00001) {
+        return (int)nextPlayDiff;
+      }
+      int endTimeDiff = endTime - p.endTime;
+      if (endTimeDiff != 0) {
+        return endTimeDiff;
+      }
+      return (int)Math.signum(Math.random() * 2 - 1);
     }
   }
   
