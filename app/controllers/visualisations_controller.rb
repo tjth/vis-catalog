@@ -3,6 +3,19 @@ class VisualisationsController < ApplicationController
   require 'color-thief'
 
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
+  
+  # PATCH /visualisations/:visid/vote
+  def vote
+    v = Visualisation.find_by_id(params[:visid])
+    if v != nil
+      v.votes = v.votes + 1
+      v.save!
+      render :nothing => true
+      return
+    end
+
+    render :status => :internal_server_error, :text => "No such vis."
+  end
 
   def get_all
     @visualisations = Visualisation.all
