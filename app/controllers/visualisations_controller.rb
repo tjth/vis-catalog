@@ -116,6 +116,10 @@ class VisualisationsController < ApplicationController
       if @onlyVis
         @visualisations = @visualisations.select{ |vis| vis.vis_type = "vis" }
       end
+
+      if params[:popular] != nil
+        @visualisations = @visualisations.sort_by{ |vis| vis["votes"] } 
+      end
       
     else
       #want visualisations of a particular user
