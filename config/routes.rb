@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get 'timeslots/test'
 
+  get '/visualisations/:visid/vote' => 'visualisations#vote'
+
   get '/visualisations/get_all' => 'visualisations#get_all'
 
   root to: 'visitors#index'
