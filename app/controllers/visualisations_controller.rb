@@ -4,13 +4,14 @@ class VisualisationsController < ApplicationController
 
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
   
-  # PATCH /visualisations/:visid/vote
+  # GET /visualisations/:visid/vote
   def vote
     v = Visualisation.find_by_id(params[:visid])
     if v != nil
       v.votes = v.votes + 1
       v.save!
       render :nothing => true
+      ## TODO: redirect to the main visualisatino page and show message
       return
     end
 
@@ -24,6 +25,7 @@ class VisualisationsController < ApplicationController
     end
   end
 
+  # TODO
   # GET /visualisations/:visid/render_vis
   def render_vis
     v = Visualisation.find_by_id(params[:visid])
@@ -51,7 +53,6 @@ class VisualisationsController < ApplicationController
       "start_time <= ? AND end_time >= ? AND start_screen <= ? AND end_screen >= ? ",
       now, now, params[:screennum], params[:screennum]).first
 
-    #TODO: this assumes one is there, else we may need to get default visualisation
     @vis = @session.visualisation
   end
 

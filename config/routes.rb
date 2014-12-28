@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get 'timeslots/test'
 
-  patch '/visualisations/:visid/vote' => 'visualisations#vote'
+  get '/visualisations/:visid/vote' => 'visualisations#vote'
 
   get '/visualisations/get_all' => 'visualisations#get_all'
 
