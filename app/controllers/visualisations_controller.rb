@@ -3,6 +3,20 @@ class VisualisationsController < ApplicationController
   require 'color-thief'
 
   before_action :set_visualisation, only: [:show, :edit, :update, :destroy]
+  
+  # GET /visualisations/:visid/vote
+  def vote
+    v = Visualisation.find_by_id(params[:visid])
+    if v != nil
+      v.votes = v.votes + 1
+      v.save!
+      redirect_to "/visualisations/#{params[:visid]}?voted=true"
+      ## TODO: redirect to the main visualisatino page and show message
+      return
+    end
+
+    render :status => :internal_server_error, :text => "No such vis."
+  end
 
   def get_all
     @visualisations = Visualisation.all
@@ -11,6 +25,7 @@ class VisualisationsController < ApplicationController
     end
   end
 
+  # TODO
   # GET /visualisations/:visid/render_vis
   def render_vis
     v = Visualisation.find_by_id(params[:visid])
@@ -38,7 +53,6 @@ class VisualisationsController < ApplicationController
       "start_time <= ? AND end_time >= ? AND start_screen <= ? AND end_screen >= ? ",
       now, now, params[:screennum], params[:screennum]).first
 
-    #TODO: this assumes one is there, else we may need to get default visualisation
     @vis = @session.visualisation
   end
 
@@ -112,6 +126,10 @@ class VisualisationsController < ApplicationController
       if @onlyVis
         @visualisations = @visualisations.select{ |vis| vis.vis_type = "vis" }
       end
+
+      if params[:popular] != nil
+        @visualisations = @visualisations.sort_by{ |vis| vis["votes"] } 
+      end
       
     else
       #want visualisations of a particular user
@@ -171,9 +189,8 @@ class VisualisationsController < ApplicationController
     p = visualisation_params
     @visualisation = Visualisation.new(p)
 
-    @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
+    #TODO: @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
 
-    #TODO: uncomment this when we have users
     puts current_user.username
     current_user.visualisations << @visualisation
     @visualisation.user = current_user
