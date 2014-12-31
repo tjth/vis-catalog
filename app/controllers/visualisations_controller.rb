@@ -10,7 +10,7 @@ class VisualisationsController < ApplicationController
     if v != nil
       v.votes = v.votes + 1
       v.save!
-      render :nothing => true
+      redirect_to "/visualisations/#{params[:visid]}?voted=true"
       ## TODO: redirect to the main visualisatino page and show message
       return
     end
@@ -179,9 +179,8 @@ class VisualisationsController < ApplicationController
     p = visualisation_params
     @visualisation = Visualisation.new(p)
 
-    @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
+    #TODO: @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
 
-    #TODO: uncomment this when we have users
     puts current_user.username
     current_user.visualisations << @visualisation
     @visualisation.user = current_user
