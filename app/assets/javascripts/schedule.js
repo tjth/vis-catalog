@@ -1,5 +1,5 @@
 app.controller('scheduleController', function($scope, $rootScope, $location, Timeslot) {
-    if ($rootScope.user == null || $rootScope.user == undefined ){//TODO: || ADD BACK!$rootScope.user.isAdmin) {
+    if ($rootScope.user == null || $rootScope.user == undefined || !$rootScope.user.isAdmin) {
         showToast("Please log in as an administrator");
         $location.search("return", "/schedule"); $location.path("/sign-in"); return;
     }

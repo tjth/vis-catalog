@@ -4,13 +4,23 @@
             <div class="view card">
                 <div class="visualisation">
                     <div class="top" style="background-image: url({[{ visualisation.screenshot }]});"></div>
-                    <div class="header" color-thief color="{[{visualisation.bgcolour}]}">{[{ visualisation.name }]}</div>
+                    <div class="header" color-thief color="{[{visualisation.bgcolour}]}">
+                        {[{ visualisation.name }]}
+                        <div class="floating-badge" ng-click="vote()"><div class="icon like"></div></div>
+                    </div>
                     <div class="description">{[{ visualisation.description }]}</div>
                     <div class="bottom">
-                        <div><img class="avatar" align="left" ng-src="{[{visualisation.author.avatar}]}"/></div>
-                        <div class="owner">{[{visualisation.author.username}]}</div>
-                        <div><a class="link" href="{[{visualisation.link}]}">{[{visualisation.link}]}</a></div>
-                        <div style="clear:both"></div>
+                        <div class="owner">
+                            <img class="avatar" align="left" ng-src="{[{visualisation.author.avatar}]}"/>
+                            <div class="name">{[{visualisation.author.username}]}</div>
+                        </div>
+                        <div class="likes">
+                            <img class="icon" src="/assets/likes-grey.png"/>
+                            <div class="number">{[{visualisation.votes}]}</div>
+                        </div>
+                        <div class="link">
+                            <a href="{[{visualisation.link}]}">{[{visualisation.link}]}</a>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -98,7 +98,7 @@
 }
 
 .visualisation {
-    $head-size: 32px;
+    $head-size: 24px;
     height: 100%;
     position: relative;
     display: flex;
@@ -124,11 +124,13 @@
         font-size: 2em;
         font-weight:500;
         height: 2.5em;
-        color:#fff;
         box-shadow: 0px -7px 5px -3px rgba(0,0,0,0.1);
+        position:relative;
+        background-color:rgb(242,242,242);
+        color:#333;
         
-        &.bright-background {
-            color:#333;
+        &.dark-background {
+            color:#fff;
         }
     }
     
@@ -144,27 +146,55 @@
         padding:0rem 2rem 2rem 2rem;
         text-align: left;
         vertical-align: middle;
-        
-            
-        .avatar {
-            vertical-align: top;
-            border-radius:50%;
-            width:$head-size;
-            height:$head-size;
-        }
+        display:flex;
         
         .owner {
-            line-height: $head-size;
-            padding:0 1rem;
             color: #424242;
-            float: left;
+            flex-grow: 1;
+            flex-shrink: 0;
+            flex-basis: 0;
+            
+            .avatar {
+                display:inline-block;
+                vertical-align: top;
+                border-radius:50%;
+                width:$head-size;
+                height:$head-size;
+            }
+            
+            .name {
+                display:inline-block;
+                padding:0 1rem;          
+                line-height: $head-size;
+            }
         }
         
-        .link{
-            line-height: $head-size;
-            padding:0 1rem;
-            float: right;
-            @include link(#00E676);
+            
+        .likes {
+            
+            .icon {
+                display: inline-block;
+                background:image-url('likes-grey.png') no-repeat center;
+                margin-top: calc((16px - #{$head-size}) / 2);
+            }
+            
+            .number {
+                display: inline-block;
+                line-height: $head-size;   
+                padding:0 .5em;
+            }
+        }
+        
+        .link {
+            flex-grow: 1;
+            flex-shrink: 0;
+            flex-basis: 0;
+            text-align: right;
+            
+            a {
+                line-height: $head-size;
+                @include link(#00E676);
+            }
         }
     }
 
@@ -238,6 +268,37 @@
             border: transparent;
             text-transform:uppercase;
             @include link(#039BE5);
+        }
+    }
+}
+
+.floating-badge {
+    @include clickable();
+    
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    bottom: calc(-55px / 2);
+    right: 20px;
+    border-radius: 50%;
+    background-color: #2198f3;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.7);   
+    
+    &:hover {
+        background-color: #44a3eb;
+    }
+    
+    &:active {
+        background-color: #218fe3;
+    }
+    
+    .icon {
+        
+        width:100%;
+        height:100%;
+        
+        &.like {
+            background: image-url('like.png') no-repeat center;   
         }
     }
 }

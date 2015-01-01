@@ -21,7 +21,7 @@ app.directive('colorThief', function() {
     return {
         controller: ['$scope', function($scope){
             $scope.setBackground = function(element, color) {
-                
+
                 if (color == "") color = "rgb(242,242,242)"
                 
                 $(element).css("background-color", color);
@@ -32,8 +32,8 @@ app.directive('colorThief', function() {
                                             .691 * Math.pow(rgb[1], 2) + 
                                             .068 * Math.pow(rgb[2], 2));
 
-                if (brightness > 255/2) {
-                    $(element).addClass("bright-background");
+                if (brightness < 255/2) {
+                    $(element).addClass("dark-background");
                 }   
             };
         }],
