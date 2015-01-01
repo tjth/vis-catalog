@@ -3,7 +3,7 @@
         <div id="details" class="col-sm-6" class="card vis" style="height:100%;">
             <div class="view card">
                 <div class="visualisation">
-                    <div class="top" style="background-image: url({[{ visualisation.screenshot }]});"></div>
+                    <a ng-href="{[{ visualisation.link }]}" class="top" style="background-image: url({[{ visualisation.screenshot }]});"></a>
                     <div class="header" color-thief color="{[{visualisation.bgcolour}]}">
                         {[{ visualisation.name }]}
                         <div class="floating-badge" ng-click="vote()"><div class="icon like"></div></div>
