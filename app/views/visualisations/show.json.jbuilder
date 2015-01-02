@@ -10,6 +10,7 @@
   json.min_playtime @visualisation.min_playtime
   json.content_type @visualisation.content_type
   json.bgcolour @visualisation.bgcolour
+  json.votes @visualisation.votes
 
   json.author do
     json.username @visualisation.user.username
