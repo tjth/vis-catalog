@@ -10,7 +10,7 @@ class VisualisationsController < ApplicationController
     if v != nil
       v.votes = v.votes + 1
       v.save!
-      redirect_to "/visualisations/#{params[:visid]}?voted=true"
+      redirect_to "#/visualisations/#{params[:visid]}?voted=true"
       ## TODO: redirect to the main visualisatino page and show message
       return
     end
