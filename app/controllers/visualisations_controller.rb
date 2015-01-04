@@ -165,9 +165,11 @@ class VisualisationsController < ApplicationController
     if !@visualisation.approved
       if params[:authentication_key] == nil
         render status: :unauthorized
+        puts "No auth token"
       else
         if !current_user.isAdmin
-          render status: :unauthorized
+          render status: :unauthorizedi 
+          puts "Trying to show a non-approved vis without an admin"
         end
       end
     end
@@ -185,11 +187,15 @@ class VisualisationsController < ApplicationController
   # POST /visualisations
   # POST /visualisations.json
   def create
-    puts current_user.username
     p = visualisation_params
     @visualisation = Visualisation.new(p)
+    $visualisation = @visualisation
 
-    #TODO: @visualisation.bgcolour = getBackgroundColor(@visualisation.screenshot.path)
+    Thread.new do
+      $visualisation.bgcolour = getBackgroundColor($visualisation.screenshot.path)
+      $visualisation.save!
+      ActiveRecord::Base.connection.close
+    end
 
     puts current_user.username
     current_user.visualisations << @visualisation
@@ -198,7 +204,6 @@ class VisualisationsController < ApplicationController
 
     respond_to do |format|
       if @visualisation.save
-        format.html { redirect_to @visualisation, notice: 'Visualisation was successfully created.' }
         format.json { render :show, status: :created, location: @visualisation }
       else
         format.html { render :new }
@@ -239,6 +244,6 @@ class VisualisationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def visualisation_params
-      params.require(:visualisation).permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot, :min_playtime)
+      params.require(:visualisation).permit(:name, :link, :description, :notes, :author_info, :content_type, :file, :approved, :vis_type, :content, :screenshot, :min_playtime, :bgcolour)
     end
 end
