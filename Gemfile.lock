@@ -173,6 +173,7 @@ PLATFORMS
 DEPENDENCIES
   PriorityQueue (~> 0.1.2)
   attribute-defaults
+  bcrypt-ruby
   better_errors
   binding_of_caller
   bootstrap-sass
