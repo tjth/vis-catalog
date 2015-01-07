@@ -1,23 +1,6 @@
 class UsersController < ApplicationController
 
   skip_before_filter :after_token_authentication, :only => :register
-
-  #put /users/register
-  def register
-    user = User.new(user_params)
-    user.encrypted_password = ::BCrypt::Password.create("#{params[:user][:password]}#{user.class.pepper}", cost: user.class.stretches).to_s
-    user.isApproved = false
-    puts user.encrypted_password
-
-    if user.save
-      render :json=> user.as_json(:auth_token=>user.authentication_token, :username=>user.username), :status=>201
-      return
-    else
-      warden.custom_failure!
-      render :json=> user.errors, :status=>422
-    end
-  end
-
   
   #PATCH /users/:userid/approve
   def approve

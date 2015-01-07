@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   mount_uploader :avatar, AvatarUploader
 
   validates :username, presence: true
-  #validates :isApproved, presence: true
+  validates_uniqueness_of :username
 
   before_save :ensure_authentication_token
   attr_default :isAdmin, false

@@ -4,9 +4,6 @@ Rails.application.routes.draw do #todo: delete this:)
 
   delete '/users/:userid/reject' => 'users#reject'
 
-  put '/users/register' => 'users#register'
-
-
   get 'timeslots/test'
 
   get '/visualisations/:visid/vote' => 'visualisations#vote'
@@ -45,6 +42,7 @@ Rails.application.routes.draw do #todo: delete this:)
   resources :programmes
   resources :visualisations
   resources :timeslots
+  resources :requests
 
 
   get '/schedulingtest/' => 'timeslots#test'
