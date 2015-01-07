@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141218164719) do
+ActiveRecord::Schema.define(version: 20150107155239) do
 
   create_table "comments", force: true do |t|
     t.text     "content"
@@ -47,6 +47,23 @@ ActiveRecord::Schema.define(version: 20141218164719) do
 
   add_index "programmes", ["timeslot_id"], name: "index_programmes_on_timeslot_id"
   add_index "programmes", ["visualisation_id"], name: "index_programmes_on_visualisation_id"
+
+  create_table "testusers", force: true do |t|
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "username"
+  end
+
+  add_index "testusers", ["reset_password_token"], name: "index_testusers_on_reset_password_token", unique: true
 
   create_table "timeslots", force: true do |t|
     t.datetime "start_time"

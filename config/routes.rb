@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  devise_for :testusers #todo: delete this:)
+
+  patch '/users/:userid/approve' => 'users#approve'
+
+  delete '/users/:userid/reject' => 'users#reject'
+
+  put '/users/register' => 'users#register'
+
+
   get 'timeslots/test'
 
   get '/visualisations/:visid/vote' => 'visualisations#vote'
