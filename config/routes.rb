@@ -1,5 +1,4 @@
-Rails.application.routes.draw do
-  devise_for :testusers #todo: delete this:)
+Rails.application.routes.draw do #todo: delete this:)
 
   patch '/users/:userid/approve' => 'users#approve'
 
