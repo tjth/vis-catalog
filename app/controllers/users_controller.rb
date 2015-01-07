@@ -15,6 +15,7 @@ class UsersController < ApplicationController
       return
     end
     
+    #TODO: need to destroy any requests here
 
     u = User.find_by_id(params[:userid])
     u.isApproved = true
@@ -38,8 +39,8 @@ class UsersController < ApplicationController
     end
 
     u = User.find_by_id(params[:userid])
-    u.destroy!
-    render :status => :ok
+    u.destroy! if u != nil
+    render :nothing => true, :status => :ok
   end
 
 
