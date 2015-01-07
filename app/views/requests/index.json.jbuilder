@@ -1,4 +1,15 @@
 json.array!(@requests) do |request|
-  json.extract! request, :id, :name, :company, :email, :notes, :desired_username
-  json.url request_url(request, format: :json)
+  	json.id request.id
+	json.name request.name 
+	json.company request.company
+	json.email request.email
+	json.notes request.notes 
+	json.desired_username request.desired_username
+	json.created_at request.created_at 
+
+	json.user do
+		json.id request.user.id
+		json.avatar request.user.avatar.url
+		json.username request.user.username
+	end
 end
