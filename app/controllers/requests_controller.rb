@@ -29,7 +29,7 @@ class RequestsController < ApplicationController
 
     u = register_external(params[:username], params[:password])
     if u == nil
-      render status: 500, :json => {:message => "Problem creating the user"}
+      render status: 500, :json => {:message => "Problem creating the user or user already exists"}
       return
     end
 

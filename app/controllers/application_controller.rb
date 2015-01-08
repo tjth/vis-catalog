@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   def register_external(username, password)
     u = User.find_by_username(username)
     if u != nil
-      return u
+      return nil
     end
 
     user = User.new({:username => username, :password => password})
