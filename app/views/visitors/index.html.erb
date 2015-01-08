@@ -65,7 +65,7 @@
             }).
             when('/visualisations/:id', {
                 templateUrl: 'partials/visualisation.html',
-                controller: 'mainController',
+                controller: 'visualisationController',
             }).
             when('/submit/advert', {
                 templateUrl: 'partials/submit-advert.html',
@@ -90,6 +90,10 @@
             when('/sign-in', {
                 templateUrl: 'partials/sign-in.html',
                 controller: 'signInController',
+            }).
+            when('/request-access', {
+                templateUrl: 'partials/request-access.html',
+                controller: 'requestAccessController',
             }).
             otherwise({
                 redirectTo: '/'
@@ -140,6 +144,15 @@
             });
     }]);
 
+    app.factory('Comments', ['$resource',
+        function($resource){
+            return $resource('comments/:id.json', {id : "@id"}, {
+                query: { method:'GET', url:'comments.json', isArray:true },
+                approve: { method:'PATCH', url:'comments/:id/approve.json'},
+                reject: { method:'PATCH', url:'comments/:id/reject.json'}
+            });
+    }]);
+
     app.factory('Timeslot', ['$resource',
         function($resource){
             return $resource('timeslots', {}, {
@@ -150,11 +163,15 @@
     app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams, $location) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
     
-        $scope.visItems = Visualisation.query($location.search())
+        $scope.visItems = []
         
         $scope.goToVisualisation = function(item) {
             $location.path("/visualisations/"+ item.id);
         }
+        
+        setTimeout(function() { 
+            $scope.visItems = Visualisation.query($location.search())
+        }, 500);
     });
     
     function showToast(msg, duration) {
