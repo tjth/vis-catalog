@@ -1,24 +1,69 @@
-<section class="container-fluid">
-    <div class="row">
-        <div id="details" class="col-sm-6">
-        
-            
-        
-        </div>
-        <div id="comments" class="col-sm-6">
-        
-            <div id="new-comment">
-                
-            </div>
-        
-            <div class="comment" ng-repeat="comment in comments">
-                <div class="top"></div>
-                <div class="bottom">
-                    <div class="date">Posted on {[{comment.date}]}</div>
-                    <div class="rating">{[{comment.rating}]} stars</div>
+<section class="container-fluid" ng-controller="visualisationController" style="padding-top:10px"> 
+    <div class="row" ng-if="visualisation != null">
+        <div id="details" class="col-sm-6" class="card vis" style="height:100%; padding-top:10px;">
+            <div class="view card animate grow">
+                <div class="visualisation">
+                    <a ng-href="{[{ visualisation.link }]}" class="top" style="background-image: url({[{ visualisation.screenshot }]});"></a>
+                    <div class="header" color-thief color="{[{visualisation.bgcolour}]}">
+                        {[{ visualisation.name }]}
+                        <div class="floating-badge" ng-click="vote()"><div class="icon like"></div></div>
+                    </div>
+                    <div class="description">{[{ visualisation.description }]}</div>
+                    <div class="bottom">
+                        <div class="owner">
+                            <img class="avatar" align="left" ng-src="{[{visualisation.author.avatar}]}"/>
+                            <div class="name">{[{visualisation.author.username}]}</div>
+                        </div>
+                        <div class="likes">
+                            <img class="icon" src="/assets/likes-grey.png"/>
+                            <div class="number">{[{visualisation.votes}]}</div>
+                        </div>
+                        <div class="link">
+                            <a href="{[{visualisation.link}]}">{[{visualisation.link}]}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
+        </div>
+        <div class="col-sm-6" id="comment-col">
+            <div class="card comment-item animate grow" animate-delay=1 ng-if="user != null">
+                <form id="submit-comment" ng-submit="submitComment(comment_content)" name="submit-comment-form">
+
+                        <div class="top">
+                            <div class="left">
+                                <img align="left" id="avatar" class="icon avatar" ng-src="{[{currentAvatar}]}"/>
+                            </div>
+                            <div class="content">
+                                <textarea
+                                   placeholder="Comment"
+                                   ng-model="comment_content"
+                                   id="comment_content"
+                                   rows="4" wrap="hard"/>
+                            </div> 
+                        </div>
+                        <div class="bottom submit" style="text-align: right;">
+                            <input type="submit" id="submit" value="{[{postLabel}]}" class="post"/>
+                        </div>
+                                           
+                </form>
+            </div>
+            <div id="comment-item" class="card animate grow" animate-delay=1 ng-if="user == null">
+                <div class="comment-item">
+                    <div class="nouser">Please login to comment</div>
+                </div>
+            </div>          
+            <div class="comment-item card animate grow" ng-repeat="c in comments" animate-delay="{[{$index+2}]}" animate-after-render >
+                <div class="top">
+                    <div class="left">
+                        <img align="left" class="icon" id="avatar" ng-src="{[{c.user.avatar}]}"/>
+                    </div>
+                    <div class="content">{[{c.content}]}</div>
+                </div>
+                <div class="bottom" class="posted">
+                    Posted on {[{c.created_at}]} by {[{c.user.username}]}
+                </div>
+            </div>
         </div>
     </div>
+</div>
 </section>

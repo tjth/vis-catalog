@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+ActiveRecord::Schema.define(version: 20141218164719) do
+=======
 ActiveRecord::Schema.define(version: 20141113151554) do
+>>>>>>> b1a54b56e3214742ed608a959358a3593fbc278a
+=======
+
+ActiveRecord::Schema.define(version: 20141218164719) do
+>>>>>>> f8862a27d709a89ac6637dd226e98dda91fe659a
 
   create_table "comments", force: true do |t|
     t.text     "content"
@@ -29,8 +38,11 @@ ActiveRecord::Schema.define(version: 20141113151554) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "visualisation_id"
+    t.integer  "timeslot_id"
+    t.integer  "programme_id"
   end
 
+  add_index "playout_sessions", ["programme_id"], name: "index_playout_sessions_on_programme_id"
   add_index "playout_sessions", ["visualisation_id"], name: "index_playout_sessions_on_visualisation_id"
 
   create_table "programmes", force: true do |t|
@@ -50,7 +62,13 @@ ActiveRecord::Schema.define(version: 20141113151554) do
     t.datetime "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
     t.date     "date"
+>>>>>>> b1a54b56e3214742ed608a959358a3593fbc278a
+=======
+>>>>>>> f8862a27d709a89ac6637dd226e98dda91fe659a
   end
 
   create_table "users", force: true do |t|
@@ -69,8 +87,11 @@ ActiveRecord::Schema.define(version: 20141113151554) do
     t.string   "username"
     t.boolean  "isAdmin"
     t.boolean  "isApproved"
+    t.string   "authentication_token"
+    t.string   "avatar"
   end
 
+  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
   create_table "visualisations", force: true do |t|
@@ -86,6 +107,11 @@ ActiveRecord::Schema.define(version: 20141113151554) do
     t.boolean  "approved"
     t.string   "content"
     t.boolean  "isDefault"
+    t.integer  "vis_type"
+    t.string   "screenshot"
+    t.integer  "min_playtime"
+    t.string   "bgcolour"
+    t.integer  "votes"
   end
 
 end
