@@ -15,7 +15,8 @@ class UsersController < ApplicationController
       return
     end
     
-    #TODO: need to destroy any requests here
+    r = Request.find_by_user_id(params[:userid])
+    r.destroy!
 
     u = User.find_by_id(params[:userid])
     u.isApproved = true
@@ -37,6 +38,9 @@ class UsersController < ApplicationController
       render :status => :unauthorized, :json=>{:message=>"Rejecting user is not an admin."}
       return
     end
+
+    r = Request.find_by_user_id(params[:userid])
+    r.destroy!
 
     u = User.find_by_id(params[:userid])
     u.destroy! if u != nil
