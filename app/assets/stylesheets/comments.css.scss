@@ -1,0 +1,97 @@
+// Place all the styles related to the Comments controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "variables";
+@import "mixins";
+
+#comment-col {
+    height:100%;
+    $head-size: 35px;
+    overflow-y: auto;
+    padding-top:10px;
+
+
+    @media (max-width: $mobile-width) {
+        overflow-y: visible;
+        .comment-item:first-child {
+            margin-top:20px;   
+        }
+    }
+
+    #avatar {
+        vertical-align: top;
+        border-radius:50%;
+        width:$head-size;
+        height:$head-size;    
+    }
+    
+    
+    #submit-comment {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .comment-item {
+        font-weight:500;
+        font-size:0.9rem;
+        margin-bottom: 20px;
+        
+
+        .top {
+            padding:1rem;
+            display: flex;
+            
+            .left {
+                flex-grow: 0;
+                flex-shrink: 0;
+            }
+            
+            .content {
+                flex-grow:1;
+                margin-left:1em;
+                color:#616161;
+                overflow-wrap: break-word;
+                
+                textarea {
+                    width:100%
+                }
+            }
+            
+        }
+        
+    
+        .bottom {
+            padding: 0.8rem 1rem;
+            background:#e0e0e0;
+            text-align: left;
+            vertical-align: middle;
+            color: #9E9E9E;
+            border-bottom-left-radius:3px;
+            border-bottom-right-radius:3px;
+            font-size:0.8rem;
+            
+            &.submit {
+                background:transparent;
+                padding: 0 1em 1em 1em;
+                                
+                .post {
+                    padding:0 1em .5em 1em;
+                    text-align: right;
+                    background: transparent;
+                    border: transparent;
+                    text-transform:uppercase;
+                    @include link(#039BE5);
+                    font-size:0.9rem;
+                }
+                
+            }
+            
+        }
+        
+        .nouser {
+            padding:2em;
+            text-align: center;
+            color:#9e9e9e
+        }
+    }        
+}

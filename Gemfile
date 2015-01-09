@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.1.4'
 gem 'rails', '4.1.6'
+gem 'bcrypt-ruby'
 gem 'sqlite3'
 gem 'sass-rails', '~> 4.0.3'
 gem 'uglifier', '>= 1.3.0'
@@ -19,7 +20,7 @@ group :development do
   gem 'quiet_assets'
   gem 'rails_layout'
 end
-gem 'devise-kerberos-authenticatable', :git => 'https://gitlab.doc.ic.ac.uk/tjt12/devise-kerberos-authenticatable.git'
+gem 'devise-kerberos-authenticatable', :github => 'tjth/devise-kerberos-authenticatable'
 gem 'rspec-rails', :group => [:development, :test]
 gem 'carrierwave'
 gem 'attribute-defaults'

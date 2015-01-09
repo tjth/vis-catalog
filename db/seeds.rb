@@ -17,7 +17,18 @@ if user != nil
   user.isAdmin = true
   user.save!
 end
+
+user = User.find_by_username("ath12")
+if user != nil
+  user.isAdmin = true
+  user.save!
+end
  
+user = User.find_by_username("ekh12")
+if user != nil
+  user.isAdmin = true
+  user.save!
+end
 
 if Visualisation.all.empty?
   user = User.find_by_username("chl312")

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141218164719) do
+ActiveRecord::Schema.define(version: 20150107230125) do
 
   create_table "comments", force: true do |t|
     t.text     "content"
@@ -47,6 +47,17 @@ ActiveRecord::Schema.define(version: 20141218164719) do
 
   add_index "programmes", ["timeslot_id"], name: "index_programmes_on_timeslot_id"
   add_index "programmes", ["visualisation_id"], name: "index_programmes_on_visualisation_id"
+
+  create_table "requests", force: true do |t|
+    t.string   "name"
+    t.string   "company"
+    t.string   "email"
+    t.text     "notes"
+    t.string   "desired_username"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
 
   create_table "timeslots", force: true do |t|
     t.datetime "start_time"

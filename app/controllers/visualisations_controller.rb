@@ -11,7 +11,6 @@ class VisualisationsController < ApplicationController
       v.votes = v.votes + 1
       v.save!
       redirect_to "#/visualisations/#{params[:visid]}?voted=true"
-      ## TODO: redirect to the main visualisatino page and show message
       return
     end
 
@@ -189,27 +188,42 @@ class VisualisationsController < ApplicationController
   def create
     p = visualisation_params
     @visualisation = Visualisation.new(p)
-    $visualisation = @visualisation
 
-    Thread.new do
-      $visualisation.bgcolour = getBackgroundColor($visualisation.screenshot.path)
-      $visualisation.save!
-      ActiveRecord::Base.connection.close
-    end
-
-    puts current_user.username
     current_user.visualisations << @visualisation
     @visualisation.user = current_user
 
+    saved = @visualisation.save
+
+    if saved then
+        # Handle background colour extraction in a separate thread
+        $sc_path = @visualisation.screenshot.path
+        $id = @visualisation.id
+    
+        Thread.new do
+        
+          puts "START(#{$id}): extracting bgcolour from #{$sc_path}"
+        
+          bgcolour = getBackgroundColor($sc_path)
+          
+          puts "START(#{$id}): extracting bgcolour from #{$sc_path}"
+          
+          v = Visualisation.find_by_id($id)
+          v.bgcolour = bgcolour
+          v.save!
+          ActiveRecord::Base.connection.close
+        end
+    end
 
     respond_to do |format|
-      if @visualisation.save
+      if saved
         format.json { render :show, status: :created, location: @visualisation }
       else
         format.html { render :new }
         format.json { render json: @visualisation.errors, status: :unprocessable_entity }
       end
     end
+
+
   end
 
   # PATCH/PUT /visualisations/1

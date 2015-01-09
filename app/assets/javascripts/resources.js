@@ -12,7 +12,7 @@ app.factory('User', ['$resource',
         return $resource('users/:id.json', {id : "@id"}, {
             query: { method:'GET', url:'users.json', isArray:true },
             approve: { method:'PATCH', url:'users/:id/approve.json'},
-            reject: { method:'PATCH', url:'users/:id/reject.json'},
+            reject: { method:'DELETE', url:'users/:id/reject.json'},
             getCurrent : { method:'GET', url:'users/info.json'},
         });
 }]);
@@ -24,6 +24,21 @@ app.factory('Visualisation', ['$resource',
             approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
             reject: { method:'DELETE', url:'visualisations/:id/reject.json'},
             vote:   { method:'GET', url:'visualisations/:id/vote.json' },
+        });
+}]);
+
+app.factory('Request', ['$resource',
+    function($resource){
+        return $resource('requests/:id.json', {id : "@id"}, {
+            query: { method:'GET', url:'requests.json', isArray:true }
+        });
+}]);
+
+app.factory('Comment', ['$resource',
+    function($resource){
+        return $resource('comments/:visid.json', {id : "@id"}, {
+            new:    { method: 'POST', url: 'comments.json', responseType: 'json'},
+            query:  { method:'GET', url:'comments.json', isArray:true }
         });
 }]);
 
