@@ -31,7 +31,6 @@ class VisualisationsController < ApplicationController
     if v == nil
       render :status => :internal_server_error, :text => "No such vis."
       return
-      #TODO: could show default vis here
     end
 
     if v.content_type == "weblink"
@@ -39,6 +38,13 @@ class VisualisationsController < ApplicationController
       return
     end
 
+    if v.content.file.extension.downcase == "zip"
+      #TODO - static web content
+      return
+    end
+
+
+    send_file v.content.path, :disposition => "inline"
     #else we have a visualisation
     #TODO: render a html file that displays the vis
 

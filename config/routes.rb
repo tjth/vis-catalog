@@ -43,6 +43,7 @@ Rails.application.routes.draw do #todo: delete this:)
   resources :visualisations
   resources :timeslots
   resources :requests
+  resources :comments
 
 
   get '/schedulingtest/' => 'timeslots#test'
