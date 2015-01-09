@@ -45,8 +45,7 @@ class VisualisationsController < ApplicationController
 
 
     send_file v.content.path, :disposition => "inline"
-    #else we have a visualisation
-    #TODO: render a html file that displays the vis
+    #TODO does not work for videos
 
   end
 
