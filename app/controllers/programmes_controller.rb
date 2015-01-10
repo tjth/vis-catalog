@@ -26,6 +26,16 @@ class ProgrammesController < ApplicationController
   # POST /programmes
   # POST /programmes.json
   def create
+    if params[:authentication_key] == nil
+      render :status => :unauthorized, :text => "Supply authentication token."
+      return
+    end
+
+    if !current_user.isAdmin
+      render :status => :unauthorized, :text => "You need to be an admin to schedule!"
+      return
+    end
+
     pars = programme_params
     @programme = Programme.new(pars)
 

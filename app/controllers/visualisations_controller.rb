@@ -25,11 +25,19 @@ class VisualisationsController < ApplicationController
       return
     end
 
+    #can only display unapproved vis if admin is trying to do it
     if !v.approved
       if params[:authentication_key] == nil
-
+        render :status => :unauthorized, :text => "Supply admin authentication token."
+        return
+      else
+        if !current_user.isAdmin
+          render :status => :unauthorized, :text => "Not an admin token"
+          return
+        end
       end
     end
+
 
     if v.content_type == "weblink"
       redirect_to v.link
@@ -60,6 +68,19 @@ class VisualisationsController < ApplicationController
     if v == nil
       render :status => :internal_server_error, :text => "No such vis."
       return
+    end
+
+    #can only display unapproved vis if admin is trying to do it
+    if !v.approved
+      if params[:authentication_key] == nil
+        render :status => :unauthorized, :text => "Supply admin authentication token."
+        return
+      else
+        if !current_user.isAdmin
+          render :status => :unauthorized, :text => "Not an admin token"
+          return
+        end
+      end
     end
 
     if v.content.file.extension.downcase == "zip"
@@ -160,12 +181,12 @@ class VisualisationsController < ApplicationController
 
     if !@visualisation.approved
       if params[:authentication_key] == nil
-        render status: :unauthorized
-        puts "No auth token"
+        render :status => :unauthorized, :text => "Supply admin authentication token."
+        return
       else
         if !current_user.isAdmin
-          render status: :unauthorized
-          puts "Trying to show a non-approved vis without an admin"
+          render :status => :unauthorized, :text => "Not an admin token"
+          return
         end
       end
     end

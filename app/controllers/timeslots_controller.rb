@@ -24,6 +24,16 @@ class TimeslotsController < ApplicationController
 
   # GET /timeslots
   def index
+    if params[:authentication_key] == nil
+      render :status => :unauthorized, :text => "Supply authentication token."
+      return
+    end
+
+    if !current_user.isAdmin
+      render :status => :unauthorized, :text => "You need to be an admin to schedule!"
+      return
+    end
+
     if params[:weekStarting] != nil
       @timeslots = get_weeks_timeslots(params[:weekStarting])
       return
@@ -40,6 +50,16 @@ class TimeslotsController < ApplicationController
 	# GET /timeslots/1
   # GET /timeslots/1.json
   def show
+    if params[:authentication_key] == nil
+      render :status => :unauthorized, :text => "Supply authentication token."
+      return
+    end
+
+    if !current_user.isAdmin
+      render :status => :unauthorized, :text => "You need to be an admin to see timeslots!"
+      return
+    end
+
     @timeslot = Timeslot.find_by_id(params[:id])
   end
 
@@ -55,6 +75,16 @@ class TimeslotsController < ApplicationController
   # POST /timeslots
   # POST /timeslots.json
   def create
+    if params[:authentication_key] == nil
+      render :status => :unauthorized, :text => "Supply authentication token."
+      return
+    end
+
+    if !current_user.isAdmin
+      render :status => :unauthorized, :text => "You need to be an admin to schedule!"
+      return
+    end
+
     pars = timeslot_params
     @timeslot = Timeslot.new(pars)
 
@@ -68,9 +98,20 @@ class TimeslotsController < ApplicationController
     end
   end
 
+
   # PATCH/PUT /timeslots/1
   # PATCH/PUT /timeslots/1.json
   def update
+    if params[:authentication_key] == nil
+      render :status => :unauthorized, :text => "Supply authentication token."
+      return
+    end
+
+    if !current_user.isAdmin
+      render :status => :unauthorized, :text => "You need to be an admin to schedule!"
+      return
+    end
+
     @timeslot = Timeslot.find_by_id(params[:id])
     clean_old_sessions(@timeslot)
     respond_to do |format|
