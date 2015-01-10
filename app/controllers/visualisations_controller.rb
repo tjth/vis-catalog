@@ -17,19 +17,18 @@ class VisualisationsController < ApplicationController
     render :status => :internal_server_error, :text => "No such vis."
   end
 
-  def get_all
-    @visualisations = Visualisation.all
-    respond_to do |format|
-      format.json { render :index }
-    end
-  end
-
-  
+  # GET /visualisations/:visid/display
   def display
     v = Visualisation.find_by_id(params[:visid])
     if v == nil
       render :status => 500, :text => "No such vis"
       return
+    end
+
+    if !v.approved
+      if params[:authentication_key] == nil
+
+      end
     end
 
     if v.content_type == "weblink"
@@ -38,14 +37,24 @@ class VisualisationsController < ApplicationController
     end
 
     @id = params[:visid]
-    #TODO set @type. can use v.content.file.extension.downcase
-    #check content uploader for whitelisted file extensions
-
-    render "display" #will render display.html.erb in visualisation views dir
+    
+    @type = nil
+    
+    file_ext = v.content.file.extension.downcase
+    if ['jpg', 'jpeg', 'png'].include? file_ext
+        @type = "image"
+    elsif ['mp4', 'avi', 'mov', 'wmv', 'webm'].include? file_ext
+        @type = "video"
+    end
+    
+    respond_to do |format|
+      format.html {render :layout => 'blank'}
+    end
+    
+    #render "display" #will render display.html.erb in visualisation views dir
   end
 
-  # TODO
-  # GET /visualisations/:visid/render_vis
+  # GET /visualisations/:visid/display_internal
   def display_internal
     v = Visualisation.find_by_id(params[:visid])
     if v == nil
@@ -60,8 +69,6 @@ class VisualisationsController < ApplicationController
 
 
     send_file v.content.path, :disposition => "inline"
-    #TODO does not work for videos
-
   end
 
 
@@ -106,74 +113,44 @@ class VisualisationsController < ApplicationController
   # GET /visualisations
   # GET /visualisations.json
   def index
-
-    @expandAuthor = params[:expandAuthor]
-    @visualisations = Visualisation.all
-    if params[:needsModeration] != nil
-      if current_user == nil
+  
+    # Require admin status to see adverts or to see unapproved
+    if (params[:needsModeration] or (not params[:onlyVis]))
+      if current_user == nil or !current_user.isAdmin
         render status: :unauthorized
         return
       end
-
-      if !current_user.isAdmin
-        render status: :unauthorized
-	return
-      end
-
-      @needsModeration = true   
-    else
-      @needsModeration = false
     end
 
-    if params[:onlyVis] != nil
-      @onlyVis = true   
-    else
-      @onlyVis = false
-    end
-
-    if params[:userid] == nil
-      if params[:newest] != nil
-      @visualisations = get_newest_n(@onlyVis, !@needsModeration, params[:newest])
-      end
-
-      if @needsModeration
-        @visualisations = @visualisations.select{ |vis| !vis.approved }
-      else
-        @visualisations = @visualisations.select{ |vis| vis.approved }
-      end
-
-      if @onlyVis
-        @visualisations = @visualisations.select{ |vis| vis.vis_type = "vis" }
-      end
-
-      if params[:popular] != nil
-        @visualisations.sort_by{ |vis| vis["votes"] }.reverse! 
-      end
-      
-    else
-      #want visualisations of a particular user
+    @visualisations = Visualisation.all
+    
+    # Want visualisations of a particular user
+    if params[:userid]
       u = User.find_by_id(params[:userid])
       if u == nil
         return "no such user"
       end
 
-      if params[:needsModeration] != nil
-        @visualisations = u.visualisations.approved(false).vis
-      else
-        @visualisations = u.visualisations.approved(true).vis
-      end
+      @visualisations = u.visualisations
     end
 
     
-  end
-
-  def get_newest_n(onlyvis, approved, n)
-    if onlyvis
-      return Visualisation.where(approved: approved, vis_type: "vis").order(created_at: :desc).take(n)
-    else
-      return Visualisation.where(approved: approved).order(created_at: :desc).take(n)
-
+    if params[:onlyVis]
+      @visualisations = @visualisations.select{ |vis| vis.vis_type = "vis" }
     end
+    
+    if params[:needsModeration]
+      @visualisations = @visualisations.select{ |vis| !vis.approved }
+    end
+    
+    if params[:newest]
+      @visualisations = @visualisations.order(created_at: :desc).take(params[:newest])
+    end
+    
+    if params[:popular]
+      @visualisations.sort_by{ |vis| vis["votes"] }.reverse! 
+    end
+
   end
 
   # GET /visualisations/1
@@ -187,7 +164,7 @@ class VisualisationsController < ApplicationController
         puts "No auth token"
       else
         if !current_user.isAdmin
-          render status: :unauthorizedi 
+          render status: :unauthorized
           puts "Trying to show a non-approved vis without an admin"
         end
       end
@@ -213,8 +190,11 @@ class VisualisationsController < ApplicationController
     @visualisation.user = current_user
 
     saved = @visualisation.save
+    
+    puts p[:vis_type]
+    puts saved
 
-    if saved then
+    if saved and p[:vis_type] == "vis" then
         # Handle background colour extraction in a separate thread
         $sc_path = @visualisation.screenshot.path
         $id = @visualisation.id

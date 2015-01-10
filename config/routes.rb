@@ -8,8 +8,6 @@ Rails.application.routes.draw do #todo: delete this:)
 
   get '/visualisations/:visid/vote' => 'visualisations#vote'
 
-  get '/visualisations/get_all' => 'visualisations#get_all'
-
   root to: 'visitors#index'
   devise_for :users, :token_authentication_key => 'authentication_key'
 
@@ -33,7 +31,8 @@ Rails.application.routes.draw do #todo: delete this:)
 
   get '/playout_sessions/info' => 'playout_sessions#get_info'
 
-  get '/visualisations/:visid/render_vis' => 'visualisations#render_vis'
+  get '/visualisations/:visid/display' => 'visualisations#display'
+  get '/visualisations/:visid/display_internal' => 'visualisations#display_internal'
 
   post '/users/register' => 'users#register'
 
