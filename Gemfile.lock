@@ -1,5 +1,5 @@
 GIT
-  remote: https://gitlab.doc.ic.ac.uk/tjt12/devise-kerberos-authenticatable.git
+  remote: git://github.com/tjth/devise-kerberos-authenticatable.git
   revision: cbe844fe3d378cd6f2457b11f7d0765fb01ffe22
   specs:
     devise-kerberos-authenticatable (0.1.0)

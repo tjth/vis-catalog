@@ -12,8 +12,9 @@ class ApplicationController < ActionController::Base
       @user = User.find_by_authentication_token(params[:authentication_key]) # we are finding 
       sign_in @user if @user # we are siging in user if it exist. sign_in is devise method 
       if @user == nil
-	render :status=>400, :json=>{:message=>"Invalid token."}
+	       render :status=>400, :json=>{:message=>"Invalid token."}
       end
+      return
     end
   end
 

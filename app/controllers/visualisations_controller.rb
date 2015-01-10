@@ -142,8 +142,14 @@ class VisualisationsController < ApplicationController
         return
       end
     end
-
+    
     @visualisations = Visualisation.all
+      
+    if params[:needsModeration]
+      @visualisations = @visualisations.select{ |vis| !vis.approved }
+    else
+       @visualisations = @visualisations.select{ |vis| vis.approved }
+    end
     
     # Want visualisations of a particular user
     if params[:userid]
@@ -154,14 +160,9 @@ class VisualisationsController < ApplicationController
 
       @visualisations = u.visualisations
     end
-
     
     if params[:onlyVis]
-      @visualisations = @visualisations.select{ |vis| vis.vis_type = "vis" }
-    end
-    
-    if params[:needsModeration]
-      @visualisations = @visualisations.select{ |vis| !vis.approved }
+      @visualisations = @visualisations.select{ |vis| vis.vis_type == "vis" }
     end
     
     if params[:newest]
@@ -205,6 +206,14 @@ class VisualisationsController < ApplicationController
   # POST /visualisations.json
   def create
     p = visualisation_params
+
+    if p[:vis_type] == "vis"
+      if p[:screenshot] == nil
+        render :status => 500, :text => "Visualisations need a screenshot!"
+        return
+      end
+    end
+
     @visualisation = Visualisation.new(p)
 
     current_user.visualisations << @visualisation

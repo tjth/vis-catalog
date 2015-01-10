@@ -134,31 +134,6 @@
             $rootScope.logIn();
         }
     });
-        
-    app.factory('Visualisation', ['$resource',
-        function($resource){
-            return $resource('visualisations/:id.json', {id : "@id"}, {
-                query: { method:'GET', url:'visualisations.json', isArray:true },
-                approve: { method:'PATCH', url:'visualisations/:id/approve.json'},
-                reject: { method:'PATCH', url:'visualisations/:id/reject.json'}
-            });
-    }]);
-
-    app.factory('Comments', ['$resource',
-        function($resource){
-            return $resource('comments/:id.json', {id : "@id"}, {
-                query: { method:'GET', url:'comments.json', isArray:true },
-                approve: { method:'PATCH', url:'comments/:id/approve.json'},
-                reject: { method:'PATCH', url:'comments/:id/reject.json'}
-            });
-    }]);
-
-    app.factory('Timeslot', ['$resource',
-        function($resource){
-            return $resource('timeslots', {}, {
-                query: { method:'GET', isArray:true },
-            });
-    }]);
     
     app.controller('masonController', function($scope, $rootScope, Visualisation, $routeParams, $location) {
         $rootScope.page = {title: "Visualisations",  headerClass:"visualisations", searchEnabled : true, class:"visualisations"}
@@ -170,7 +145,10 @@
         }
         
         setTimeout(function() { 
-            $scope.visItems = Visualisation.query($location.search())
+            var params = $location.search()
+            params.onlyVis = true
+        
+            $scope.visItems = Visualisation.query(params)
         }, 500);
     });
     
